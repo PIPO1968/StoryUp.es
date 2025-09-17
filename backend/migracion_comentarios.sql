@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS comentarios (
+  id SERIAL PRIMARY KEY,
+  post_id INTEGER REFERENCES posts(id),
+  usuario_id INTEGER REFERENCES usuarios(id),
+  contenido TEXT NOT NULL,
+  fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
