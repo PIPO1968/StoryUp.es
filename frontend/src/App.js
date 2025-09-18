@@ -27,6 +27,84 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // Estado para crear grupo
+  const [showCrearGrupo, setShowCrearGrupo] = useState(false);
+  const [nuevoGrupoNombre, setNuevoGrupoNombre] = useState("");
+  const [nuevoGrupoMiembros, setNuevoGrupoMiembros] = useState([]);
+  const [nuevoGrupoImg, setNuevoGrupoImg] = useState("");
+  const [crearGrupoMsg, setCrearGrupoMsg] = useState("");
+
+  // Crear grupo
+  const handleCrearGrupo = async (e) => {
+    e.preventDefault();
+    setCrearGrupoMsg("");
+    if (!nuevoGrupoNombre || nuevoGrupoMiembros.length === 0) {
+      setCrearGrupoMsg("Elige nombre y al menos 1 miembro");
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/grupos`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+        body: JSON.stringify({ nombre: nuevoGrupoNombre, imagen_url: nuevoGrupoImg, miembros: [profile.id, ...nuevoGrupoMiembros] })
+      });
+      if (res.ok) {
+        setCrearGrupoMsg('¡Grupo creado!');
+        setShowCrearGrupo(false);
+        setNuevoGrupoNombre(""); setNuevoGrupoMiembros([]); setNuevoGrupoImg("");
+        // Recargar grupos
+        const data = await res.json();
+        setGrupos(prev => [data, ...prev]);
+      } else {
+        const data = await res.json();
+        setCrearGrupoMsg(data.error || 'Error al crear grupo');
+      }
+    } catch {
+      setCrearGrupoMsg('Error de conexión');
+    }
+  };
+  // --- Estado y lógica para grupos de chat ---
+  const [grupos, setGrupos] = useState([]); // Lista de grupos del usuario
+  const [grupoSeleccionado, setGrupoSeleccionado] = useState(null); // Grupo seleccionado
+  const [grupoMensajes, setGrupoMensajes] = useState([]); // Mensajes del grupo seleccionado
+  const [grupoMiembros, setGrupoMiembros] = useState([]); // Miembros del grupo seleccionado
+  const [grupoCargando, setGrupoCargando] = useState(false);
+
+  // Cargar grupos del usuario al iniciar sesión
+  useEffect(() => {
+    if (!jwt) return;
+    const fetchGrupos = async () => {
+      try {
+        const res = await fetch(`${API}/grupos`, { headers: { Authorization: `Bearer ${jwt}` } });
+        const data = await res.json();
+        if (Array.isArray(data)) setGrupos(data);
+      } catch { }
+    };
+    fetchGrupos();
+  }, [jwt]);
+
+  // Cargar info y mensajes de grupo al seleccionar
+  useEffect(() => {
+    if (!jwt || !grupoSeleccionado) return;
+    setGrupoCargando(true);
+    const fetchGrupoInfo = async () => {
+      try {
+        const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}`, { headers: { Authorization: `Bearer ${jwt}` } });
+        const data = await res.json();
+        setGrupoMiembros(data.miembros || []);
+      } catch { }
+    };
+    const fetchGrupoMensajes = async () => {
+      try {
+        const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}/mensajes`, { headers: { Authorization: `Bearer ${jwt}` } });
+        const data = await res.json();
+        setGrupoMensajes(Array.isArray(data) ? data : []);
+      } catch { }
+      setGrupoCargando(false);
+    };
+    fetchGrupoInfo();
+    fetchGrupoMensajes();
+  }, [jwt, grupoSeleccionado]);
   // --- Estado para búsqueda de usuarios y mensajes ---
   const [userSearch, setUserSearch] = useState("");
   const [msgSearch, setMsgSearch] = useState("");
@@ -847,26 +925,67 @@ function App() {
             {/* Chat tipo WhatsApp avanzado */}
             <hr style={{ margin: '18px 0' }} />
             <div className="chat-whatsapp">
-              {/* Barra de favoritos */}
-              {/* Búsqueda de usuarios */}
-              <input
-                type="text"
-                className="chat-user-search"
-                placeholder="Buscar usuario..."
-                value={userSearch}
-                onChange={e => setUserSearch(e.target.value)}
-                style={{ width: '100%', marginBottom: 6, padding: 6, fontSize: 15 }}
-              />
-              <div className="chat-favs-bar">
-                {usuarios.filter(u => u.id !== profile.id && u.nombre.toLowerCase().includes(userSearch.toLowerCase())).map(u => (
-                  <div key={u.id} className={`chat-fav-user${favoritos.includes(u.id) ? ' fav' : ''}${chatUser && chatUser.id === u.id ? ' selected' : ''}`}
-                    onClick={() => setChatUser(u)}>
-                    <img src={u.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.nombre)} alt="perfil" className="chat-fav-img" />
-                    <span className="chat-fav-nombre">{u.nombre}</span>
-                    <button className="chat-fav-star" onClick={e => { e.stopPropagation(); toggleFavorito(u.id); }}>{favoritos.includes(u.id) ? '★' : '☆'}</button>
-                  </div>
-                ))}
+              {/* Barra de chats: grupos y privados */}
+              <div className="chat-bar">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <button className="chat-group-create-btn" onClick={() => setShowCrearGrupo(true)}>➕ Grupo</button>
+                  <input
+                    type="text"
+                    className="chat-user-search"
+                    placeholder="Buscar usuario..."
+                    value={userSearch}
+                    onChange={e => setUserSearch(e.target.value)}
+                    style={{ flex: 1, padding: 6, fontSize: 15 }}
+                  />
+                </div>
+                {/* Grupos */}
+                <div className="chat-groups-bar">
+                  {grupos.map(g => (
+                    <div key={g.id} className={`chat-group-item${grupoSeleccionado && grupoSeleccionado.id === g.id ? ' selected' : ''}`}
+                      onClick={() => { setGrupoSeleccionado(g); setChatUser(null); }}>
+                      <span className="chat-group-icon">👥</span>
+                      <span className="chat-group-nombre">{g.nombre}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Chats privados */}
+                <div className="chat-favs-bar">
+                  {usuarios.filter(u => u.id !== profile.id && u.nombre.toLowerCase().includes(userSearch.toLowerCase())).map(u => (
+                    <div key={u.id} className={`chat-fav-user${favoritos.includes(u.id) ? ' fav' : ''}${chatUser && chatUser.id === u.id ? ' selected' : ''}`}
+                      onClick={() => { setChatUser(u); setGrupoSeleccionado(null); }}>
+                      <img src={u.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.nombre)} alt="perfil" className="chat-fav-img" />
+                      <span className="chat-fav-nombre">{u.nombre}</span>
+                      <button className="chat-fav-star" onClick={e => { e.stopPropagation(); toggleFavorito(u.id); }}>{favoritos.includes(u.id) ? '★' : '☆'}</button>
+                    </div>
+                  ))}
+                </div>
               </div>
+              {/* Modal crear grupo */}
+              {showCrearGrupo && (
+                <div className="chat-group-modal">
+                  <form className="chat-group-form" onSubmit={handleCrearGrupo}>
+                    <h3>Crear grupo</h3>
+                    <input type="text" placeholder="Nombre del grupo" value={nuevoGrupoNombre} onChange={e => setNuevoGrupoNombre(e.target.value)} required />
+                    <input type="text" placeholder="URL imagen (opcional)" value={nuevoGrupoImg} onChange={e => setNuevoGrupoImg(e.target.value)} />
+                    <div style={{ margin: '8px 0' }}>
+                      <span>Miembros:</span>
+                      <div className="chat-group-miembros-select">
+                        {usuarios.filter(u => u.id !== profile.id).map(u => (
+                          <label key={u.id} style={{ display: 'block', fontSize: 15 }}>
+                            <input type="checkbox" checked={nuevoGrupoMiembros.includes(u.id)} onChange={e => {
+                              if (e.target.checked) setNuevoGrupoMiembros(prev => [...prev, u.id]);
+                              else setNuevoGrupoMiembros(prev => prev.filter(id => id !== u.id));
+                            }} /> {u.nombre}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <button type="submit" className="chat-group-create-btn">Crear</button>
+                    <button type="button" onClick={() => setShowCrearGrupo(false)} style={{ marginLeft: 8 }}>Cancelar</button>
+                    <div style={{ color: crearGrupoMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 18 }}>{crearGrupoMsg}</div>
+                  </form>
+                </div>
+              )}
               {/* Área de chat */}
               {chatUser ? (
                 <>
@@ -892,48 +1011,48 @@ function App() {
                   <div className="chat-messages">
                     {(chatMessages[chatUser.id] && chatMessages[chatUser.id].length > 0)
                       ? chatMessages[chatUser.id]
-                          .map((msg, i) => ({ msg, i }))
-                          .filter(({ msg }) => {
-                            if (!msgSearch.trim()) return true;
-                            const txt = (msg.text || "") + " " + (msg.fileType || "");
-                            return txt.toLowerCase().includes(msgSearch.toLowerCase());
-                          })
-                          .map(({ msg, i }) => (
-                        <div key={i} className={msg.sender.id === profile.id ? 'chat-msg chat-msg-own animated' : 'chat-msg chat-msg-other animated'}>
-                          <img src={msg.sender.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(msg.sender.nombre)} alt="perfil" className="chat-msg-img" />
-                          <div className="chat-msg-content">
-                            <span className="chat-msg-nombre">{msg.sender.nombre}</span>
-                            {msg.text && <span>{msg.text}</span>}
-                            {msg.fileUrl && msg.fileType && msg.fileType.startsWith('image') && (
-                              <img src={msg.fileUrl} alt="img" className="chat-media-img" />
-                            )}
-                            {msg.fileUrl && msg.fileType && msg.fileType.startsWith('video') && (
-                              <video src={msg.fileUrl} controls className="chat-media-video" />
-                            )}
-                            {msg.fileUrl && msg.fileType && msg.fileType.startsWith('audio') && (
-                              <audio src={msg.fileUrl} controls className="chat-media-audio" />
-                            )}
-                            {/* Reacciones rápidas */}
-                            <div className="chat-reactions-row">
-                              {emojiList.map(emoji => {
-                                const reacts = (chatReactions[chatUser.id]?.[i] || []).find(r => r.emoji === emoji);
-                                const reacted = reacts && reacts.users.includes(profile.id);
-                                return (
-                                  <button
-                                    key={emoji}
-                                    className={`chat-reaction-btn${reacted ? ' reacted' : ''}`}
-                                    onClick={() => toggleReaction(profile.id, chatUser.id, i, emoji)}
-                                    title={reacts && reacts.users.length > 0 ? `Usuarios: ${reacts.users.length}` : `Reaccionar con ${emoji}`}
-                                  >
-                                    {emoji} {reacts && reacts.users.length > 0 ? <span className="chat-reaction-count">{reacts.users.length}</span> : null}
-                                  </button>
-                                );
-                              })}
+                        .map((msg, i) => ({ msg, i }))
+                        .filter(({ msg }) => {
+                          if (!msgSearch.trim()) return true;
+                          const txt = (msg.text || "") + " " + (msg.fileType || "");
+                          return txt.toLowerCase().includes(msgSearch.toLowerCase());
+                        })
+                        .map(({ msg, i }) => (
+                          <div key={i} className={msg.sender.id === profile.id ? 'chat-msg chat-msg-own animated' : 'chat-msg chat-msg-other animated'}>
+                            <img src={msg.sender.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(msg.sender.nombre)} alt="perfil" className="chat-msg-img" />
+                            <div className="chat-msg-content">
+                              <span className="chat-msg-nombre">{msg.sender.nombre}</span>
+                              {msg.text && <span>{msg.text}</span>}
+                              {msg.fileUrl && msg.fileType && msg.fileType.startsWith('image') && (
+                                <img src={msg.fileUrl} alt="img" className="chat-media-img" />
+                              )}
+                              {msg.fileUrl && msg.fileType && msg.fileType.startsWith('video') && (
+                                <video src={msg.fileUrl} controls className="chat-media-video" />
+                              )}
+                              {msg.fileUrl && msg.fileType && msg.fileType.startsWith('audio') && (
+                                <audio src={msg.fileUrl} controls className="chat-media-audio" />
+                              )}
+                              {/* Reacciones rápidas */}
+                              <div className="chat-reactions-row">
+                                {emojiList.map(emoji => {
+                                  const reacts = (chatReactions[chatUser.id]?.[i] || []).find(r => r.emoji === emoji);
+                                  const reacted = reacts && reacts.users.includes(profile.id);
+                                  return (
+                                    <button
+                                      key={emoji}
+                                      className={`chat-reaction-btn${reacted ? ' reacted' : ''}`}
+                                      onClick={() => toggleReaction(profile.id, chatUser.id, i, emoji)}
+                                      title={reacts && reacts.users.length > 0 ? `Usuarios: ${reacts.users.length}` : `Reaccionar con ${emoji}`}
+                                    >
+                                      {emoji} {reacts && reacts.users.length > 0 ? <span className="chat-reaction-count">{reacts.users.length}</span> : null}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                              <span className="chat-msg-date">{new Date(msg.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <span className="chat-msg-date">{new Date(msg.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
-                        </div>
-                      ))
+                        ))
                       : <div className="chat-placeholder">No hay mensajes aún.</div>}
                     <div ref={chatEndRef} />
                   </div>
@@ -966,27 +1085,6 @@ function App() {
                       <button onClick={() => setChatFile(null)} className="chat-file-cancel">✕</button>
                     </div>
                   )}
-                  {/* Previsualización de audio grabado antes de enviar */}
-                  {audioUrl && !chatFile && (
-                    <div className="chat-file-preview">
-                      <audio src={audioUrl} controls className="chat-media-audio" />
-                      <button onClick={sendAudioMessage} className="chat-file-send">Enviar audio</button>
-                      <button onClick={cancelRecording} className="chat-file-cancel">Cancelar</button>
-                    </div>
-                  )}
                 </>
-              ) : (
-                <div className="chat-placeholder">Selecciona un usuario para chatear</div>
-              )}
-            </div>
-            <button onClick={() => setView('feed')} className="scale-btn" style={{ marginTop: 16 }}>Volver al feed</button>
-          </div>
-        )}
-      </header>
-    </div>
-  );
-}
-
-export default App;
-// Forzar redeploy en Vercel
+              )
 
