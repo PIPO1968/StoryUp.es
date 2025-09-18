@@ -13,6 +13,8 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // Estado para mostrar la pantalla de bienvenida
+  const [showWelcome, setShowWelcome] = useState(true);
   // Obtener perfil propio y seguidores/seguidos
   const fetchProfile = async (token) => {
     // Notificaciones
@@ -425,22 +427,30 @@ function App() {
   return (
     <div className="App">
       <Toast toast={toast} onClose={() => setToast(null)} />
+      {/* Pantalla de bienvenida */}
+      {showWelcome && !jwt && (
+        <div className="welcome-screen fade-in">
+          <img src="/logo192.png" alt="Logo StoryUp" className="welcome-logo" />
+          <h1 className="welcome-title">StoryUp</h1>
+          <p className="welcome-msg">Conecta, comparte y chatea con tu comunidad. ¡Bienvenido a la red social diferente!</p>
+          <div className="welcome-btns">
+            <button className="welcome-btn" onClick={() => { setShowWelcome(false); setView('login'); }}>Iniciar sesión</button>
+            <button className="welcome-btn" onClick={() => { setShowWelcome(false); setView('register'); }}>Registrarse</button>
+          </div>
+        </div>
+      )}
       {/* Barra de navegación */}
       {jwt && (
-        <nav style={{ width: '100%', background: '#181818', padding: '10px 0', display: 'flex', justifyContent: 'center', gap: 24, position: 'fixed', top: 0, left: 0, zIndex: 10 }}>
-          <button onClick={() => setView('feed')} style={{ background: view === 'feed' ? '#333' : '#222', color: 'white', border: 'none', borderRadius: 4, padding: '6px 18px', fontWeight: view === 'feed' ? 'bold' : 'normal', cursor: 'pointer' }}>Feed</button>
-          <button onClick={() => setView('profile')} style={{ background: view === 'profile' ? '#333' : '#222', color: 'white', border: 'none', borderRadius: 4, padding: '6px 18px', fontWeight: view === 'profile' ? 'bold' : 'normal', cursor: 'pointer' }}>Perfil</button>
-          <button onClick={() => { setJwt(''); setView('login'); }} style={{ background: '#a00', color: 'white', border: 'none', borderRadius: 4, padding: '6px 18px', fontWeight: 'bold', cursor: 'pointer' }}>Cerrar sesión</button>
+        <nav className="main-nav">
+          <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Feed</button>
+          <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Perfil</button>
+          <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
         </nav>
       )}
       <header className="App-header" style={jwt ? { marginTop: 60 } : {}}>
-        <h1>Bienvenido a StoryUp.es</h1>
-        <p>Tu nueva red social</p>
-        {!jwt && (
-          <div style={{ margin: '20px' }}>
-            <button onClick={() => setView('register')}>Registro</button>
-            <button onClick={() => setView('login')} style={{ marginLeft: '10px' }}>Login</button>
-          </div>
+        {/* Solo mostrar el resto si no está la pantalla de bienvenida */}
+        {!showWelcome && !jwt && (
+          <div className="welcome-fake-space" />
         )}
         {view === 'register' && (
           <form onSubmit={handleRegister} className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 250 }}>

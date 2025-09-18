@@ -1,3 +1,99 @@
+/* --- Pantalla de bienvenida StoryUp --- */
+.welcome-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  animation: fadeIn 1s;
+}
+.welcome-logo {
+  width: 110px;
+  height: 110px;
+  margin-bottom: 18px;
+  border-radius: 24px;
+  box-shadow: 0 6px 32px #0007;
+}
+.welcome-title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: #25d366;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 12px #0006;
+}
+.welcome-msg {
+  font-size: 1.18rem;
+  color: #fff;
+  margin-bottom: 32px;
+  max-width: 340px;
+  text-align: center;
+  line-height: 1.5;
+}
+.welcome-btns {
+  display: flex;
+  gap: 18px;
+}
+.welcome-btn {
+  background: linear-gradient(90deg, #25d366 60%, #1976d2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 14px 38px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  box-shadow: 0 2px 16px #0004;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.welcome-btn:hover {
+  background: linear-gradient(90deg, #1976d2 40%, #25d366 100%);
+  transform: scale(1.04);
+}
+.welcome-fake-space {
+  height: 60px;
+}
+
+/* --- Navegación principal moderna --- */
+.main-nav {
+  width: 100%;
+  background: rgba(24,24,24,0.98);
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  box-shadow: 0 2px 12px #0003;
+}
+.nav-btn {
+  background: #23272f;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 8px 28px;
+  font-size: 1.08rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.13s;
+}
+.nav-btn-active {
+  background: #25d366;
+  color: #222;
+  font-weight: 700;
+  transform: scale(1.07);
+}
+.nav-btn-logout {
+  background: #c62828;
+  color: #fff;
+  font-weight: 700;
+}
+.nav-btn-logout:hover {
+  background: #a00;
+}
 .chat-msg.animated {
   animation: fadeInMsg 0.4s;
 }
@@ -336,10 +432,10 @@ body,
 
 .App {
   text-align: center;
-  background: #181818;
   min-height: 100vh;
   color: white;
   font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
 }
 
 .App-header {
