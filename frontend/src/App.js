@@ -13,6 +13,112 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // Obtener perfil propio y seguidores/seguidos
+  const fetchProfile = async (token) => {
+    // Notificaciones
+    try {
+      const res = await fetch(`${API}/notificaciones`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) setNotificaciones(data);
+    } catch { }
+    // Perfil
+    try {
+      const res = await fetch(`${API}/perfil`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) setProfile(data);
+    } catch { }
+    // Seguidores
+    try {
+      const res = await fetch(`${API}/seguidores`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) setSeguidores(data);
+    } catch { }
+    // Seguidos
+    try {
+      const res = await fetch(`${API}/seguidos`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) setSeguidos(data);
+    } catch { }
+    // Todos los usuarios (para seguir)
+    try {
+      const res = await fetch(`${API}/usuarios`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) setUsuarios(data);
+    } catch { }
+  };
+
+  // Seguir usuario
+  const handleFollow = async (id) => {
+    setFollowMsg('');
+    try {
+      const res = await fetch(`${API}/seguir/${id}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${jwt}` }
+      });
+      if (res.ok) {
+        setFollowMsg('¡Ahora sigues a este usuario!');
+        fetchProfile(jwt);
+      } else {
+        setFollowMsg('Error al seguir');
+      }
+    } catch {
+      setFollowMsg('Error de conexión');
+    }
+  };
+
+  // Dejar de seguir usuario
+  const handleUnfollow = async (id) => {
+    setFollowMsg('');
+    try {
+      const res = await fetch(`${API}/dejar-de-seguir/${id}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${jwt}` }
+      });
+      if (res.ok) {
+        setFollowMsg('Has dejado de seguir a este usuario');
+        fetchProfile(jwt);
+      } else {
+        setFollowMsg('Error al dejar de seguir');
+      }
+    } catch {
+      setFollowMsg('Error de conexión');
+    }
+  };
+
+  // Editar perfil
+  const handleEditProfile = async (e) => {
+    e.preventDefault();
+    setProfileMsg('');
+    const formData = new FormData();
+    if (editName) formData.append('nombre', editName);
+    if (editImg) formData.append('imagen', editImg);
+    try {
+      const res = await fetch(`${API}/perfil`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${jwt}` },
+        body: formData
+      });
+      if (res.ok) {
+        setProfileMsg('¡Perfil actualizado!');
+        setEditName(''); setEditImg(null);
+        fetchProfile(jwt);
+      } else {
+        setProfileMsg('Error al actualizar');
+      }
+    } catch {
+      setProfileMsg('Error de conexión');
+    }
+  };
   const [toast, setToast] = useState(null);
   // --- Estados y funciones para notificaciones y perfil ---
   const [notificaciones, setNotificaciones] = useState([]);
@@ -306,154 +412,12 @@ function App() {
         setView('feed');
         fetchFeed(data.token);
         fetchProfile(data.token);
-
-        // Obtener perfil propio y seguidores/seguidos
-        const fetchProfile = async (token) => {
-          // Notificaciones
-          try {
-            const res = await fetch(`${API}/notificaciones`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (Array.isArray(data)) setNotificaciones(data);
-          } catch { }
-          // Marcar notificación como leída
-          const handleReadNotif = async (id) => {
-            setNotifMsg('');
-            try {
-              const res = await fetch(`${API}/notificaciones/${id}/leer`, {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${jwt}` }
-              });
-              if (res.ok) {
-                setNotifMsg('Notificación marcada como leída');
-                fetchProfile(jwt);
-              } else {
-                setNotifMsg('Error al marcar como leída');
-              }
-            } catch {
-              setNotifMsg('Error de conexión');
-            }
-          };
-          try {
-            const res = await fetch(`${API}/perfil`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (res.ok) setProfile(data);
-          } catch { }
-          // Seguidores
-          try {
-            const res = await fetch(`${API}/seguidores`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (Array.isArray(data)) setSeguidores(data);
-          } catch { }
-          // Seguidos
-          try {
-            const res = await fetch(`${API}/seguidos`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (Array.isArray(data)) setSeguidos(data);
-          } catch { }
-          // Todos los usuarios (para seguir)
-          try {
-            const res = await fetch(`${API}/usuarios`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if (Array.isArray(data)) setUsuarios(data);
-          } catch { }
-        };
-
-        // Seguir usuario
-        const handleFollow = async (id) => {
-          setFollowMsg('');
-          try {
-            const res = await fetch(`${API}/seguir/${id}`, {
-              method: 'POST',
-              headers: { Authorization: `Bearer ${jwt}` }
-            });
-            if (res.ok) {
-              setFollowMsg('¡Ahora sigues a este usuario!');
-              fetchProfile(jwt);
-            } else {
-              setFollowMsg('Error al seguir');
-            }
-          } catch {
-            setFollowMsg('Error de conexión');
-          }
-        };
-
-        // Dejar de seguir usuario
-        const handleUnfollow = async (id) => {
-          setFollowMsg('');
-          try {
-            const res = await fetch(`${API}/dejar-de-seguir/${id}`, {
-              method: 'POST',
-              headers: { Authorization: `Bearer ${jwt}` }
-            });
-            if (res.ok) {
-              setFollowMsg('Has dejado de seguir a este usuario');
-              fetchProfile(jwt);
-            } else {
-              setFollowMsg('Error al dejar de seguir');
-            }
-          } catch {
-            setFollowMsg('Error de conexión');
-          }
-        };
-
-        // Editar perfil
-        const handleEditProfile = async (e) => {
-          e.preventDefault();
-          setProfileMsg('');
-          const formData = new FormData();
-          if (editName) formData.append('nombre', editName);
-          if (editImg) formData.append('imagen', editImg);
-          try {
-            const res = await fetch(`${API}/perfil`, {
-              method: 'PUT',
-              headers: { Authorization: `Bearer ${jwt}` },
-              body: formData
-            });
-            if (res.ok) {
-              setProfileMsg('¡Perfil actualizado!');
-              setEditName(''); setEditImg(null);
-              fetchProfile(jwt);
-            } else {
-              setProfileMsg('Error al actualizar');
-            }
-          } catch {
-            setProfileMsg('Error de conexión');
-          }
-        };
       } else {
-        setLoginMsg(data.error || 'Credenciales incorrectas');
-        showToast(data.error || 'Credenciales incorrectas', 'error');
+        setLoginMsg((data && data.error) || 'Credenciales incorrectas');
+        showToast((data && data.error) || 'Credenciales incorrectas', 'error');
       }
     } catch (err) {
       setLoginMsg('Error de conexión');
-      showToast('Error de conexión', 'error');
-      showToast('¡Publicación creada!', 'success');
-      showToast(data.error || 'Error al publicar', 'error');
-      showToast('Error de conexión', 'error');
-      showToast('¡Comentario publicado!', 'success');
-      showToast(data.error || 'Error al comentar', 'error');
-      showToast('Error de conexión', 'error');
-      showToast('¡Perfil actualizado!', 'success');
-      showToast('Error al actualizar', 'error');
-      showToast('Error de conexión', 'error');
-      showToast('¡Ahora sigues a este usuario!', 'success');
-      showToast('Error al seguir', 'error');
-      showToast('Error de conexión', 'error');
-      showToast('Has dejado de seguir a este usuario', 'success');
-      showToast('Error al dejar de seguir', 'error');
-      showToast('Error de conexión', 'error');
-      showToast('Notificación marcada como leída', 'success');
-      showToast('Error al marcar como leída', 'error');
       showToast('Error de conexión', 'error');
     }
   };
