@@ -63,8 +63,11 @@
 
 .chat-group-modal {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.45);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -82,7 +85,27 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  animation: fadeIn 0.4s;
+  animation: modalPop 0.45s cubic-bezier(.4, 1.6, .6, 1);
+}
+
+@keyframes modalPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(40px);
+    box-shadow: 0 0 0 #0000;
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1.04) translateY(-8px);
+    box-shadow: 0 8px 32px #25d36633;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    box-shadow: 0 4px 32px #0008;
+  }
 }
 
 .chat-group-form input[type="text"] {
@@ -114,6 +137,7 @@
   margin-right: 6px;
   margin-bottom: 4px;
 }
+
 /* Inputs de búsqueda en chat */
 .chat-user-search,
 .chat-msg-search {
@@ -578,6 +602,7 @@ body.light-theme,
 .form-bg-logo form {
   position: relative;
   z-index: 1;
+  animation: modalPop 0.45s cubic-bezier(.4, 1.6, .6, 1);
 }
 
 /* --- Pantalla de bienvenida StoryUp --- */
@@ -957,6 +982,7 @@ body.light-theme,
   opacity: 0.97;
   cursor: pointer;
   transition: opacity 0.3s;
+  animation: modalPop 0.45s cubic-bezier(.4, 1.6, .6, 1);
 }
 
 .toast.success {

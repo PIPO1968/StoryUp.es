@@ -40,6 +40,7 @@ function App() {
     setCrearGrupoMsg("");
     if (!nuevoGrupoNombre || nuevoGrupoMiembros.length === 0) {
       setCrearGrupoMsg("Elige nombre y al menos 1 miembro");
+      showToast("Elige nombre y al menos 1 miembro", "error");
       return;
     }
     try {
@@ -50,6 +51,7 @@ function App() {
       });
       if (res.ok) {
         setCrearGrupoMsg('¡Grupo creado!');
+        showToast('¡Grupo creado!', 'success');
         setShowCrearGrupo(false);
         setNuevoGrupoNombre(""); setNuevoGrupoMiembros([]); setNuevoGrupoImg("");
         // Recargar grupos
@@ -58,9 +60,11 @@ function App() {
       } else {
         const data = await res.json();
         setCrearGrupoMsg(data.error || 'Error al crear grupo');
+        showToast(data.error || 'Error al crear grupo', 'error');
       }
     } catch {
       setCrearGrupoMsg('Error de conexión');
+      showToast('Error de conexión', 'error');
     }
   };
   // --- Estado y lógica para grupos de chat ---
@@ -475,7 +479,10 @@ function App() {
   // Enviar mensaje real al backend
   const handleSendMsg = async (e) => {
     e.preventDefault();
-    if ((!chatInput.trim() && !chatFile) || !chatUser) return;
+    if ((!chatInput.trim() && !chatFile) || !chatUser) {
+      showToast('No puedes enviar un mensaje vacío', 'error');
+      return;
+    }
     const formData = new FormData();
     formData.append('texto', chatInput);
     // Si el archivo es un audio grabado (Blob sin type), asígnale un nombre y tipo
@@ -507,8 +514,14 @@ function App() {
             fileType: data.archivo_tipo || null
           }]
         }));
+        showToast('Mensaje enviado', 'success');
+      } else {
+        const data = await res.json();
+        showToast(data.error || 'Error al enviar mensaje', 'error');
       }
-    } catch { }
+    } catch {
+      showToast('Error de conexión', 'error');
+    }
   };
 
   // URL backend
@@ -1086,5 +1099,19 @@ function App() {
                     </div>
                   )}
                 </>
-              )
+              )}
+              {grupoSeleccionado && (
+                <>
+                  {/* Aquí iría el renderizado del chat de grupo, si aplica */}
+                </>
+              )}
+              {/* Cierre de chat-whatsapp */}
+            </div>
+          </div>
+        )}
+      </header>
+    </div>
+  );
+}
+export default App;
 
