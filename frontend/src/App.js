@@ -27,6 +27,10 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // Cálculo de badges
+  const notificacionesNoLeidas = notificaciones.filter(n => !n.leida).length;
+  // Mensajes no leídos: contar chats donde hay mensajes de otros usuarios no leídos
+  const mensajesNoLeidos = Object.values(chatMessages).reduce((acc, arr) => acc + (Array.isArray(arr) ? arr.filter(m => m.sender.id !== profile?.id && !m.leido).length : 0), 0);
   // --- SOCKET.IO ---
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]); // ids
@@ -506,8 +510,18 @@ function App() {
       {/* Barra de navegación */}
       {jwt && (
         <nav className="main-nav">
-          <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Feed</button>
-          <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Perfil</button>
+          <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
+            Feed
+            {mensajesNoLeidos > 0 && (
+              <span className="badge-nav">{mensajesNoLeidos > 99 ? '99+' : mensajesNoLeidos}</span>
+            )}
+          </button>
+          <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
+            Perfil
+            {notificacionesNoLeidas > 0 && (
+              <span className="badge-nav">{notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}</span>
+            )}
+          </button>
           <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
           <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{ marginLeft: 12 }}>
             {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
