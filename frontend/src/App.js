@@ -27,6 +27,76 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // --- Estados y lógica para grabación de audio (push-to-talk) ---
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  // Iniciar grabación
+  const startRecording = async () => {
+    if (isRecording) return;
+    setAudioBlob(null);
+    setAudioUrl(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new window.MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        setAudioBlob(blob);
+        setAudioUrl(URL.createObjectURL(blob));
+      };
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      showToast('No se pudo acceder al micrófono', 'error');
+    }
+  };
+
+  // Detener grabación
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  // Cancelar grabación
+  const cancelRecording = () => {
+    setIsRecording(false);
+    setAudioBlob(null);
+    setAudioUrl(null);
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
+  // Adjuntar audio grabado al chat
+  const sendAudioMessage = () => {
+    if (audioBlob) {
+      setChatFile(audioBlob);
+      setAudioBlob(null);
+      setAudioUrl(null);
+    }
+  };
+  // Temas de color
+  const colorThemes = [
+    { name: 'Verde', key: 'green', color: '#25d366' },
+    { name: 'Azul', key: 'blue', color: '#2196f3' },
+    { name: 'Morado', key: 'purple', color: '#9c27b0' },
+    { name: 'Naranja', key: 'orange', color: '#ff9800' }
+  ];
+  const [colorTheme, setColorTheme] = useState(localStorage.getItem('colorTheme') || 'green');
+  useEffect(() => {
+    document.body.setAttribute('data-color-theme', colorTheme);
+    localStorage.setItem('colorTheme', colorTheme);
+  }, [colorTheme]);
   // Detectar si es móvil
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   useEffect(() => {
@@ -297,7 +367,13 @@ function App() {
     if ((!chatInput.trim() && !chatFile) || !chatUser) return;
     const formData = new FormData();
     formData.append('texto', chatInput);
-    if (chatFile) formData.append('archivo', chatFile);
+    // Si el archivo es un audio grabado (Blob sin type), asígnale un nombre y tipo
+    if (chatFile && chatFile instanceof Blob && (!chatFile.type || chatFile.type === 'audio/webm')) {
+      const audioFile = new File([chatFile], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
+      formData.append('archivo', audioFile);
+    } else if (chatFile) {
+      formData.append('archivo', chatFile);
+    }
     try {
       const res = await fetch(`${API}/chat/${chatUser.id}`, {
         method: 'POST',
@@ -531,6 +607,12 @@ function App() {
                   <span className="badge-nav">{notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}</span>
                 )}
               </button>
+              {/* Selector de tema de color */}
+              <div className="color-theme-selector">
+                {colorThemes.map(t => (
+                  <button key={t.key} className={colorTheme === t.key ? 'color-btn color-btn-active' : 'color-btn'} style={{ background: t.color }} title={t.name} onClick={() => setColorTheme(t.key)} />
+                ))}
+              </div>
               <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
               <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{ marginLeft: 12 }}>
                 {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
@@ -553,6 +635,12 @@ function App() {
                     <span className="badge-nav">{notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}</span>
                   )}
                 </button>
+                {/* Selector de tema de color en bottom bar */}
+                <div className="color-theme-selector-mobile">
+                  {colorThemes.map(t => (
+                    <button key={t.key} className={colorTheme === t.key ? 'color-btn color-btn-active' : 'color-btn'} style={{ background: t.color }} title={t.name} onClick={() => setColorTheme(t.key)} />
+                  ))}
+                </div>
                 <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn">
                   {theme === 'dark' ? '☀️' : '🌙'}
                 </button>
@@ -764,6 +852,9 @@ function App() {
                             {msg.fileUrl && msg.fileType && msg.fileType.startsWith('video') && (
                               <video src={msg.fileUrl} controls className="chat-media-video" />
                             )}
+                            {msg.fileUrl && msg.fileType && msg.fileType.startsWith('audio') && (
+                              <audio src={msg.fileUrl} controls className="chat-media-audio" />
+                            )}
                             <span className="chat-msg-date">{new Date(msg.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
                         </div>
@@ -774,16 +865,38 @@ function App() {
                   <form className="chat-input-row" onSubmit={handleSendMsg}>
                     <input type="text" className="chat-input" placeholder={`Mensaje para ${chatUser.nombre}...`} value={chatInput} onChange={e => setChatInput(e.target.value)} autoComplete="off" />
                     <input type="file" accept="image/*,video/*" onChange={e => setChatFile(e.target.files[0])} className="chat-file-input" />
+                    {/* Botón de micrófono push-to-talk */}
+                    <button
+                      type="button"
+                      className={`chat-mic-btn${isRecording ? ' recording' : ''}`}
+                      title={isRecording ? 'Grabando...' : 'Mantén pulsado para grabar audio'}
+                      style={{ fontSize: 20, margin: '0 4px', background: isRecording ? '#e53935' : undefined, color: isRecording ? '#fff' : undefined }}
+                      onMouseDown={startRecording}
+                      onMouseUp={stopRecording}
+                      onMouseLeave={isRecording ? cancelRecording : undefined}
+                      onTouchStart={startRecording}
+                      onTouchEnd={stopRecording}
+                    >🎤</button>
                     <button type="submit" className="chat-send-btn">Enviar</button>
                   </form>
                   {chatFile && (
                     <div className="chat-file-preview">
-                      {chatFile.type.startsWith('image') ? (
+                      {chatFile.type && chatFile.type.startsWith('image') ? (
                         <img src={URL.createObjectURL(chatFile)} alt="preview" className="chat-media-img" />
-                      ) : chatFile.type.startsWith('video') ? (
+                      ) : chatFile.type && chatFile.type.startsWith('video') ? (
                         <video src={URL.createObjectURL(chatFile)} controls className="chat-media-video" />
+                      ) : chatFile.type && chatFile.type.startsWith('audio') ? (
+                        <audio src={URL.createObjectURL(chatFile)} controls className="chat-media-audio" />
                       ) : null}
                       <button onClick={() => setChatFile(null)} className="chat-file-cancel">✕</button>
+                    </div>
+                  )}
+                  {/* Previsualización de audio grabado antes de enviar */}
+                  {audioUrl && !chatFile && (
+                    <div className="chat-file-preview">
+                      <audio src={audioUrl} controls className="chat-media-audio" />
+                      <button onClick={sendAudioMessage} className="chat-file-send">Enviar audio</button>
+                      <button onClick={cancelRecording} className="chat-file-cancel">Cancelar</button>
                     </div>
                   )}
                 </>
