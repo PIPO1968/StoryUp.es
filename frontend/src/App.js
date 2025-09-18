@@ -259,7 +259,7 @@ function App() {
   };
 
   // URL backend
-  const API = 'https://storyup-es.onrender.com/api';
+  const API = 'https://storyup.es/api';
 
   // Registro
   const handleRegister = async (e) => {
