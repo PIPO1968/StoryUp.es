@@ -661,3 +661,5 @@ function App() {
 }
 
 export default App;
+// Forzar redeploy en Vercel
+
