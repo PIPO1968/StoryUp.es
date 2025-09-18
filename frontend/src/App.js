@@ -1,5 +1,16 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+// Hook para detectar preferencia de color del sistema
+function usePrefersDark() {
+  const [prefersDark, setPrefersDark] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = e => setPrefersDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return prefersDark;
+}
 import './App.css';
 
 // Toast global
@@ -13,6 +24,17 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // Estado para modo oscuro/claro
+  const prefersDark = usePrefersDark();
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved || (prefersDark ? 'dark' : 'light');
+  });
+  useEffect(() => {
+    document.body.classList.toggle('dark-theme', theme === 'dark');
+    document.body.classList.toggle('light-theme', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
   // Estado para mostrar la pantalla de bienvenida
   const [showWelcome, setShowWelcome] = useState(true);
   // Obtener perfil propio y seguidores/seguidos
@@ -439,7 +461,7 @@ function App() {
       {/* Pantalla de bienvenida */}
       {showWelcome && !jwt && (
         <div className="welcome-screen fade-in">
-          <img src="/logo512.png" alt="Logo StoryUp" className="welcome-logo" />
+          <img src="/logo.png" alt="Logo StoryUp" className="welcome-logo" />
           <h1 className="welcome-title">StoryUp</h1>
           <p className="welcome-msg">Conecta, comparte y chatea con tu comunidad. ¡Bienvenido a la red social diferente!</p>
           <div className="welcome-btns">
@@ -454,6 +476,9 @@ function App() {
           <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Feed</button>
           <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Perfil</button>
           <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
+          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{marginLeft: 12}}>
+            {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
+          </button>
         </nav>
       )}
       <header className="App-header" style={jwt ? { marginTop: 60 } : {}}>
@@ -462,23 +487,27 @@ function App() {
           <div className="welcome-fake-space" />
         )}
         {view === 'register' && (
-          <form onSubmit={handleRegister} className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 250 }}>
-            <h2>Registro</h2>
-            <input type="text" placeholder="Nombre" value={regNombre} onChange={e => setRegNombre(e.target.value)} required />
-            <input type="email" placeholder="Email" value={regEmail} onChange={e => setRegEmail(e.target.value)} required />
-            <input type="password" placeholder="Contraseña" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
-            <button type="submit" className="scale-btn">Registrarse</button>
-            <div style={{ color: regMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 24 }}>{regMsg}</div>
-          </form>
+          <div className="form-bg-logo">
+            <form onSubmit={handleRegister} className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 250 }}>
+              <h2>Registro</h2>
+              <input type="text" placeholder="Nombre" value={regNombre} onChange={e => setRegNombre(e.target.value)} required />
+              <input type="email" placeholder="Email" value={regEmail} onChange={e => setRegEmail(e.target.value)} required />
+              <input type="password" placeholder="Contraseña" value={regPassword} onChange={e => setRegPassword(e.target.value)} required />
+              <button type="submit" className="scale-btn">Registrarse</button>
+              <div style={{ color: regMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 24 }}>{regMsg}</div>
+            </form>
+          </div>
         )}
         {view === 'login' && (
-          <form onSubmit={handleLogin} className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 250 }}>
-            <h2>Login</h2>
-            <input type="email" placeholder="Email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required />
-            <input type="password" placeholder="Contraseña" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} required />
-            <button type="submit" className="scale-btn">Entrar</button>
-            <div style={{ color: loginMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 24 }}>{loginMsg}</div>
-          </form>
+          <div className="form-bg-logo">
+            <form onSubmit={handleLogin} className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 250 }}>
+              <h2>Login</h2>
+              <input type="email" placeholder="Email" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} required />
+              <input type="password" placeholder="Contraseña" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} required />
+              <button type="submit" className="scale-btn">Entrar</button>
+              <div style={{ color: loginMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 24 }}>{loginMsg}</div>
+            </form>
+          </div>
         )}
         {view === 'feed' && (
           <div className="fade-in" style={{ width: '100%', maxWidth: 400, margin: '0 auto' }}>

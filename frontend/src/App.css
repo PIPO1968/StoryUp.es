@@ -1,3 +1,97 @@
+/* --- Temas claro y oscuro --- */
+.dark-theme {
+  --bg-main: #181a1b;
+  --bg-header: #232526;
+  --bg-card: #23272f;
+  --bg-chat: #181f22;
+  --text-main: #fff;
+  --text-secondary: #aaa;
+  --nav-bg: rgba(24,24,24,0.98);
+  --btn-bg: #23272f;
+  --btn-active: #25d366;
+  --btn-logout: #c62828;
+}
+.light-theme {
+  --bg-main: #f5f7fa;
+  --bg-header: #e3e6eb;
+  --bg-card: #fff;
+  --bg-chat: #f0f2f5;
+  --text-main: #232526;
+  --text-secondary: #555;
+  --nav-bg: #fff;
+  --btn-bg: #e3e6eb;
+  --btn-active: #25d366;
+  --btn-logout: #c62828;
+}
+
+body.dark-theme, .App.dark-theme {
+  background: linear-gradient(135deg, var(--bg-header) 0%, var(--bg-main) 100%) !important;
+  color: var(--text-main) !important;
+}
+body.light-theme, .App.light-theme {
+  background: linear-gradient(135deg, var(--bg-header) 0%, var(--bg-main) 100%) !important;
+  color: var(--text-main) !important;
+}
+
+/* Ajustar componentes principales para usar variables de tema */
+.main-nav {
+  background: var(--nav-bg) !important;
+}
+.nav-btn {
+  background: var(--btn-bg) !important;
+  color: var(--text-main) !important;
+}
+.nav-btn-active {
+  background: var(--btn-active) !important;
+  color: #222 !important;
+}
+.nav-btn-logout {
+  background: var(--btn-logout) !important;
+}
+.chat-fav-user, .chat-file-preview, .chat-whatsapp, .chat-messages, .chat-input, .welcome-screen, .form-bg-logo {
+  background: var(--bg-card) !important;
+  color: var(--text-main) !important;
+}
+.chat-msg-own {
+  background: var(--btn-active) !important;
+  color: #222 !important;
+}
+.chat-msg-other {
+  background: var(--btn-bg) !important;
+  color: var(--text-main) !important;
+}
+.chat-placeholder {
+  color: var(--text-secondary) !important;
+}
+/* Fondo con logo para login/registro */
+.form-bg-logo {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-bg-logo:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  background: url('/logo.png') no-repeat center center/contain;
+  opacity: 0.10;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.form-bg-logo form {
+  position: relative;
+  z-index: 1;
+}
+
 /* --- Pantalla de bienvenida StoryUp --- */
 .welcome-screen {
   min-height: 100vh;
@@ -8,6 +102,7 @@
   background: linear-gradient(135deg, #232526 0%, #414345 100%);
   animation: fadeIn 1s;
 }
+
 .welcome-logo {
   width: 110px;
   height: 110px;
@@ -15,6 +110,7 @@
   border-radius: 24px;
   box-shadow: 0 6px 32px #0007;
 }
+
 .welcome-title {
   font-size: 2.6rem;
   font-weight: 700;
@@ -23,6 +119,7 @@
   letter-spacing: 1px;
   text-shadow: 0 2px 12px #0006;
 }
+
 .welcome-msg {
   font-size: 1.18rem;
   color: #fff;
@@ -31,10 +128,12 @@
   text-align: center;
   line-height: 1.5;
 }
+
 .welcome-btns {
   display: flex;
   gap: 18px;
 }
+
 .welcome-btn {
   background: linear-gradient(90deg, #25d366 60%, #1976d2 100%);
   color: #fff;
@@ -47,10 +146,12 @@
   cursor: pointer;
   transition: background 0.2s, transform 0.15s;
 }
+
 .welcome-btn:hover {
   background: linear-gradient(90deg, #1976d2 40%, #25d366 100%);
   transform: scale(1.04);
 }
+
 .welcome-fake-space {
   height: 60px;
 }
@@ -58,7 +159,7 @@
 /* --- Navegación principal moderna --- */
 .main-nav {
   width: 100%;
-  background: rgba(24,24,24,0.98);
+  background: rgba(24, 24, 24, 0.98);
   padding: 10px 0;
   display: flex;
   justify-content: center;
@@ -69,6 +170,7 @@
   z-index: 10;
   box-shadow: 0 2px 12px #0003;
 }
+
 .nav-btn {
   background: #23272f;
   color: #fff;
@@ -80,20 +182,24 @@
   cursor: pointer;
   transition: background 0.2s, color 0.2s, transform 0.13s;
 }
+
 .nav-btn-active {
   background: #25d366;
   color: #222;
   font-weight: 700;
   transform: scale(1.07);
 }
+
 .nav-btn-logout {
   background: #c62828;
   color: #fff;
   font-weight: 700;
 }
+
 .nav-btn-logout:hover {
   background: #a00;
 }
+
 .chat-msg.animated {
   animation: fadeInMsg 0.4s;
 }
