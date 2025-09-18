@@ -970,6 +970,9 @@ function App() {
                       onClick={() => { setGrupoSeleccionado(g); setChatUser(null); }}>
                       <span className="chat-group-icon">👥</span>
                       <span className="chat-group-nombre">{g.nombre}</span>
+                      <span className="chat-group-ultima-actividad">
+                        {g.ultima_actividad ? `Última actividad: ${new Date(g.ultima_actividad).toLocaleString()}` : 'Sin mensajes'}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -980,6 +983,9 @@ function App() {
                       onClick={() => { setChatUser(u); setGrupoSeleccionado(null); }}>
                       <img src={u.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.nombre)} alt="perfil" className="chat-fav-img" />
                       <span className="chat-fav-nombre">{u.nombre}</span>
+                      <span className="chat-fav-ultima-conexion">
+                        {u.ultima_conexion ? `Últ. conexión: ${new Date(u.ultima_conexion).toLocaleString()}` : 'Nunca conectado'}
+                      </span>
                       <button className="chat-fav-star" onClick={e => { e.stopPropagation(); toggleFavorito(u.id); }}>{favoritos.includes(u.id) ? '★' : '☆'}</button>
                     </div>
                   ))}
@@ -1032,6 +1038,12 @@ function App() {
                     ) : (
                       <span style={{ color: '#aaa', fontSize: 13, marginLeft: 8 }}>● desconectado</span>
                     )}
+                    {/* Última conexión */}
+                    {chatUser.ultima_conexion ? (
+                      <span style={{ color: '#aaa', fontSize: 12, marginLeft: 8 }}>
+                        Últ. conexión: {new Date(chatUser.ultima_conexion).toLocaleString()}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="chat-messages">
                     {(chatMessages[chatUser.id] && chatMessages[chatUser.id].length > 0)
@@ -1119,6 +1131,12 @@ function App() {
                   <div className="chat-header">
                     <span className="chat-group-icon">👥</span>
                     <span className="chat-group-nombre">{grupoSeleccionado.nombre}</span>
+                    {/* Última actividad grupo */}
+                    {grupoSeleccionado.ultima_actividad ? (
+                      <span style={{ color: '#aaa', fontSize: 12, marginLeft: 8 }}>
+                        Últ. actividad: {new Date(grupoSeleccionado.ultima_actividad).toLocaleString()}
+                      </span>
+                    ) : null}
                     {/* Indicador escribiendo en grupo */}
                     {typingState[`grupo-${grupoSeleccionado.id}`] && typingState[`grupo-${grupoSeleccionado.id}`] !== profile.id && (
                       <span className="chat-typing-indicator">{(() => {

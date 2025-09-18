@@ -24,10 +24,13 @@ app.post('/grupos', autenticarToken, async (req, res) => {
 app.get('/grupos', autenticarToken, async (req, res) => {
     try {
         const result = await pool.query(
-            `SELECT g.* FROM grupos g
-             JOIN grupo_miembros gm ON g.id = gm.grupo_id
-             WHERE gm.usuario_id = $1
-             ORDER BY g.creado_en DESC`,
+            `SELECT g.*, (
+                SELECT MAX(creado_en) FROM grupo_mensajes gm2 WHERE gm2.grupo_id = g.id
+            ) AS ultima_actividad
+            FROM grupos g
+            JOIN grupo_miembros gm ON g.id = gm.grupo_id
+            WHERE gm.usuario_id = $1
+            ORDER BY g.creado_en DESC`,
             [req.usuario.id]
         );
         res.json(result.rows);
@@ -483,7 +486,7 @@ function autenticarToken(req, res, next) {
 // Obtener todos los usuarios
 app.get('/usuarios', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM usuarios');
+        const result = await pool.query('SELECT id, nombre, email, imagen_perfil, ultima_conexion FROM usuarios');
         res.json(result.rows);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -614,17 +617,25 @@ let typingUsers = new Map(); // chatKey (userId-userId) -> userId que escribe
 
 io.on('connection', (socket) => {
     // Al conectar, el frontend debe emitir 'login' con su userId
-    socket.on('login', (userId) => {
+    socket.on('login', async (userId) => {
         onlineUsers.set(userId, socket.id);
         io.emit('online-users', Array.from(onlineUsers.keys()));
+        // Actualizar última conexión al conectarse
+        try {
+            await pool.query('UPDATE usuarios SET ultima_conexion = NOW() WHERE id = $1', [userId]);
+        } catch (e) { /* opcional: log error */ }
     });
 
     // Al desconectar
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         for (let [userId, sId] of onlineUsers.entries()) {
             if (sId === socket.id) {
                 onlineUsers.delete(userId);
                 io.emit('online-users', Array.from(onlineUsers.keys()));
+                // Actualizar última conexión al desconectarse
+                try {
+                    await pool.query('UPDATE usuarios SET ultima_conexion = NOW() WHERE id = $1', [userId]);
+                } catch (e) { /* opcional: log error */ }
                 break;
             }
         }
