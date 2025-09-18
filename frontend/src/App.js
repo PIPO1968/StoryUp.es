@@ -430,7 +430,7 @@ function App() {
       {/* Pantalla de bienvenida */}
       {showWelcome && !jwt && (
         <div className="welcome-screen fade-in">
-          <img src="/logo192.png" alt="Logo StoryUp" className="welcome-logo" />
+          <img src="/logo512.png" alt="Logo StoryUp" className="welcome-logo" />
           <h1 className="welcome-title">StoryUp</h1>
           <p className="welcome-msg">Conecta, comparte y chatea con tu comunidad. ¡Bienvenido a la red social diferente!</p>
           <div className="welcome-btns">
