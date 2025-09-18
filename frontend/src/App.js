@@ -27,6 +27,36 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // --- Estado para reacciones rápidas en mensajes de chat ---
+  // chatReactions: { [chatUserId]: { [msgIndex]: { emoji: string, users: [userId] }[] } }
+  const [chatReactions, setChatReactions] = useState({});
+  const emojiList = ['👍', '😂', '😍', '😮', '😢', '😡', '🔥', '👏'];
+
+  // Añadir o quitar reacción a un mensaje
+  const toggleReaction = (userId, chatUserId, msgIndex, emoji) => {
+    setChatReactions(prev => {
+      const chat = prev[chatUserId] || {};
+      const msgReacts = chat[msgIndex] || [];
+      const existing = msgReacts.find(r => r.emoji === emoji);
+      let newMsgReacts;
+      if (existing) {
+        // Si ya reaccionó este usuario, quitar
+        if (existing.users.includes(userId)) {
+          newMsgReacts = msgReacts.map(r =>
+            r.emoji === emoji ? { ...r, users: r.users.filter(uid => uid !== userId) } : r
+          ).filter(r => r.users.length > 0);
+        } else {
+          // Si no, añadir usuario
+          newMsgReacts = msgReacts.map(r =>
+            r.emoji === emoji ? { ...r, users: [...r.users, userId] } : r
+          );
+        }
+      } else {
+        newMsgReacts = [...msgReacts, { emoji, users: [userId] }];
+      }
+      return { ...prev, [chatUserId]: { ...chat, [msgIndex]: newMsgReacts } };
+    });
+  };
   // --- Estados y lógica para grabación de audio (push-to-talk) ---
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -855,6 +885,23 @@ function App() {
                             {msg.fileUrl && msg.fileType && msg.fileType.startsWith('audio') && (
                               <audio src={msg.fileUrl} controls className="chat-media-audio" />
                             )}
+                            {/* Reacciones rápidas */}
+                            <div className="chat-reactions-row">
+                              {emojiList.map(emoji => {
+                                const reacts = (chatReactions[chatUser.id]?.[i] || []).find(r => r.emoji === emoji);
+                                const reacted = reacts && reacts.users.includes(profile.id);
+                                return (
+                                  <button
+                                    key={emoji}
+                                    className={`chat-reaction-btn${reacted ? ' reacted' : ''}`}
+                                    onClick={() => toggleReaction(profile.id, chatUser.id, i, emoji)}
+                                    title={reacts && reacts.users.length > 0 ? `Usuarios: ${reacts.users.length}` : `Reaccionar con ${emoji}`}
+                                  >
+                                    {emoji} {reacts && reacts.users.length > 0 ? <span className="chat-reaction-count">{reacts.users.length}</span> : null}
+                                  </button>
+                                );
+                              })}
+                            </div>
                             <span className="chat-msg-date">{new Date(msg.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
                         </div>
