@@ -271,17 +271,26 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre: regNombre, email: regEmail, password: regPassword })
       });
-      const data = await res.json();
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {
+        // Si la respuesta no es JSON
+        data = null;
+      }
       if (res.ok) {
         setRegMsg('¡Registro exitoso! Ya puedes iniciar sesión.');
         showToast('¡Registro exitoso! Ya puedes iniciar sesión.', 'success');
         setRegNombre(''); setRegEmail(''); setRegPassword('');
+      } else if (data && data.error) {
+        setRegMsg(data.error);
+        showToast(data.error, 'error');
       } else {
-        setRegMsg(data.error || 'Error en el registro');
-        showToast(data.error || 'Error en el registro', 'error');
+        setRegMsg('Error inesperado en el registro. Intenta más tarde.');
+        showToast('Error inesperado en el registro', 'error');
       }
     } catch (err) {
-      setRegMsg('Error de conexión');
+      setRegMsg('Error de conexión. Revisa tu red o inténtalo más tarde.');
       showToast('Error de conexión', 'error');
     }
   };
