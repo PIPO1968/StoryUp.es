@@ -476,7 +476,7 @@ function App() {
           <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Feed</button>
           <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'}>Perfil</button>
           <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
-          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{marginLeft: 12}}>
+          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{ marginLeft: 12 }}>
             {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
           </button>
         </nav>
@@ -569,14 +569,30 @@ function App() {
         {view === 'profile' && profile && (
           <div className="fade-in" style={{ width: '100%', maxWidth: 400, margin: '0 auto' }}>
             <h2>Mi perfil</h2>
-            {profile.imagen_perfil && (
-              <img src={profile.imagen_perfil} alt="perfil" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', marginBottom: 8 }} />
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 8 }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 13, marginBottom: 2 }}>Actual</div>
+                {profile.imagen_perfil && (
+                  <img src={profile.imagen_perfil} alt="perfil" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #888' }} />
+                )}
+              </div>
+              {editImg && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 13, marginBottom: 2 }}>Nuevo</div>
+                  <img src={URL.createObjectURL(editImg)} alt="preview-avatar" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: '2px solid #4caf50' }} />
+                </div>
+              )}
+            </div>
             <div><strong>Nombre:</strong> {profile.nombre}</div>
             <div><strong>Email:</strong> {profile.email}</div>
             <form onSubmit={handleEditProfile} style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
               <input type="text" placeholder="Nuevo nombre" value={editName} onChange={e => setEditName(e.target.value)} />
               <input type="file" accept="image/*" onChange={e => setEditImg(e.target.files[0])} />
+              {editImg && (
+                <div style={{ color: '#4caf50', fontWeight: 'bold', fontSize: 15, marginBottom: 2 }}>
+                  ¡Avatar listo para guardar!
+                </div>
+              )}
               <button type="submit" className="scale-btn">Actualizar perfil</button>
               <div style={{ color: profileMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 18 }}>{profileMsg}</div>
             </form>
