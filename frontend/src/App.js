@@ -27,6 +27,13 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // Detectar si es móvil
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
   // Cálculo de badges
   const notificacionesNoLeidas = notificaciones.filter(n => !n.leida).length;
   // Mensajes no leídos: contar chats donde hay mensajes de otros usuarios no leídos
@@ -509,24 +516,53 @@ function App() {
       )}
       {/* Barra de navegación */}
       {jwt && (
-        <nav className="main-nav">
-          <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
-            Feed
-            {mensajesNoLeidos > 0 && (
-              <span className="badge-nav">{mensajesNoLeidos > 99 ? '99+' : mensajesNoLeidos}</span>
-            )}
-          </button>
-          <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
-            Perfil
-            {notificacionesNoLeidas > 0 && (
-              <span className="badge-nav">{notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}</span>
-            )}
-          </button>
-          <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
-          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{ marginLeft: 12 }}>
-            {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
-          </button>
-        </nav>
+        <>
+          {!isMobile && (
+            <nav className="main-nav">
+              <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
+                Feed
+                {mensajesNoLeidos > 0 && (
+                  <span className="badge-nav">{mensajesNoLeidos > 99 ? '99+' : mensajesNoLeidos}</span>
+                )}
+              </button>
+              <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
+                Perfil
+                {notificacionesNoLeidas > 0 && (
+                  <span className="badge-nav">{notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}</span>
+                )}
+              </button>
+              <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">Cerrar sesión</button>
+              <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn" style={{ marginLeft: 12 }}>
+                {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
+              </button>
+            </nav>
+          )}
+          {/* Bottom bar solo en móvil */}
+          {isMobile && (
+            <>
+              <nav className="bottom-nav">
+                <button onClick={() => setView('feed')} className={view === 'feed' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
+                  📰
+                  {mensajesNoLeidos > 0 && (
+                    <span className="badge-nav">{mensajesNoLeidos > 99 ? '99+' : mensajesNoLeidos}</span>
+                  )}
+                </button>
+                <button onClick={() => setView('profile')} className={view === 'profile' ? 'nav-btn nav-btn-active' : 'nav-btn'} style={{ position: 'relative' }}>
+                  👤
+                  {notificacionesNoLeidas > 0 && (
+                    <span className="badge-nav">{notificacionesNoLeidas > 99 ? '99+' : notificacionesNoLeidas}</span>
+                  )}
+                </button>
+                <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="nav-btn">
+                  {theme === 'dark' ? '☀️' : '🌙'}
+                </button>
+                <button onClick={() => { setJwt(''); setView('login'); }} className="nav-btn nav-btn-logout">⏻</button>
+              </nav>
+              {/* Añadir espacio inferior en móvil para que la bottom bar no tape el contenido */}
+              <div style={{ height: 56 }} />
+            </>
+          )}
+        </>
       )}
       <header className="App-header" style={jwt ? { marginTop: 60 } : {}}>
         {/* Solo mostrar el resto si no está la pantalla de bienvenida */}
