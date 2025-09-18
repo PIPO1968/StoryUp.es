@@ -1,3 +1,141 @@
+// --- ENDPOINTS DE GRUPOS DE CHAT ---
+// Crear grupo
+app.post('/grupos', autenticarToken, async (req, res) => {
+    const { nombre, imagen_url, miembros } = req.body; // miembros: array de userId
+    if (!nombre || !Array.isArray(miembros) || miembros.length === 0) {
+        return res.status(400).json({ error: 'Nombre y miembros requeridos' });
+    }
+    try {
+        const result = await pool.query(
+            'INSERT INTO grupos (nombre, imagen_url, creador_id) VALUES ($1, $2, $3) RETURNING *',
+            [nombre, imagen_url || null, req.usuario.id]
+        );
+        const grupo = result.rows[0];
+        // Insertar miembros (incluye al creador como admin)
+        const values = miembros.map(uid => `(${grupo.id}, ${uid}, ${uid === req.usuario.id ? 'TRUE' : 'FALSE'})`).join(',');
+        await pool.query(`INSERT INTO grupo_miembros (grupo_id, usuario_id, es_admin) VALUES ${values}`);
+        res.status(201).json(grupo);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Listar grupos del usuario
+app.get('/grupos', autenticarToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT g.* FROM grupos g
+             JOIN grupo_miembros gm ON g.id = gm.grupo_id
+             WHERE gm.usuario_id = $1
+             ORDER BY g.creado_en DESC`,
+            [req.usuario.id]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Obtener info de grupo y miembros
+app.get('/grupos/:id', autenticarToken, async (req, res) => {
+    const grupo_id = req.params.id;
+    try {
+        const grupo = await pool.query('SELECT * FROM grupos WHERE id = $1', [grupo_id]);
+        const miembros = await pool.query(
+            'SELECT u.id, u.nombre, u.imagen_perfil, gm.es_admin FROM grupo_miembros gm JOIN usuarios u ON gm.usuario_id = u.id WHERE gm.grupo_id = $1',
+            [grupo_id]
+        );
+        res.json({ ...grupo.rows[0], miembros: miembros.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Añadir miembro a grupo (solo admin)
+app.post('/grupos/:id/miembros', autenticarToken, async (req, res) => {
+    const grupo_id = req.params.id;
+    const { usuario_id } = req.body;
+    try {
+        // Verificar admin
+        const admin = await pool.query('SELECT es_admin FROM grupo_miembros WHERE grupo_id = $1 AND usuario_id = $2', [grupo_id, req.usuario.id]);
+        if (!admin.rows[0] || !admin.rows[0].es_admin) return res.status(403).json({ error: 'Solo admin puede añadir miembros' });
+        await pool.query('INSERT INTO grupo_miembros (grupo_id, usuario_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [grupo_id, usuario_id]);
+        res.json({ mensaje: 'Miembro añadido' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Quitar miembro de grupo (solo admin)
+app.delete('/grupos/:id/miembros/:usuario_id', autenticarToken, async (req, res) => {
+    const grupo_id = req.params.id;
+    const usuario_id = req.params.usuario_id;
+    try {
+        // Verificar admin
+        const admin = await pool.query('SELECT es_admin FROM grupo_miembros WHERE grupo_id = $1 AND usuario_id = $2', [grupo_id, req.usuario.id]);
+        if (!admin.rows[0] || !admin.rows[0].es_admin) return res.status(403).json({ error: 'Solo admin puede quitar miembros' });
+        await pool.query('DELETE FROM grupo_miembros WHERE grupo_id = $1 AND usuario_id = $2', [grupo_id, usuario_id]);
+        res.json({ mensaje: 'Miembro eliminado' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Enviar mensaje a grupo (con soporte multimedia)
+app.post('/grupos/:id/mensajes', autenticarToken, upload.single('archivo'), async (req, res) => {
+    const grupo_id = req.params.id;
+    const texto = req.body.texto || '';
+    let archivo_url = null;
+    let archivo_tipo = null;
+    if (req.file) {
+        try {
+            const uploadRes = await cloudinary.uploader.upload_stream(
+                { resource_type: 'auto', folder: 'storyup_grupos' },
+                (error, result) => {
+                    if (error) throw error;
+                    archivo_url = result.secure_url;
+                    archivo_tipo = result.resource_type + '/' + result.format;
+                }
+            );
+            const streamifier = require('streamifier');
+            streamifier.createReadStream(req.file.buffer).pipe(uploadRes);
+            await new Promise((resolve, reject) => {
+                uploadRes.on('finish', resolve);
+                uploadRes.on('error', reject);
+            });
+        } catch (err) {
+            return res.status(500).json({ error: 'Error al subir archivo' });
+        }
+    }
+    if (!texto && !archivo_url) return res.status(400).json({ error: 'Faltan datos' });
+    try {
+        const result = await pool.query(
+            'INSERT INTO grupo_mensajes (grupo_id, emisor_id, texto, archivo_url, archivo_tipo) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [grupo_id, req.usuario.id, texto, archivo_url, archivo_tipo]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Listar mensajes de grupo
+app.get('/grupos/:id/mensajes', autenticarToken, async (req, res) => {
+    const grupo_id = req.params.id;
+    try {
+        const result = await pool.query(
+            `SELECT gm.*, u.nombre as emisor_nombre, u.imagen_perfil as emisor_imagen
+             FROM grupo_mensajes gm
+             JOIN usuarios u ON gm.emisor_id = u.id
+             WHERE gm.grupo_id = $1
+             ORDER BY gm.creado_en ASC`,
+            [grupo_id]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 // --- ENDPOINTS DE CHAT PRIVADO ---
 // Obtener historial de mensajes entre usuario autenticado y otro usuario
 app.get('/chat/:otroId', autenticarToken, async (req, res) => {
@@ -458,6 +596,86 @@ app.post('/posts/:postId/comentarios', autenticarToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-    console.log(`Servidor backend escuchando en puerto ${PORT}`);
+
+// --- SOCKET.IO: Usuarios en línea y escribiendo ---
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    }
+});
+
+// Mapas para usuarios conectados y escribiendo
+let onlineUsers = new Map(); // userId -> socketId
+let typingUsers = new Map(); // chatKey (userId-userId) -> userId que escribe
+
+io.on('connection', (socket) => {
+    // Al conectar, el frontend debe emitir 'login' con su userId
+    socket.on('login', (userId) => {
+        onlineUsers.set(userId, socket.id);
+        io.emit('online-users', Array.from(onlineUsers.keys()));
+    });
+
+    // Al desconectar
+    socket.on('disconnect', () => {
+        for (let [userId, sId] of onlineUsers.entries()) {
+            if (sId === socket.id) {
+                onlineUsers.delete(userId);
+                io.emit('online-users', Array.from(onlineUsers.keys()));
+                break;
+            }
+        }
+        // Limpiar typing
+        for (let [chatKey, typingId] of typingUsers.entries()) {
+            if (typingId && onlineUsers.get(typingId) === undefined) {
+                typingUsers.delete(chatKey);
+                // Detectar si es grupo o privado
+                if (chatKey.startsWith('grupo-')) {
+                    // Emitir solo a miembros del grupo
+                    const grupoId = chatKey.split('-')[1];
+                    enviarATodosMiembrosGrupo(grupoId, 'typing', { chatKey, typingId: null });
+                } else {
+                    io.emit('typing', { chatKey, typingId: null });
+                }
+            }
+        }
+    });
+
+    // Evento de escribiendo
+    socket.on('typing', ({ chatKey, typingId }) => {
+        if (typingId) {
+            typingUsers.set(chatKey, typingId);
+        } else {
+            typingUsers.delete(chatKey);
+        }
+        if (chatKey.startsWith('grupo-')) {
+            // Emitir solo a miembros del grupo
+            const grupoId = chatKey.split('-')[1];
+            enviarATodosMiembrosGrupo(grupoId, 'typing', { chatKey, typingId });
+        } else {
+            io.emit('typing', { chatKey, typingId });
+        }
+    });
+});
+
+// Función auxiliar para emitir a todos los miembros de un grupo
+async function enviarATodosMiembrosGrupo(grupoId, evento, data) {
+    try {
+        const result = await pool.query('SELECT usuario_id FROM grupo_miembros WHERE grupo_id = $1', [grupoId]);
+        for (const row of result.rows) {
+            const socketId = onlineUsers.get(row.usuario_id);
+            if (socketId) {
+                io.to(socketId).emit(evento, data);
+            }
+        }
+    } catch (err) {
+        // Opcional: log error
+    }
+}
+
+server.listen(PORT, () => {
+    console.log(`Servidor backend escuchando en puerto ${PORT} (con Socket.io)`);
 });

@@ -421,18 +421,30 @@ function App() {
 
   // --- Estado y lógica para chat tipo WhatsApp avanzado ---
   const [chatInput, setChatInput] = useState("");
-  // Emitir evento typing al escribir
+  // Emitir evento typing al escribir (privado o grupo)
   useEffect(() => {
-    if (!socket || !chatUser || !profile) return;
-    const chatKey = [profile.id, chatUser.id].sort().join('-');
-    if (chatInput) {
-      socket.emit('typing', { chatKey, typingId: profile.id });
-    } else {
-      socket.emit('typing', { chatKey, typingId: null });
+    if (!socket || !profile) return;
+    // Chat privado
+    if (chatUser) {
+      const chatKey = [profile.id, chatUser.id].sort().join('-');
+      if (chatInput) {
+        socket.emit('typing', { chatKey, typingId: profile.id });
+      } else {
+        socket.emit('typing', { chatKey, typingId: null });
+      }
+      return () => { socket.emit('typing', { chatKey, typingId: null }); };
     }
-    // Limpiar typing al salir del chat
-    return () => { socket.emit('typing', { chatKey, typingId: null }); };
-  }, [chatInput, chatUser, socket, profile]);
+    // Grupo
+    if (grupoSeleccionado) {
+      const chatKey = `grupo-${grupoSeleccionado.id}`;
+      if (chatInput) {
+        socket.emit('typing', { chatKey, typingId: profile.id });
+      } else {
+        socket.emit('typing', { chatKey, typingId: null });
+      }
+      return () => { socket.emit('typing', { chatKey, typingId: null }); };
+    }
+  }, [chatInput, chatUser, grupoSeleccionado, socket, profile]);
   const [chatUser, setChatUser] = useState(null); // usuario seleccionado para chatear
   const [chatMessages, setChatMessages] = useState({}); // userId -> array de mensajes
   const [favoritos, setFavoritos] = useState([]); // array de userId favoritos
@@ -1100,9 +1112,105 @@ function App() {
                   )}
                 </>
               )}
-              {grupoSeleccionado && (
+              {/* Renderizado de chat de grupo solo si no hay chatUser seleccionado */}
+              {grupoSeleccionado && !chatUser && (
                 <>
-                  {/* Aquí iría el renderizado del chat de grupo, si aplica */}
+                  {/* Chat de grupo */}
+                  <div className="chat-header">
+                    <span className="chat-group-icon">👥</span>
+                    <span className="chat-group-nombre">{grupoSeleccionado.nombre}</span>
+                    {/* Indicador escribiendo en grupo */}
+                    {typingState[`grupo-${grupoSeleccionado.id}`] && typingState[`grupo-${grupoSeleccionado.id}`] !== profile.id && (
+                      <span className="chat-typing-indicator">{(() => {
+                        const user = grupoMiembros.find(u => u.id === typingState[`grupo-${grupoSeleccionado.id}`]);
+                        return user ? `${user.nombre} está escribiendo...` : 'Alguien está escribiendo...';
+                      })()}</span>
+                    )}
+                  </div>
+                  <div className="chat-messages">
+                    {grupoMensajes.length > 0
+                      ? grupoMensajes.map((msg, i) => (
+                        <div key={i} className={msg.emisor_id === profile.id ? 'chat-msg chat-msg-own animated' : 'chat-msg chat-msg-other animated'}>
+                          <img src={msg.emisor_imagen || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(msg.emisor_nombre)} alt="perfil" className="chat-msg-img" />
+                          <div className="chat-msg-content">
+                            <span className="chat-msg-nombre">{msg.emisor_nombre}</span>
+                            {msg.texto && <span>{msg.texto}</span>}
+                            {msg.archivo_url && msg.archivo_tipo && msg.archivo_tipo.startsWith('image') && (
+                              <img src={msg.archivo_url} alt="img" className="chat-media-img" />
+                            )}
+                            {msg.archivo_url && msg.archivo_tipo && msg.archivo_tipo.startsWith('video') && (
+                              <video src={msg.archivo_url} controls className="chat-media-video" />
+                            )}
+                            {msg.archivo_url && msg.archivo_tipo && msg.archivo_tipo.startsWith('audio') && (
+                              <audio src={msg.archivo_url} controls className="chat-media-audio" />
+                            )}
+                            <span className="chat-msg-date">{new Date(msg.creado_en).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                        </div>
+                      ))
+                      : <div className="chat-placeholder">No hay mensajes aún.</div>}
+                  </div>
+                  <form className="chat-input-row" onSubmit={async e => {
+                    e.preventDefault();
+                    if ((!chatInput.trim() && !chatFile) || !grupoSeleccionado) {
+                      showToast('No puedes enviar un mensaje vacío', 'error');
+                      return;
+                    }
+                    const formData = new FormData();
+                    formData.append('texto', chatInput);
+                    if (chatFile && chatFile instanceof Blob && (!chatFile.type || chatFile.type === 'audio/webm')) {
+                      const audioFile = new File([chatFile], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
+                      formData.append('archivo', audioFile);
+                    } else if (chatFile) {
+                      formData.append('archivo', chatFile);
+                    }
+                    try {
+                      const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}/mensajes`, {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${jwt}` },
+                        body: formData
+                      });
+                      if (res.ok) {
+                        setChatInput("");
+                        setChatFile(null);
+                        const data = await res.json();
+                        setGrupoMensajes(msgs => ([...msgs, data]));
+                        showToast('Mensaje enviado', 'success');
+                      } else {
+                        const data = await res.json();
+                        showToast(data.error || 'Error al enviar mensaje', 'error');
+                      }
+                    } catch {
+                      showToast('Error de conexión', 'error');
+                    }
+                  }}>
+                    <input type="text" className="chat-input" placeholder={`Mensaje para grupo...`} value={chatInput} onChange={e => setChatInput(e.target.value)} autoComplete="off" />
+                    <input type="file" accept="image/*,video/*" onChange={e => setChatFile(e.target.files[0])} className="chat-file-input" />
+                    <button
+                      type="button"
+                      className={`chat-mic-btn${isRecording ? ' recording' : ''}`}
+                      title={isRecording ? 'Grabando...' : 'Mantén pulsado para grabar audio'}
+                      style={{ fontSize: 20, margin: '0 4px', background: isRecording ? '#e53935' : undefined, color: isRecording ? '#fff' : undefined }}
+                      onMouseDown={startRecording}
+                      onMouseUp={stopRecording}
+                      onMouseLeave={isRecording ? cancelRecording : undefined}
+                      onTouchStart={startRecording}
+                      onTouchEnd={stopRecording}
+                    >🎤</button>
+                    <button type="submit" className="chat-send-btn">Enviar</button>
+                  </form>
+                  {chatFile && (
+                    <div className="chat-file-preview">
+                      {chatFile.type && chatFile.type.startsWith('image') ? (
+                        <img src={URL.createObjectURL(chatFile)} alt="preview" className="chat-media-img" />
+                      ) : chatFile.type && chatFile.type.startsWith('video') ? (
+                        <video src={URL.createObjectURL(chatFile)} controls className="chat-media-video" />
+                      ) : chatFile.type && chatFile.type.startsWith('audio') ? (
+                        <audio src={URL.createObjectURL(chatFile)} controls className="chat-media-audio" />
+                      ) : null}
+                      <button onClick={() => setChatFile(null)} className="chat-file-cancel">✕</button>
+                    </div>
+                  )}
                 </>
               )}
               {/* Cierre de chat-whatsapp */}
