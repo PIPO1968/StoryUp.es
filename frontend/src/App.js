@@ -27,6 +27,9 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // --- Estado para búsqueda de usuarios y mensajes ---
+  const [userSearch, setUserSearch] = useState("");
+  const [msgSearch, setMsgSearch] = useState("");
   // --- Estado para reacciones rápidas en mensajes de chat ---
   // chatReactions: { [chatUserId]: { [msgIndex]: { emoji: string, users: [userId] }[] } }
   const [chatReactions, setChatReactions] = useState({});
@@ -845,8 +848,17 @@ function App() {
             <hr style={{ margin: '18px 0' }} />
             <div className="chat-whatsapp">
               {/* Barra de favoritos */}
+              {/* Búsqueda de usuarios */}
+              <input
+                type="text"
+                className="chat-user-search"
+                placeholder="Buscar usuario..."
+                value={userSearch}
+                onChange={e => setUserSearch(e.target.value)}
+                style={{ width: '100%', marginBottom: 6, padding: 6, fontSize: 15 }}
+              />
               <div className="chat-favs-bar">
-                {usuarios.filter(u => u.id !== profile.id).map(u => (
+                {usuarios.filter(u => u.id !== profile.id && u.nombre.toLowerCase().includes(userSearch.toLowerCase())).map(u => (
                   <div key={u.id} className={`chat-fav-user${favoritos.includes(u.id) ? ' fav' : ''}${chatUser && chatUser.id === u.id ? ' selected' : ''}`}
                     onClick={() => setChatUser(u)}>
                     <img src={u.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(u.nombre)} alt="perfil" className="chat-fav-img" />
@@ -858,6 +870,15 @@ function App() {
               {/* Área de chat */}
               {chatUser ? (
                 <>
+                  {/* Búsqueda de mensajes */}
+                  <input
+                    type="text"
+                    className="chat-msg-search"
+                    placeholder="Buscar en mensajes..."
+                    value={msgSearch}
+                    onChange={e => setMsgSearch(e.target.value)}
+                    style={{ width: '100%', marginBottom: 6, padding: 6, fontSize: 15 }}
+                  />
                   <div className="chat-header">
                     <img src={chatUser.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(chatUser.nombre)} alt="perfil" className="chat-fav-img" />
                     <span className={`chat-fav-nombre${typingState[[profile.id, chatUser.id].sort().join('-')] === chatUser.id ? ' typing-glow' : ''}`}>{chatUser.nombre}</span>
@@ -870,7 +891,14 @@ function App() {
                   </div>
                   <div className="chat-messages">
                     {(chatMessages[chatUser.id] && chatMessages[chatUser.id].length > 0)
-                      ? chatMessages[chatUser.id].map((msg, i) => (
+                      ? chatMessages[chatUser.id]
+                          .map((msg, i) => ({ msg, i }))
+                          .filter(({ msg }) => {
+                            if (!msgSearch.trim()) return true;
+                            const txt = (msg.text || "") + " " + (msg.fileType || "");
+                            return txt.toLowerCase().includes(msgSearch.toLowerCase());
+                          })
+                          .map(({ msg, i }) => (
                         <div key={i} className={msg.sender.id === profile.id ? 'chat-msg chat-msg-own animated' : 'chat-msg chat-msg-other animated'}>
                           <img src={msg.sender.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(msg.sender.nombre)} alt="perfil" className="chat-msg-img" />
                           <div className="chat-msg-content">

@@ -1,3 +1,21 @@
+/* Inputs de búsqueda en chat */
+.chat-user-search,
+.chat-msg-search {
+  border: 1.5px solid #25d366;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  font-size: 15px;
+  background: #181f22;
+  color: #fff;
+  outline: none;
+  transition: border 0.18s, box-shadow 0.18s;
+}
+.chat-user-search:focus,
+.chat-msg-search:focus {
+  border: 2px solid #25d366;
+  box-shadow: 0 0 0 2px #25d36633;
+}
 /* Reacciones rápidas en mensajes de chat */
 .chat-reactions-row {
   display: flex;
