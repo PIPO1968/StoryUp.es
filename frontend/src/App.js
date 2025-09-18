@@ -1200,7 +1200,7 @@ function App() {
                     >🎤</button>
                     <button type="submit" className="chat-send-btn">Enviar</button>
                   </form>
-                  {/* Fragmento para agrupar preview y chat de grupo */}
+                  {/* Fragmento para agrupar preview y chat de grupo y grupoSeleccionado */}
                   {chatFile && (
                     <div className="chat-file-preview">
                       {chatFile.type && chatFile.type.startsWith('image') ? (
@@ -1213,7 +1213,6 @@ function App() {
                       <button onClick={() => setChatFile(null)} className="chat-file-cancel">✕</button>
                     </div>
                   )}
-                  {/* Renderizado de chat de grupo solo si no hay chatUser seleccionado */}
                   {grupoSeleccionado && !chatUser && (
                     <>
                       {/* Chat de grupo */}
@@ -1344,4 +1343,11 @@ function App() {
                       </form>
                     </>
                   )}
+                </>
+              ) : null}
+              {/* CIERRES FINALES DE ESTRUCTURA PRINCIPAL */}
+            </div> {/* cierre .chat-whatsapp */}
+          </div> {/* cierre .fade-in (profile/feed) */}
+      </header> {/* cierre App-header */}
+    </div>
 
