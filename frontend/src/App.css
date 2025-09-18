@@ -1,3 +1,79 @@
+.chat-fav-nombre.typing-glow {
+  animation: typingGlow 0.8s infinite alternate;
+  color: #25d366 !important;
+}
+
+@keyframes typingGlow {
+  0% { text-shadow: 0 0 0px #25d366; }
+  100% { text-shadow: 0 0 12px #25d366, 0 0 24px #25d36699; }
+}
+/* Microinteracciones y animaciones mejoradas */
+.scale-btn {
+  transition: transform 0.15s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px #0002;
+}
+
+.scale-btn:active {
+  transform: scale(0.93) rotate(-1deg);
+  box-shadow: 0 1px 2px #0001;
+}
+
+.scale-btn:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 16px #25d36644;
+}
+
+/* Rebote en botones de navegación */
+.nav-btn {
+  transition: background 0.2s, color 0.2s, transform 0.13s, box-shadow 0.18s;
+  box-shadow: 0 1px 6px #0002;
+}
+
+.nav-btn:active {
+  transform: scale(0.96) rotate(-1deg);
+  box-shadow: 0 1px 2px #0001;
+}
+
+.nav-btn:hover {
+  filter: brightness(1.10);
+  box-shadow: 0 4px 16px #25d36633;
+}
+
+/* Animación de entrada para mensajes de chat */
+.chat-msg.animated {
+  animation: bounceIn 0.45s cubic-bezier(.4, 1.6, .6, 1);
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.04);
+  }
+
+  80% {
+    transform: translateY(2px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Animación de feedback en inputs */
+input:focus,
+textarea:focus {
+  outline: 2px solid #25d366;
+  box-shadow: 0 0 0 2px #25d36633;
+  background: #e8f5e9;
+  transition: box-shadow 0.18s, background 0.18s;
+}
+
 /* --- Temas claro y oscuro --- */
 .dark-theme {
   --bg-main: #181a1b;
@@ -6,11 +82,12 @@
   --bg-chat: #181f22;
   --text-main: #fff;
   --text-secondary: #aaa;
-  --nav-bg: rgba(24,24,24,0.98);
+  --nav-bg: rgba(24, 24, 24, 0.98);
   --btn-bg: #23272f;
   --btn-active: #25d366;
   --btn-logout: #c62828;
 }
+
 .light-theme {
   --bg-main: #f5f7fa;
   --bg-header: #e3e6eb;
@@ -24,11 +101,14 @@
   --btn-logout: #c62828;
 }
 
-body.dark-theme, .App.dark-theme {
+body.dark-theme,
+.App.dark-theme {
   background: linear-gradient(135deg, var(--bg-header) 0%, var(--bg-main) 100%) !important;
   color: var(--text-main) !important;
 }
-body.light-theme, .App.light-theme {
+
+body.light-theme,
+.App.light-theme {
   background: linear-gradient(135deg, var(--bg-header) 0%, var(--bg-main) 100%) !important;
   color: var(--text-main) !important;
 }
@@ -37,32 +117,46 @@ body.light-theme, .App.light-theme {
 .main-nav {
   background: var(--nav-bg) !important;
 }
+
 .nav-btn {
   background: var(--btn-bg) !important;
   color: var(--text-main) !important;
 }
+
 .nav-btn-active {
   background: var(--btn-active) !important;
   color: #222 !important;
 }
+
 .nav-btn-logout {
   background: var(--btn-logout) !important;
 }
-.chat-fav-user, .chat-file-preview, .chat-whatsapp, .chat-messages, .chat-input, .welcome-screen, .form-bg-logo {
+
+.chat-fav-user,
+.chat-file-preview,
+.chat-whatsapp,
+.chat-messages,
+.chat-input,
+.welcome-screen,
+.form-bg-logo {
   background: var(--bg-card) !important;
   color: var(--text-main) !important;
 }
+
 .chat-msg-own {
   background: var(--btn-active) !important;
   color: #222 !important;
 }
+
 .chat-msg-other {
   background: var(--btn-bg) !important;
   color: var(--text-main) !important;
 }
+
 .chat-placeholder {
   color: var(--text-secondary) !important;
 }
+
 /* Fondo con logo para login/registro */
 .form-bg-logo {
   position: relative;

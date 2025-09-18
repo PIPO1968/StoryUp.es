@@ -1,5 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { io } from 'socket.io-client';
+// URL del backend para socket.io (ajusta si usas otro puerto en local)
+const SOCKET_URL = 'https://storyup.es';
 // Hook para detectar preferencia de color del sistema
 function usePrefersDark() {
   const [prefersDark, setPrefersDark] = useState(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -24,6 +27,24 @@ function Toast({ toast, onClose }) {
 }
 
 function App() {
+  // --- SOCKET.IO ---
+  const [socket, setSocket] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]); // ids
+  const [typingState, setTypingState] = useState({}); // chatKey -> typingId
+
+  // Inicializar socket al hacer login
+  useEffect(() => {
+    if (jwt && profile) {
+      const s = io(SOCKET_URL, { transports: ['websocket'] });
+      setSocket(s);
+      s.emit('login', profile.id);
+      s.on('online-users', setOnlineUsers);
+      s.on('typing', ({ chatKey, typingId }) => {
+        setTypingState(prev => ({ ...prev, [chatKey]: typingId }));
+      });
+      return () => { s.disconnect(); };
+    }
+  }, [jwt, profile]);
   // Estado para modo oscuro/claro
   const prefersDark = usePrefersDark();
   const [theme, setTheme] = useState(() => {
@@ -204,6 +225,18 @@ function App() {
 
   // --- Estado y lógica para chat tipo WhatsApp avanzado ---
   const [chatInput, setChatInput] = useState("");
+  // Emitir evento typing al escribir
+  useEffect(() => {
+    if (!socket || !chatUser || !profile) return;
+    const chatKey = [profile.id, chatUser.id].sort().join('-');
+    if (chatInput) {
+      socket.emit('typing', { chatKey, typingId: profile.id });
+    } else {
+      socket.emit('typing', { chatKey, typingId: null });
+    }
+    // Limpiar typing al salir del chat
+    return () => { socket.emit('typing', { chatKey, typingId: null }); };
+  }, [chatInput, chatUser, socket, profile]);
   const [chatUser, setChatUser] = useState(null); // usuario seleccionado para chatear
   const [chatMessages, setChatMessages] = useState({}); // userId -> array de mensajes
   const [favoritos, setFavoritos] = useState([]); // array de userId favoritos
@@ -659,7 +692,13 @@ function App() {
                 <>
                   <div className="chat-header">
                     <img src={chatUser.imagen_perfil || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(chatUser.nombre)} alt="perfil" className="chat-fav-img" />
-                    <span className="chat-fav-nombre">{chatUser.nombre}</span>
+                    <span className={`chat-fav-nombre${typingState[[profile.id, chatUser.id].sort().join('-')] === chatUser.id ? ' typing-glow' : ''}`}>{chatUser.nombre}</span>
+                    {/* Estado en línea */}
+                    {onlineUsers.includes(chatUser.id) ? (
+                      <span style={{ color: '#4caf50', fontSize: 13, marginLeft: 8 }}>● en línea</span>
+                    ) : (
+                      <span style={{ color: '#aaa', fontSize: 13, marginLeft: 8 }}>● desconectado</span>
+                    )}
                   </div>
                   <div className="chat-messages">
                     {(chatMessages[chatUser.id] && chatMessages[chatUser.id].length > 0)
