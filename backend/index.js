@@ -1,3 +1,80 @@
+// --- ENDPOINTS DE CHAT PRIVADO ---
+// Obtener historial de mensajes entre usuario autenticado y otro usuario
+app.get('/chat/:otroId', autenticarToken, async (req, res) => {
+    const { otroId } = req.params;
+    const miId = req.usuario.id;
+    try {
+        const result = await pool.query(
+            `SELECT * FROM mensajes WHERE 
+                (emisor_id = $1 AND receptor_id = $2) OR (emisor_id = $2 AND receptor_id = $1)
+             ORDER BY creado_en ASC`,
+            [miId, otroId]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Enviar mensaje privado (con soporte multimedia)
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+const cloudinary = require('./cloudinary');
+
+app.post('/chat/:otroId', autenticarToken, upload.single('archivo'), async (req, res) => {
+    const { otroId } = req.params;
+    const miId = req.usuario.id;
+    const texto = req.body.texto || '';
+    let archivo_url = null;
+    let archivo_tipo = null;
+    if (req.file) {
+        try {
+            const uploadRes = await cloudinary.uploader.upload_stream(
+                { resource_type: 'auto', folder: 'storyup_chat' },
+                (error, result) => {
+                    if (error) throw error;
+                    archivo_url = result.secure_url;
+                    archivo_tipo = result.resource_type + '/' + result.format;
+                }
+            );
+            // Convertir buffer a stream
+            const streamifier = require('streamifier');
+            streamifier.createReadStream(req.file.buffer).pipe(uploadRes);
+            // Esperar a que termine la subida
+            await new Promise((resolve, reject) => {
+                uploadRes.on('finish', resolve);
+                uploadRes.on('error', reject);
+            });
+        } catch (err) {
+            return res.status(500).json({ error: 'Error al subir archivo' });
+        }
+    }
+    if (!texto && !archivo_url) return res.status(400).json({ error: 'Faltan datos' });
+    try {
+        const result = await pool.query(
+            'INSERT INTO mensajes (emisor_id, receptor_id, texto, archivo_url, archivo_tipo) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [miId, otroId, texto, archivo_url, archivo_tipo]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Marcar mensajes como leídos
+app.put('/chat/:otroId/leido', autenticarToken, async (req, res) => {
+    const { otroId } = req.params;
+    const miId = req.usuario.id;
+    try {
+        await pool.query(
+            'UPDATE mensajes SET leido = TRUE WHERE emisor_id = $1 AND receptor_id = $2 AND leido = FALSE',
+            [otroId, miId]
+        );
+        res.json({ mensaje: 'Mensajes marcados como leídos' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 // Función para crear notificaciones
 async function crearNotificacion(usuario_id, tipo, mensaje) {
     await pool.query(
@@ -98,7 +175,7 @@ const storage = multer.diskStorage({
         cb(null, 'perfil_' + req.usuario.id + ext);
     }
 });
-const upload = multer({ storage });
+const uploadPerfil = multer({ storage });
 
 // Crear carpeta uploads si no existe
 const fs = require('fs');
@@ -108,7 +185,7 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Endpoint para subir imagen de perfil
-app.post('/usuarios/perfil/imagen', autenticarToken, upload.single('imagen'), async (req, res) => {
+app.post('/usuarios/perfil/imagen', autenticarToken, uploadPerfil.single('imagen'), async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No se subió ninguna imagen' });
     }
