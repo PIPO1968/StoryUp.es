@@ -1,3 +1,41 @@
+// Estado para modal de edición de grupo
+const [showEditGrupo, setShowEditGrupo] = useState(false);
+const [editGrupoNombre, setEditGrupoNombre] = useState("");
+const [editGrupoImg, setEditGrupoImg] = useState("");
+const [editGrupoMsg, setEditGrupoMsg] = useState("");
+
+// Función para saber si el usuario es admin del grupo seleccionado
+const esAdminGrupo = grupoSeleccionado && grupoMiembros.some(m => m.id === profile.id && m.es_admin);
+
+// Guardar cambios de grupo
+const handleEditGrupo = async (e) => {
+  e.preventDefault();
+  setEditGrupoMsg("");
+  try {
+    const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jwt}` },
+      body: JSON.stringify({ nombre: editGrupoNombre, imagen_url: editGrupoImg })
+    });
+    if (res.ok) {
+      showToast('Grupo actualizado', 'success');
+      setShowEditGrupo(false);
+      setEditGrupoMsg("");
+      // Refrescar info grupo
+      const data = await res.json();
+      setGrupoSeleccionado(g => ({ ...g, ...data }));
+      // Refrescar lista de grupos
+      setGrupos(gs => gs.map(gr => gr.id === data.id ? { ...gr, ...data } : gr));
+    } else {
+      const data = await res.json();
+      setEditGrupoMsg(data.error || 'Error al actualizar grupo');
+      showToast(data.error || 'Error al actualizar grupo', 'error');
+    }
+  } catch {
+    setEditGrupoMsg('Error de conexión');
+    showToast('Error de conexión', 'error');
+  }
+};
 
 import React, { useState, useRef, useEffect } from 'react';
 import { io } from 'socket.io-client';
@@ -1131,6 +1169,14 @@ function App() {
                   <div className="chat-header">
                     <span className="chat-group-icon">👥</span>
                     <span className="chat-group-nombre">{grupoSeleccionado.nombre}</span>
+                    {/* Botón editar grupo solo admin */}
+                    {esAdminGrupo && (
+                      <button className="chat-group-edit-btn" style={{ marginLeft: 8 }} onClick={() => {
+                        setEditGrupoNombre(grupoSeleccionado.nombre || "");
+                        setEditGrupoImg(grupoSeleccionado.imagen_url || "");
+                        setShowEditGrupo(true);
+                      }}>✏️ Editar grupo</button>
+                    )}
                     {/* Última actividad grupo */}
                     {grupoSeleccionado.ultima_actividad ? (
                       <span style={{ color: '#aaa', fontSize: 12, marginLeft: 8 }}>
@@ -1145,6 +1191,19 @@ function App() {
                       })()}</span>
                     )}
                   </div>
+                  {/* Modal editar grupo */}
+                  {showEditGrupo && (
+                    <div className="chat-group-modal">
+                      <form className="chat-group-form" onSubmit={handleEditGrupo}>
+                        <h3>Editar grupo</h3>
+                        <input type="text" placeholder="Nuevo nombre del grupo" value={editGrupoNombre} onChange={e => setEditGrupoNombre(e.target.value)} required />
+                        <input type="text" placeholder="URL imagen (opcional)" value={editGrupoImg} onChange={e => setEditGrupoImg(e.target.value)} />
+                        <button type="submit" className="chat-group-create-btn">Guardar cambios</button>
+                        <button type="button" onClick={() => setShowEditGrupo(false)} style={{ marginLeft: 8 }}>Cancelar</button>
+                        <div style={{ color: editGrupoMsg.startsWith('¡') ? 'lightgreen' : 'salmon', minHeight: 18 }}>{editGrupoMsg}</div>
+                      </form>
+                    </div>
+                  )}
                   <div className="chat-messages">
                     {grupoMensajes.length > 0
                       ? grupoMensajes.map((msg, i) => (
