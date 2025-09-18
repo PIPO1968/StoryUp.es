@@ -1,3 +1,55 @@
+// Estado para modales de salir/eliminar grupo
+const [showSalirGrupo, setShowSalirGrupo] = useState(false);
+const [showEliminarGrupo, setShowEliminarGrupo] = useState(false);
+const [grupoActionMsg, setGrupoActionMsg] = useState("");
+
+// Salir de grupo
+const handleSalirGrupo = async () => {
+  setGrupoActionMsg("");
+  try {
+    const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}/miembros/${profile.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${jwt}` }
+    });
+    if (res.ok) {
+      showToast('Has salido del grupo', 'success');
+      setShowSalirGrupo(false);
+      setGrupoSeleccionado(null);
+      setGrupos(gs => gs.filter(g => g.id !== grupoSeleccionado.id));
+    } else {
+      const data = await res.json();
+      setGrupoActionMsg(data.error || 'Error al salir del grupo');
+      showToast(data.error || 'Error al salir del grupo', 'error');
+    }
+  } catch {
+    setGrupoActionMsg('Error de conexión');
+    showToast('Error de conexión', 'error');
+  }
+};
+
+// Eliminar grupo (solo admin)
+const handleEliminarGrupo = async () => {
+  setGrupoActionMsg("");
+  try {
+    const res = await fetch(`${API}/grupos/${grupoSeleccionado.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${jwt}` }
+    });
+    if (res.ok) {
+      showToast('Grupo eliminado', 'success');
+      setShowEliminarGrupo(false);
+      setGrupoSeleccionado(null);
+      setGrupos(gs => gs.filter(g => g.id !== grupoSeleccionado.id));
+    } else {
+      const data = await res.json();
+      setGrupoActionMsg(data.error || 'Error al eliminar grupo');
+      showToast(data.error || 'Error al eliminar grupo', 'error');
+    }
+  } catch {
+    setGrupoActionMsg('Error de conexión');
+    showToast('Error de conexión', 'error');
+  }
+};
 // Estado para modal de edición de grupo
 const [showEditGrupo, setShowEditGrupo] = useState(false);
 const [editGrupoNombre, setEditGrupoNombre] = useState("");
@@ -1176,6 +1228,33 @@ function App() {
                         setEditGrupoImg(grupoSeleccionado.imagen_url || "");
                         setShowEditGrupo(true);
                       }}>✏️ Editar grupo</button>
+                    )}
+                    {/* Botón salir/eliminar grupo */}
+                    <button className="chat-group-leave-btn" style={{ marginLeft: 8 }} onClick={() => setShowSalirGrupo(true)}>Salir del grupo</button>
+                    {esAdminGrupo && (
+                      <button className="chat-group-delete-btn" style={{ marginLeft: 8, color: 'salmon' }} onClick={() => setShowEliminarGrupo(true)}>Eliminar grupo</button>
+                    )}
+                    {/* Modal salir grupo */}
+                    {showSalirGrupo && (
+                      <div className="chat-group-modal">
+                        <div className="chat-group-form">
+                          <h3>¿Seguro que quieres salir del grupo?</h3>
+                          <button onClick={handleSalirGrupo} className="chat-group-create-btn">Sí, salir</button>
+                          <button onClick={() => setShowSalirGrupo(false)} style={{ marginLeft: 8 }}>Cancelar</button>
+                          <div style={{ color: grupoActionMsg.startsWith('Has salido') ? 'lightgreen' : 'salmon', minHeight: 18 }}>{grupoActionMsg}</div>
+                        </div>
+                      </div>
+                    )}
+                    {/* Modal eliminar grupo */}
+                    {showEliminarGrupo && (
+                      <div className="chat-group-modal">
+                        <div className="chat-group-form">
+                          <h3>¿Seguro que quieres eliminar el grupo? Esta acción no se puede deshacer.</h3>
+                          <button onClick={handleEliminarGrupo} className="chat-group-create-btn" style={{ background: 'salmon' }}>Sí, eliminar</button>
+                          <button onClick={() => setShowEliminarGrupo(false)} style={{ marginLeft: 8 }}>Cancelar</button>
+                          <div style={{ color: grupoActionMsg.startsWith('Grupo eliminado') ? 'lightgreen' : 'salmon', minHeight: 18 }}>{grupoActionMsg}</div>
+                        </div>
+                      </div>
                     )}
                     {/* Última actividad grupo */}
                     {grupoSeleccionado.ultima_actividad ? (
