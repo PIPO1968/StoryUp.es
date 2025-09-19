@@ -68,6 +68,10 @@ body {
     margin-bottom: 0;
 }
 
+.features > .feature-card:not(:last-child) {
+    margin-bottom: 12px;
+}
+
 .feature-card.feature-inline {
     display: flex;
     align-items: center;
