@@ -34,8 +34,10 @@ function App() {
                 <img src="/login-icon.png" alt="Icono login StoryUp.es" className="logo-img" />
                 <div className="logo">StoryUp.es</div>
                 <div className="descripcion">
-                    <strong>(PARA USUARIOS PARTICULARES):</strong> Red Social moderna y diferente para chatear, crear grupos y compartir con amigos de todo el mundo.<br /><br />
-                    <strong>(PARA DOCENTES Y ESCOLARES):</strong> Red Social y herramienta para centros educativos, multilingüe y anti-bullying
+                    <strong>(PARA USUARIOS PARTICULARES)</strong><br />
+                    Red social moderna y diferente para chatear, crear grupos y compartir experiencias con personas de todo el mundo. ¡Conéctate, haz amigos y disfruta de una comunidad segura y divertida!<br /><br />
+                    <strong>(PARA DOCENTES Y ESCOLARES)</strong><br />
+                    Herramienta social y educativa para centros escolares: multilingüe, colaborativa y con enfoque anti-bullying. Fomenta la comunicación, el aprendizaje y la convivencia positiva en el aula y más allá.
                 </div>
                 {!usuario ? (
                     <>
