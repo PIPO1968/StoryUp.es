@@ -21,31 +21,11 @@ function App() {
             {/* Bloque blanco con características a la izquierda */}
             <div className="features-block">
                 <div className="features">
-                    <div className="feature-card">
-                        <span className="feature-icon">💬</span>
-                        <h3>Chat en tiempo real</h3>
-                        <p>Envía y recibe mensajes instantáneos con tus amigos y grupos.</p>
-                    </div>
-                    <div className="feature-card">
-                        <span className="feature-icon">👥</span>
-                        <h3>Grupos personalizados</h3>
-                        <p>Crea, administra y únete a grupos para compartir intereses.</p>
-                    </div>
-                    <div className="feature-card">
-                        <span className="feature-icon">🔒</span>
-                        <h3>Privacidad y seguridad</h3>
-                        <p>Tus datos y conversaciones están protegidos y son privados.</p>
-                    </div>
-                    <div className="feature-card">
-                        <span className="feature-icon">🌍</span>
-                        <h3>Comunidad global</h3>
-                        <p>Conecta con personas de todo el mundo.</p>
-                    </div>
-                    <div className="feature-card">
-                        <span className="feature-icon">🏆</span>
-                        <h3>Logros y recompensas</h3>
-                        <p>Gana medallas por tu actividad.</p>
-                    </div>
+                    <div className="feature-card feature-inline"><span className="feature-icon">💬</span> Chat en tiempo real</div>
+                    <div className="feature-card feature-inline"><span className="feature-icon">👥</span> Grupos personalizados</div>
+                    <div className="feature-card feature-inline"><span className="feature-icon">🔒</span> Privacidad y seguridad</div>
+                    <div className="feature-card feature-inline"><span className="feature-icon">🌍</span> Comunidad global</div>
+                    <div className="feature-card feature-inline"><span className="feature-icon">🏆</span> Logros y recompensas</div>
                 </div>
             </div>
             {/* Login centrado sobre fondo gris */}
