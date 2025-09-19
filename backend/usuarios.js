@@ -1,38 +1,49 @@
 // Módulo de usuarios para StoryUp.es
 const express = require('express');
 const router = express.Router();
-const usuarios = [
-    { id: 1, nombre: 'admin', email: 'admin@storyup.es', password: 'admin123' },
-];
+const pool = require('./db');
 
 
 // Registro de usuario
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
     const { nombre, email, password } = req.body;
     if (!nombre || !email || !password) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
-    if (usuarios.find(u => u.email === email)) {
-        return res.status(409).json({ error: 'El email ya está registrado' });
+    try {
+        // Verificar si el email ya existe
+        const existe = await pool.query('SELECT id FROM usuarios WHERE email = $1', [email]);
+        if (existe.rows.length > 0) {
+            return res.status(409).json({ error: 'El email ya está registrado' });
+        }
+        // Insertar nuevo usuario
+        const resultado = await pool.query(
+            'INSERT INTO usuarios (nombre, email, password) VALUES ($1, $2, $3) RETURNING id, nombre, email',
+            [nombre, email, password]
+        );
+        res.status(201).json({ mensaje: 'Usuario registrado', usuario: resultado.rows[0] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error en el servidor' });
     }
-    const nuevoUsuario = {
-        id: usuarios.length + 1,
-        nombre,
-        email,
-        password
-    };
-    usuarios.push(nuevoUsuario);
-    res.status(201).json({ mensaje: 'Usuario registrado', usuario: { id: nuevoUsuario.id, nombre, email } });
 });
 
 // Login básico
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const user = usuarios.find(u => u.email === email && u.password === password);
-    if (user) {
-        res.json({ mensaje: 'Login exitoso', usuario: { id: user.id, nombre: user.nombre, email: user.email } });
-    } else {
-        res.status(401).json({ error: 'Credenciales incorrectas' });
+    try {
+        const resultado = await pool.query(
+            'SELECT id, nombre, email FROM usuarios WHERE email = $1 AND password = $2',
+            [email, password]
+        );
+        if (resultado.rows.length > 0) {
+            res.json({ mensaje: 'Login exitoso', usuario: resultado.rows[0] });
+        } else {
+            res.status(401).json({ error: 'Credenciales incorrectas' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error en el servidor' });
     }
 });
 
