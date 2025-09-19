@@ -59,6 +59,7 @@ function App() {
                 <div className="topbar-center">
                     <span className="topbar-clock">{horaMadrid}</span>
                 </div>
+                <div className="topbar-right"></div>
             </header>
             <div className="main-layout">
                 {/* Bloque blanco con características a la izquierda */}
