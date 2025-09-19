@@ -9,7 +9,8 @@ function App() {
 
     return (
         <div className="main-layout">
-            <div className="features-side">
+            {/* Bloque blanco con características a la izquierda */}
+            <div className="features-block">
                 <div className="features">
                     <div className="feature-card">
                         <span className="feature-icon">💬</span>
@@ -28,7 +29,8 @@ function App() {
                     </div>
                 </div>
             </div>
-            <div className="app-container">
+            {/* Login centrado sobre fondo gris */}
+            <div className="login-block">
                 <img src="/logo.png" alt="Logo StoryUp.es" className="logo-img" />
                 <div className="logo">StoryUp.es</div>
                 <div className="descripcion">
@@ -54,6 +56,10 @@ function App() {
                 <footer className="footer">
                     <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
                 </footer>
+            </div>
+            {/* Imagen a la derecha del login */}
+            <div className="image-block">
+                <img src="/logo.png" alt="Imagen decorativa" className="side-image" />
             </div>
         </div>
     );

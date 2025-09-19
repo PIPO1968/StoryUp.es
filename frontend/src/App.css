@@ -1,3 +1,64 @@
+/* Bloque blanco de características a la izquierda */
+.features-block {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    padding: 40px 32px;
+    margin-right: 32px;
+    display: flex;
+    align-items: center;
+    min-width: 320px;
+    max-width: 340px;
+    height: auto;
+}
+
+/* Login centrado sobre fondo gris */
+.login-block {
+    background: #f3f4f6;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    padding: 40px 32px;
+    margin: 0 32px;
+    min-width: 340px;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Imagen decorativa a la derecha */
+.image-block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 320px;
+    max-width: 380px;
+    height: auto;
+}
+
+.side-image {
+    width: 220px;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 1200px) {
+    .main-layout {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .features-block, .login-block, .image-block {
+        margin: 24px 0;
+        min-width: 90vw;
+        max-width: 98vw;
+    }
+    .side-image {
+        width: 160px;
+    }
+}
 .main-layout {
     display: flex;
     min-height: 100vh;
@@ -109,6 +170,7 @@ body {
         flex-direction: column;
         align-items: stretch;
     }
+
     .features-side {
         justify-content: center;
         align-items: center;
@@ -117,12 +179,14 @@ body {
         margin-bottom: 24px;
         background: none;
     }
+
     .features {
         margin: 0 auto 16px auto;
         max-width: 100%;
         gap: 16px;
     }
 }
+
 /* Layout principal: dos columnas, características a la izquierda, login centrado */
 .main-layout {
     display: flex;
