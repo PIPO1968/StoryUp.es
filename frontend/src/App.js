@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Login from './Login';
 import Register from './Register';
 import './App.css';
 
+
 function App() {
     const [usuario, setUsuario] = useState(null);
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
+    const [totalUsuarios, setTotalUsuarios] = useState(null);
+
+    useEffect(() => {
+        fetch('/api/usuarios/total')
+            .then(res => res.json())
+            .then(data => setTotalUsuarios(data.total))
+            .catch(() => setTotalUsuarios('—'));
+    }, []);
 
     return (
-        <div className="main-layout">
+        <>
+            <header className="top-bar">
+                <div className="top-bar-left">
+                    <span className="usuarios-total">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}</span>
+                </div>
+                <div className="top-bar-center"></div>
+                <div className="top-bar-right"></div>
+            </header>
+            <div className="main-layout">
             {/* Bloque blanco con características a la izquierda */}
             <div className="features-block">
                 <div className="features">
@@ -64,7 +81,8 @@ function App() {
             <div className="image-block">
                 <img src="/logo-grande.png" alt="Logo grande StoryUp.es" className="side-image" />
             </div>
-        </div>
+            </div>
+        </>
     );
 }
 

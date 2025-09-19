@@ -1,6 +1,46 @@
+/* Barra superior fija */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 48px;
+    background: #23243a;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 0 32px;
+    font-size: 1.1rem;
+}
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.usuarios-total {
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+.top-bar-center {
+    flex: 1;
+    text-align: center;
+}
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Ajuste para dejar espacio arriba del layout principal */
+.main-layout {
+    margin-top: 56px;
+}
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-        background: linear-gradient(135deg, #7a7fa3 0%, #a3a7b3 100%);
+    background: linear-gradient(135deg, #7a7fa3 0%, #a3a7b3 100%);
     margin: 0;
     min-height: 100vh;
 }
