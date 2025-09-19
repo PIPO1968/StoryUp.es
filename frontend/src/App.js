@@ -34,7 +34,8 @@ function App() {
                 <img src="/login-icon.png" alt="Icono login StoryUp.es" className="logo-img" />
                 <div className="logo">StoryUp.es</div>
                 <div className="descripcion">
-                    Red social moderna para chatear, crear grupos y compartir con amigos.
+                    <strong>(PARA USUARIOS PARTICULARES):</strong> Red Social moderna y diferente para chatear, crear grupos y compartir con amigos de todo el mundo.<br /><br />
+                    <strong>(PARA DOCENTES Y ESCOLARES):</strong> Red Social y herramienta para centros educativos, multilingüe y anti-bullying
                 </div>
                 {!usuario ? (
                     <>
