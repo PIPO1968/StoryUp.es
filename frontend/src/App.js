@@ -36,6 +36,16 @@ function App() {
                         <h3>Privacidad y seguridad</h3>
                         <p>Tus datos y conversaciones están protegidos y son privados.</p>
                     </div>
+                    <div className="feature-card">
+                        <span className="feature-icon">🌍</span>
+                        <h3>Comunidad global</h3>
+                        <p>Conecta con personas de todo el mundo.</p>
+                    </div>
+                    <div className="feature-card">
+                        <span className="feature-icon">🏆</span>
+                        <h3>Logros y recompensas</h3>
+                        <p>Gana medallas por tu actividad.</p>
+                    </div>
                 </div>
             </div>
             {/* Login centrado sobre fondo gris */}
