@@ -31,7 +31,7 @@ function App() {
             </div>
             {/* Login centrado sobre fondo gris */}
             <div className="login-block">
-                <img src="/login-icon.png" alt="Icono pequeño StoryUp.es" className="logo-img" />
+                <img src="/login-icon.png" alt="Icono login StoryUp.es" className="logo-img" />
                 <div className="logo">StoryUp.es</div>
                 <div className="descripcion">
                     Red social moderna para chatear, crear grupos y compartir con amigos.
