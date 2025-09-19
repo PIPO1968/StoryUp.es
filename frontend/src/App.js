@@ -20,6 +20,7 @@ function App() {
         <>
             <header className="top-bar">
                 <img src="/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
+                <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}</span>
             </header>
             <div className="main-layout">
                 {/* Bloque blanco con características a la izquierda */}
