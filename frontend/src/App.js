@@ -31,7 +31,7 @@ function App() {
             </div>
             {/* Login centrado sobre fondo gris */}
             <div className="login-block">
-                <img src="/favicon.ico" alt="Favicon StoryUp.es" className="logo-img" />
+                <img src="/login-icon.png" alt="Icono pequeño StoryUp.es" className="logo-img" />
                 <div className="logo">StoryUp.es</div>
                 <div className="descripcion">
                     Red social moderna para chatear, crear grupos y compartir con amigos.
@@ -59,7 +59,7 @@ function App() {
             </div>
             {/* Imagen a la derecha del login */}
             <div className="image-block">
-                <img src="/logo.png" alt="Logo StoryUp.es decorativo" className="side-image" />
+                <img src="/logo-grande.png" alt="Logo grande StoryUp.es" className="side-image" />
             </div>
         </div>
     );
