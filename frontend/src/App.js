@@ -9,6 +9,8 @@ function App() {
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
     const [usuariosOnline, setUsuariosOnline] = useState(null);
+    const [horaMadrid, setHoraMadrid] = useState("");
+
     const fetchTotalUsuarios = () => {
         fetch('/api/usuarios/total')
             .then(res => res.json())
@@ -23,12 +25,23 @@ function App() {
             .catch(() => setUsuariosOnline('—'));
     };
 
+    const actualizarHoraMadrid = () => {
+        const ahora = new Date();
+        const opciones = { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        const opcionesFecha = { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' };
+        const hora = ahora.toLocaleTimeString('es-ES', opciones);
+        const fecha = ahora.toLocaleDateString('es-ES', opcionesFecha);
+        setHoraMadrid(`${fecha} ${hora}`);
+    };
+
     useEffect(() => {
         fetchTotalUsuarios();
         fetchUsuariosOnline();
+        actualizarHoraMadrid();
         const interval = setInterval(() => {
             fetchTotalUsuarios();
             fetchUsuariosOnline();
+            actualizarHoraMadrid();
         }, 10000); // Actualiza cada 10s
         return () => clearInterval(interval);
     }, []);
@@ -36,11 +49,16 @@ function App() {
     return (
         <>
             <header className="top-bar">
-                <img src="/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
-                <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
-                    <span className="topbar-sep">&nbsp;-&nbsp;</span>
-                    <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
-                </span>
+                <div className="topbar-left">
+                    <img src="/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
+                    <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
+                        <span className="topbar-sep">&nbsp;-&nbsp;</span>
+                        <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
+                    </span>
+                </div>
+                <div className="topbar-center">
+                    <span className="topbar-clock">{horaMadrid}</span>
+                </div>
             </header>
             <div className="main-layout">
                 {/* Bloque blanco con características a la izquierda */}
