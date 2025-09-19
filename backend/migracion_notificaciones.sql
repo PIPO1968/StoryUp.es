@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS notificaciones (
   id SERIAL PRIMARY KEY,
-  usuario_id INTEGER REFERENCES usuarios(id),
   tipo VARCHAR(50) NOT NULL,
   mensaje TEXT NOT NULL,
   leida BOOLEAN DEFAULT FALSE,

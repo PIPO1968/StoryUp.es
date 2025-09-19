@@ -1,1 +1,1 @@
-ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS imagen_perfil VARCHAR(255);
+

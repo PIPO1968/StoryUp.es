@@ -1,8 +1,6 @@
 -- migracion_mensajes.sql
 CREATE TABLE IF NOT EXISTS mensajes (
     id SERIAL PRIMARY KEY,
-    emisor_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
-    receptor_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
     texto TEXT,
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     leido BOOLEAN DEFAULT FALSE,
