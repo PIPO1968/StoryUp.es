@@ -46,20 +46,18 @@ function App() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        actualizarHoraMadrid();
+        const interval = setInterval(actualizarHoraMadrid, 1000); // Actualiza cada segundo
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <>
-            <header className="top-bar">
-                <div className="topbar-left">
-                    <img src="/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
-                    <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
-                        <span className="topbar-sep">&nbsp;-&nbsp;</span>
-                        <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
-                    </span>
-                </div>
-                <div className="topbar-center">
+            <header className="top-bar" style={{position: 'static', marginBottom: '24px'}}>
+                <div className="topbar-center" style={{flex: 1, justifyContent: 'center'}}>
                     <span className="topbar-clock">{horaMadrid}</span>
                 </div>
-                <div className="topbar-right"></div>
             </header>
             <div className="main-layout">
                 {/* Bloque blanco con características a la izquierda */}
