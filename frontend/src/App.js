@@ -8,12 +8,17 @@ function App() {
     const [usuario, setUsuario] = useState(null);
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
-
-    useEffect(() => {
+    const fetchTotalUsuarios = () => {
         fetch('/api/usuarios/total')
             .then(res => res.json())
             .then(data => setTotalUsuarios(data.total))
             .catch(() => setTotalUsuarios('—'));
+    };
+
+    useEffect(() => {
+        fetchTotalUsuarios();
+        const interval = setInterval(fetchTotalUsuarios, 10000); // Actualiza cada 10s
+        return () => clearInterval(interval);
     }, []);
 
     return (
