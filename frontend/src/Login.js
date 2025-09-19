@@ -9,7 +9,8 @@ function Login({ onLogin }) {
         e.preventDefault();
         setError('');
         try {
-            const res = await fetch('/api/login', {
+            const API_URL = process.env.REACT_APP_API_URL;
+            const res = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })

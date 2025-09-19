@@ -10,7 +10,8 @@ function Register({ onRegister }) {
         e.preventDefault();
         setError('');
         try {
-            const res = await fetch('/api/register', {
+            const API_URL = process.env.REACT_APP_API_URL;
+            const res = await fetch(`${API_URL}/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nombre, email, password })
