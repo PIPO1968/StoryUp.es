@@ -8,49 +8,53 @@ function App() {
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
 
     return (
-        <div className="app-container">
-            <img src="/logo.png" alt="Logo StoryUp.es" className="logo-img" />
-            <div className="logo">StoryUp.es</div>
-            <div className="descripcion">
-                Red social moderna para chatear, crear grupos y compartir con amigos.
-            </div>
-            <div className="features">
-                <div className="feature-card">
-                    <span className="feature-icon">💬</span>
-                    <h3>Chat en tiempo real</h3>
-                    <p>Envía y recibe mensajes instantáneos con tus amigos y grupos.</p>
-                </div>
-                <div className="feature-card">
-                    <span className="feature-icon">👥</span>
-                    <h3>Grupos personalizados</h3>
-                    <p>Crea, administra y únete a grupos para compartir intereses.</p>
-                </div>
-                <div className="feature-card">
-                    <span className="feature-icon">🔒</span>
-                    <h3>Privacidad y seguridad</h3>
-                    <p>Tus datos y conversaciones están protegidos y son privados.</p>
+        <div className="main-layout">
+            <div className="features-side">
+                <div className="features">
+                    <div className="feature-card">
+                        <span className="feature-icon">💬</span>
+                        <h3>Chat en tiempo real</h3>
+                        <p>Envía y recibe mensajes instantáneos con tus amigos y grupos.</p>
+                    </div>
+                    <div className="feature-card">
+                        <span className="feature-icon">👥</span>
+                        <h3>Grupos personalizados</h3>
+                        <p>Crea, administra y únete a grupos para compartir intereses.</p>
+                    </div>
+                    <div className="feature-card">
+                        <span className="feature-icon">🔒</span>
+                        <h3>Privacidad y seguridad</h3>
+                        <p>Tus datos y conversaciones están protegidos y son privados.</p>
+                    </div>
                 </div>
             </div>
-            {!usuario ? (
-                <>
-                    {mostrarRegistro ? (
-                        <Register onRegister={setUsuario} />
-                    ) : (
-                        <Login onLogin={setUsuario} />
-                    )}
-                    <button onClick={() => setMostrarRegistro(!mostrarRegistro)}>
-                        {mostrarRegistro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
-                    </button>
-                </>
-            ) : (
-                <div>
-                    <p>¡Bienvenido, {usuario.nombre}!</p>
-                    <p>Ya puedes acceder al chat y grupos.</p>
+            <div className="app-container">
+                <img src="/logo.png" alt="Logo StoryUp.es" className="logo-img" />
+                <div className="logo">StoryUp.es</div>
+                <div className="descripcion">
+                    Red social moderna para chatear, crear grupos y compartir con amigos.
                 </div>
-            )}
-            <footer className="footer">
-                <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
-            </footer>
+                {!usuario ? (
+                    <>
+                        {mostrarRegistro ? (
+                            <Register onRegister={setUsuario} />
+                        ) : (
+                            <Login onLogin={setUsuario} />
+                        )}
+                        <button onClick={() => setMostrarRegistro(!mostrarRegistro)}>
+                            {mostrarRegistro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
+                        </button>
+                    </>
+                ) : (
+                    <div>
+                        <p>¡Bienvenido, {usuario.nombre}!</p>
+                        <p>Ya puedes acceder al chat y grupos.</p>
+                    </div>
+                )}
+                <footer className="footer">
+                    <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
+                </footer>
+            </div>
         </div>
     );
 }
