@@ -1,62 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login';
 import Register from './Register';
-import './App.css';
-
 
 function App() {
     const [usuario, setUsuario] = useState(null);
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
-    const [totalUsuarios, setTotalUsuarios] = useState(null);
-    const [usuariosOnline, setUsuariosOnline] = useState(null);
-    const [horaMadrid, setHoraMadrid] = useState("");
-
-    const fetchTotalUsuarios = () => {
-        fetch('/api/usuarios/total')
-            .then(res => res.json())
-            .then(data => setTotalUsuarios(data.total))
-            .catch(() => setTotalUsuarios('—'));
-    };
-
-    const fetchUsuariosOnline = () => {
-        fetch('/api/usuarios/online')
-            .then(res => res.json())
-            .then(data => setUsuariosOnline(data.online))
-            .catch(() => setUsuariosOnline('—'));
-    };
-
-    const actualizarHoraMadrid = () => {
-        const ahora = new Date();
-        const opciones = { timeZone: 'Europe/Madrid', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const opcionesFecha = { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' };
-        const hora = ahora.toLocaleTimeString('es-ES', opciones);
-        const fecha = ahora.toLocaleDateString('es-ES', opcionesFecha);
-        setHoraMadrid(`${fecha} ${hora}`);
-    };
+    const [totalUsuarios, setTotalUsuarios] = useState(0);
+    const [usuariosOnline, setUsuariosOnline] = useState(0);
+    const [date, setDate] = useState(new Date());
 
     useEffect(() => {
-        fetchTotalUsuarios();
-        fetchUsuariosOnline();
-        actualizarHoraMadrid();
-        const interval = setInterval(() => {
-            fetchTotalUsuarios();
-            fetchUsuariosOnline();
-            actualizarHoraMadrid();
-        }, 10000); // Actualiza cada 10s
-        return () => clearInterval(interval);
-    }, []);
-
-    useEffect(() => {
-        actualizarHoraMadrid();
-        const interval = setInterval(actualizarHoraMadrid, 1000); // Actualiza cada segundo
-        return () => clearInterval(interval);
+        // Simulación de fetch de usuarios (reemplazar por fetch real)
+        fetch('/api/usuarios/total').then(r => r.json()).then(d => setTotalUsuarios(d.total || 0)).catch(() => { });
+        fetch('/api/usuarios/online').then(r => r.json()).then(d => setUsuariosOnline(d.online || 0)).catch(() => { });
+        const timer = setInterval(() => {
+            setDate(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
     }, []);
 
     return (
         <>
-            <header className="top-bar" style={{position: 'static', marginBottom: '24px'}}>
-                <div className="topbar-center" style={{flex: 1, justifyContent: 'center'}}>
-                    <span className="topbar-clock">{horaMadrid}</span>
+            <header className="top-bar" style={{ position: 'static', marginBottom: '24px' }}>
+                <div className="top-bar-left">
+                    <img src="/favicon.ico" alt="Logo" className="logo" />
+                    <span className="user-stats">
+                        Usuarios: {totalUsuarios} - Online: {usuariosOnline}
+                    </span>
+                </div>
+                <div className="top-bar-center">
+                    <span className="clock">
+                        {date.toLocaleDateString("es-ES", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })} {date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZone: "Europe/Madrid" })}
+                    </span>
+                </div>
+                <div className="top-bar-right">
+                    {/* Selector de idioma (próximamente) */}
                 </div>
             </header>
             <div className="main-layout">
