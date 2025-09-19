@@ -59,7 +59,7 @@ function App() {
             </div>
             {/* Imagen a la derecha del login */}
             <div className="image-block">
-                <img src="/logo.png" alt="Logo StoryUp.es decorativo" className="side-image" />
+                <img src="/favicon.ico" alt="Favicon decorativo" className="side-image" />
             </div>
         </div>
     );
