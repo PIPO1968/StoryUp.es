@@ -9,6 +9,7 @@ function App() {
 
     return (
         <div className="app-container">
+            <img src="/logo.png" alt="Logo StoryUp.es" className="logo-img" />
             <div className="logo">StoryUp.es</div>
             <div className="descripcion">
                 Red social moderna para chatear, crear grupos y compartir con amigos.
