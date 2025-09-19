@@ -8,6 +8,7 @@ function App() {
     const [usuario, setUsuario] = useState(null);
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
+    const [usuariosOnline, setUsuariosOnline] = useState(null);
     const fetchTotalUsuarios = () => {
         fetch('/api/usuarios/total')
             .then(res => res.json())
@@ -15,9 +16,20 @@ function App() {
             .catch(() => setTotalUsuarios('—'));
     };
 
+    const fetchUsuariosOnline = () => {
+        fetch('/api/usuarios/online')
+            .then(res => res.json())
+            .then(data => setUsuariosOnline(data.online))
+            .catch(() => setUsuariosOnline('—'));
+    };
+
     useEffect(() => {
         fetchTotalUsuarios();
-        const interval = setInterval(fetchTotalUsuarios, 10000); // Actualiza cada 10s
+        fetchUsuariosOnline();
+        const interval = setInterval(() => {
+            fetchTotalUsuarios();
+            fetchUsuariosOnline();
+        }, 10000); // Actualiza cada 10s
         return () => clearInterval(interval);
     }, []);
 
@@ -25,7 +37,10 @@ function App() {
         <>
             <header className="top-bar">
                 <img src="/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
-                <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}</span>
+                <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
+                    <span className="topbar-sep">&nbsp;-&nbsp;</span>
+                    <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
+                </span>
             </header>
             <div className="main-layout">
                 {/* Bloque blanco con características a la izquierda */}

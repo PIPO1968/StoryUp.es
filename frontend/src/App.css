@@ -31,6 +31,17 @@ body {
     letter-spacing: 0.5px;
 }
 
+.topbar-sep {
+    color: #888;
+    font-weight: 400;
+    margin: 0 8px;
+}
+
+.topbar-online {
+    color: #219a3b;
+    font-weight: 600;
+}
+
 .main-layout {
     display: flex;
     min-height: 100vh;
