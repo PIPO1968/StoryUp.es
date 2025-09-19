@@ -2,12 +2,21 @@ body {
     background: #b0b0b0;
 }
 
+.main-layout {
+    display: flex;
+    min-height: 100vh;
+    background: none;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+}
+
 .login-block {
     background: #f3f4f6;
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
     padding: 40px 32px;
-    margin: 0 32px;
+    margin: 0;
     min-width: 340px;
     max-width: 380px;
     display: flex;
