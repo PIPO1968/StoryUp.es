@@ -32,6 +32,7 @@ body {
     min-width: 320px;
     max-width: 380px;
     height: auto;
+    margin-top: 0;
 }
 
 .features-block {
@@ -66,10 +67,6 @@ body {
     width: 100%;
     text-align: left;
     margin-bottom: 0;
-}
-
-.features > .feature-card:not(:last-child) {
-    margin-bottom: 12px;
 }
 
 .feature-card.feature-inline {
