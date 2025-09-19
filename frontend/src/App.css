@@ -1,21 +1,3 @@
-/* Barra superior fija */
-.top-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 48px;
-    .main-layout {
-        display: flex;
-        min-height: 100vh;
-        background: #f0f2f5;
-        align-items: center;
-        justify-content: center;
-    }
-    min-width: 320px;
-    max-width: 340px;
-    height: auto;
-}
 
 .login-block {
     background: #f3f4f6;
