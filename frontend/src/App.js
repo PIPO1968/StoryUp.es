@@ -17,15 +17,7 @@ function App() {
     }, []);
 
     return (
-        <>
-            <header className="top-bar">
-                <div className="top-bar-left">
-                    <span className="usuarios-total">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}</span>
-                </div>
-                <div className="top-bar-center"></div>
-                <div className="top-bar-right"></div>
-            </header>
-            <div className="main-layout">
+        <div className="main-layout">
             {/* Bloque blanco con características a la izquierda */}
             <div className="features-block">
                 <div className="features">
@@ -81,8 +73,7 @@ function App() {
             <div className="image-block">
                 <img src="/logo-grande.png" alt="Logo grande StoryUp.es" className="side-image" />
             </div>
-            </div>
-        </>
+        </div>
     );
 }
 
