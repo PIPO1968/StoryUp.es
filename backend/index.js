@@ -4,7 +4,10 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors({
-    origin: 'https://story-up-es.vercel.app',
+    origin: [
+        'https://story-up-es.vercel.app',
+        /^https:\/\/story-up-[^.]+\.vercel\.app$/
+    ],
     credentials: true
 }));
 app.use(express.json());
