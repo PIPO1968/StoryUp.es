@@ -5,6 +5,8 @@ const cors = require('cors');
 const app = express();
 app.use(cors({
     origin: [
+        'https://storyup.es',
+        'https://www.storyup.es',
         'https://story-up-es.vercel.app',
         /^https:\/\/story-up-[^.]+\.vercel\.app$/
     ],
