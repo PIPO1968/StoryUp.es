@@ -7,8 +7,9 @@ app.use(cors({
     origin: [
         'https://storyup.es',
         'https://www.storyup.es',
-        'https://story-up-es.vercel.app',
-        /^https:\/\/story-up-[^.]+\.vercel\.app$/
+        'https://story-up-es.vercel.app', // dominio de producción Vercel
+        'https://story-up-9nhrztg0i-pipo68s-projects.vercel.app', // dominio de preview Vercel
+        /^https:\/\/story-up-[^.]+\.vercel\.app$/ // cualquier preview de Vercel
     ],
     credentials: true
 }));
