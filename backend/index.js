@@ -1,6 +1,12 @@
 // Backend Express básico para StoryUp.es
+
 const express = require('express');
+const cors = require('cors');
 const app = express();
+app.use(cors({
+    origin: 'https://story-up-es.vercel.app',
+    credentials: true
+}));
 app.use(express.json());
 
 
