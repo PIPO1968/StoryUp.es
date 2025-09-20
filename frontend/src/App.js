@@ -11,15 +11,16 @@ function App() {
     const [usuariosOnline, setUsuariosOnline] = useState(null);
     const [horaMadrid, setHoraMadrid] = useState("");
 
+    const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
     const fetchTotalUsuarios = () => {
-        fetch('/api/usuarios/total')
+        fetch(`${API_URL}/usuarios/total`)
             .then(res => res.json())
             .then(data => setTotalUsuarios(data.total))
             .catch(() => setTotalUsuarios('—'));
     };
 
     const fetchUsuariosOnline = () => {
-        fetch('/api/usuarios/online')
+        fetch(`${API_URL}/usuarios/online`)
             .then(res => res.json())
             .then(data => setUsuariosOnline(data.online))
             .catch(() => setUsuariosOnline('—'));
