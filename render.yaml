@@ -3,9 +3,8 @@ services:
     name: storyup-app
     env: node
     buildCommand: |
-      cd frontend && npm install && npm run build
-      cd .. && npm install
-    startCommand: node backend/index.js
+      cd backend && npm install
+    startCommand: npm start --prefix backend
     envVars:
       - key: NODE_ENV
         value: production
