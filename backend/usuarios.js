@@ -1,21 +1,3 @@
-// Permitir preflight OPTIONS para /register-or-login
-router.options('/register-or-login', (req, res) => {
-    const allowed = [
-        'https://storyup.es',
-        'https://www.storyup.es',
-        'https://story-up-es.vercel.app',
-        'https://story-up-9nhrztg0i-pipo68s-projects.vercel.app'
-    ];
-    const vercelPreview = /^https:\/\/story-up-[^.]+\.vercel\.app$/;
-    const origin = req.headers.origin;
-    if (!origin || allowed.includes(origin) || vercelPreview.test(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    }
-    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(204);
-});
 // Módulo de usuarios para StoryUp.es
 const express = require('express');
 const router = express.Router();
