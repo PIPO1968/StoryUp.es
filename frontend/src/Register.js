@@ -1,42 +1,64 @@
 import React, { useState } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+
 function Register({ onRegister }) {
-    const [nombre, setNombre] = useState('');
+    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setLoading(true);
+        setError(null);
         try {
-            const API_URL = process.env.REACT_APP_API_URL;
-            const res = await fetch(`${API_URL}/register`, {
+            const res = await fetch(`${API_URL}/register-or-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, email, password })
+                body: JSON.stringify({ email, password, username })
             });
             const data = await res.json();
-            if (res.ok) {
-                onRegister(data.usuario);
-            } else {
-                setError(data.error || 'Error de registro');
-            }
+            if (!res.ok) throw new Error(data.error || 'Error de registro');
+            onRegister(data.user);
+            localStorage.setItem('token', data.token);
         } catch (err) {
-            setError('Error de conexión');
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Registro</h2>
-            <input type="text" placeholder="Nombre" value={nombre} onChange={e => setNombre(e.target.value)} required />
-            <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-            <input type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} required />
-            <button type="submit">Registrarse</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <form className="register-form" onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Nombre de usuario"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                required
+            />
+            <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+            />
+            <input
+                type="password"
+                placeholder="Contraseña"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+            />
+            <button type="submit" disabled={loading}>
+                {loading ? 'Registrando...' : 'Registrarse'}
+            </button>
+            {error && <div className="error">{error}</div>}
         </form>
     );
 }
 
-export default Register;
+*** End Patch

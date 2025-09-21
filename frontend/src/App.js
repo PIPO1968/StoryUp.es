@@ -1,6 +1,9 @@
+
+
 import React, { useState, useEffect } from 'react';
 import Login from './Login';
 import Register from './Register';
+import LanguageSelector from './LanguageSelector';
 import './App.css';
 
 
@@ -10,8 +13,10 @@ function App() {
     const [totalUsuarios, setTotalUsuarios] = useState(null);
     const [usuariosOnline, setUsuariosOnline] = useState(null);
     const [horaMadrid, setHoraMadrid] = useState("");
+    const [lang, setLang] = useState('es');
 
     const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+
     const fetchTotalUsuarios = () => {
         fetch(`${API_URL}/usuarios/total`)
             .then(res => res.json())
@@ -41,13 +46,13 @@ function App() {
         const intervalUsuarios = setInterval(() => {
             fetchTotalUsuarios();
             fetchUsuariosOnline();
-        }, 10000); // Usuarios cada 10s
+        }, 10000);
         return () => clearInterval(intervalUsuarios);
     }, []);
 
     useEffect(() => {
         actualizarHoraMadrid();
-        const intervalHora = setInterval(actualizarHoraMadrid, 1000); // Reloj cada segundo
+        const intervalHora = setInterval(actualizarHoraMadrid, 1000);
         return () => clearInterval(intervalHora);
     }, []);
 
@@ -64,7 +69,9 @@ function App() {
                 <div className="topbar-center-absolute">
                     <span className="topbar-clock">{horaMadrid}</span>
                 </div>
-                <div className="topbar-right"></div>
+                <div className="topbar-right">
+                    <LanguageSelector lang={lang} setLang={setLang} />
+                </div>
             </header>
             <div className="main-layout">
                 {/* Bloque blanco con características a la izquierda */}

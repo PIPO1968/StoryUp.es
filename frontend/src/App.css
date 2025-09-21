@@ -1,115 +1,260 @@
 body {
-    background: #b0b0b0;
+    background: linear-gradient(135deg, #fffbe6 0%, #fff 100%);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
 }
 
 .top-bar {
     width: 100vw;
     height: 54px;
-    background: #fff;
     display: flex;
     align-items: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    padding: 0 24px;
+    z-index: 100;
+}
+
+.App {
+    background: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.App-logo {
     position: fixed;
+    height: 40vmin;
     top: 0;
     left: 0;
-    z-index: 100;
-    padding: 0 24px;
-    justify-content: space-between;
+    pointer-events: none;
 }
 
-.topbar-left {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    min-width: 0;
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
 }
 
-.topbar-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 2;
-    min-width: 0;
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ...resto de las reglas ya estaban bien estructuradas y se mantienen... */
+display: flex;
+
+justify-content: flex-start;
+justify-content: center;
+
+font-size: calc(10px + 2vmin);
+align-items: center;
+
+color: #1a2a44;
+flex: 2;
+
+box-shadow: 0 2px 16px #ffe06644;
+min-width: 0;
+
+}
+}
+
+
+
+.App-link {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.12rem;
+    margin: 0 6px 8px 0;
+    cursor: pointer;
+    color: #222;
 }
 
 .topbar-center-absolute {
+    color: #61dafb;
     position: absolute;
     left: 50%;
     top: 0;
+    transform: translateX(-50%);
+    pointer-events: none;
     height: 54px;
     display: flex;
     align-items: center;
-    transform: translateX(-50%);
-    pointer-events: none;
 }
 
 .topbar-clock {
     font-family: 'Roboto Mono', monospace;
     font-size: 1.12rem;
-    color: #333;
-    background: #f5f5f5;
-    border-radius: 6px;
-    padding: 4px 18px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-.topbar-users {
-    font-weight: 600;
-    font-size: 1.08rem;
-    margin-left: 12px;
-    color: #222;
+button {
+    color: #1a2a44;
+    background: linear-gradient(90deg, #ffe066 0%, #fffbe6 100%);
+    border-radius: 6px;
+    border: none;
+    padding: 8px 18px;
     letter-spacing: 0.5px;
+    font-weight: bold;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    font-size: 1rem;
+    margin-left: 12px;
+    transition: background 0.2s, color 0.2s;
+}
+
+button:hover {
+    background: #fffbe6;
+    color: #e6b800;
     white-space: nowrap;
 }
 
-.topbar-sep {
-    color: #888;
-    font-weight: 400;
-    margin: 0 8px;
-}
-
-.topbar-online {
-    color: #219a3b;
+.topbar-users {
+    box-shadow: 0 1px 4px #ffe06633;
     font-weight: 600;
+    font-size: 1.08rem;
+    transition: background 0.2s, color 0.2s;
 }
 
-.topbar-logo {
-    height: 32px;
-    width: 32px;
-    object-fit: contain;
-    margin-right: 12px;
+.topbar-sep {
+
+    select {
+        color: #888;
+
+        background: #fffbe6;
+        font-weight: 400;
+
+        color: #1a2a44;
+        margin: 0 8px;
+
+        border: 1px solid #ffe066;
+    }
+
+    border-radius: 4px;
+
+    padding: 4px 8px;
+
+    .topbar-online {
+
+        font-size: 1rem;
+        color: #219a3b;
+
+    }
+
+    font-weight: 600;
+
+}
+
+input,
+
+textarea {
+    .topbar-logo {
+
+        border: 1px solid #ffe066;
+        height: 32px;
+
+        border-radius: 4px;
+        width: 32px;
+
+        padding: 6px 10px;
+        object-fit: contain;
+
+        font-size: 1rem;
+        margin-right: 12px;
+
+        background: #fff;
+    }
+
+    color: #1a2a44;
+
 }
 
 .main-layout {
+
     display: flex;
+
+    /* Notificación en tiempo real */
     min-height: 100vh;
-    background: none;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    margin-top: 54px;
-}
 
-.login-block {
-    background: #f3f4f6;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
-    padding: 40px 32px;
-    margin: 0;
-    min-width: 340px;
+    .App .notification {
+        background: none;
+
+        position: fixed;
+        align-items: center;
+
+        top: 10px;
+        justify-content: center;
+
+        right: 10px;
+        gap: 40px;
+
+        background: linear-gradient(90deg, #ffe066 0%, #fffbe6 100%);
+        margin-top: 54px;
+
+        color: #1a2a44;
+    }
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    .login-block {
+
+        z-index: 9999;
+        background: #f3f4f6;
+
+        box-shadow: 0 2px 8px #ffe06688;
+        border-radius: 18px;
+
+        font-weight: bold;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+
+        font-size: 1.1rem;
+        padding: 40px 32px;
+
+        display: flex;
+        margin: 0;
+
+        align-items: center;
+        min-width: 340px;
+
+    }
+
     max-width: 380px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
 
-.image-block {
     display: flex;
-    align-items: center;
+
+    .App .notification button {
+        flex-direction: column;
+
+        margin-left: 16px;
+        align-items: center;
+
+        background: transparent;
+        justify-content: center;
+
+        color: #e6b800;
+    }
+
+    border: none;
+
+    font-weight: bold;
+
+    .image-block {
+
+        font-size: 1.2rem;
+        display: flex;
+
+        cursor: pointer;
+        align-items: center;
+
+    }
+
     justify-content: center;
+
     min-width: 320px;
     max-width: 380px;
     height: auto;
