@@ -1,3 +1,11 @@
+// Permitir preflight OPTIONS para /register-or-login
+router.options('/register-or-login', (req, res) => {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(204);
+});
 // Módulo de usuarios para StoryUp.es
 const express = require('express');
 const router = express.Router();
