@@ -4,20 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowed = [
-            'https://storyup.es',
-            'https://www.storyup.es',
-            'https://story-up-es.vercel.app',
-            'https://story-up-9nhrztg0i-pipo68s-projects.vercel.app'
-        ];
-        const vercelPreview = /^https:\/\/story-up-[^.]+\.vercel\.app$/;
-        if (!origin || allowed.includes(origin) || vercelPreview.test(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('No permitido por CORS'));
-        }
-    },
+    origin: true, // Permitir cualquier origen (solo para pruebas)
     credentials: true
 }));
 
