@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
 
+
 function Login({ onLogin }) {
-    const [nick, setNick] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -10,15 +11,17 @@ function Login({ onLogin }) {
         e.preventDefault();
         setError('');
         try {
-            const API_URL = process.env.REACT_APP_API_URL;
-            const res = await fetch(`${API_URL}/register-or-login`, {
+            const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+            const res = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nick, password })
+                body: JSON.stringify({ email, password })
             });
             const data = await res.json();
             if (res.ok) {
+                localStorage.setItem('storyup_logged', JSON.stringify(data.usuario));
                 onLogin(data.usuario);
+                window.location.href = '/';
             } else {
                 setError(data.error || 'Error de login');
             }
@@ -30,7 +33,7 @@ function Login({ onLogin }) {
     return (
         <form onSubmit={handleSubmit}>
             <h2>Login</h2>
-            <input type="text" placeholder="Nick" value={nick} onChange={e => setNick(e.target.value)} required />
+            <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
             <input type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} required />
             <button type="submit">Entrar</button>
             {error && <p style={{ color: 'red' }}>{error}</p>}
