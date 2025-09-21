@@ -4,13 +4,20 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 app.use(cors({
-    origin: [
-        'https://storyup.es',
-        'https://www.storyup.es',
-        'https://story-up-es.vercel.app', // dominio de producción Vercel
-        'https://story-up-9nhrztg0i-pipo68s-projects.vercel.app', // dominio de preview Vercel
-        /^https:\/\/story-up-[^.]+\.vercel\.app$/ // cualquier preview de Vercel
-    ],
+    origin: function(origin, callback) {
+        const allowed = [
+            'https://storyup.es',
+            'https://www.storyup.es',
+            'https://story-up-es.vercel.app',
+            'https://story-up-9nhrztg0i-pipo68s-projects.vercel.app'
+        ];
+        const vercelPreview = /^https:\/\/story-up-[^.]+\.vercel\.app$/;
+        if (!origin || allowed.includes(origin) || vercelPreview.test(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(express.json());
