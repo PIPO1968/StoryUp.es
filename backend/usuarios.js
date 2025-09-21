@@ -1,3 +1,8 @@
+// Módulo de usuarios para StoryUp.es
+const express = require('express');
+const router = express.Router();
+const pool = require('./db');
+
 // Login o registro instantáneo solo con nick y password
 router.post('/register-or-login', async (req, res) => {
     const { nick, password } = req.body;
@@ -25,10 +30,7 @@ router.post('/register-or-login', async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 });
-// Módulo de usuarios para StoryUp.es
-const express = require('express');
-const router = express.Router();
-const pool = require('./db');
+
 
 
 // Registro de usuario
