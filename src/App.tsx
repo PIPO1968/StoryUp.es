@@ -66,48 +66,39 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                         return;
                     }
                     if (!userById) {
-                        console.log('Usuario no encontrado en tabla users, creando...');
-                        // Crear usuario en tabla si no existe
-                        const nickname = session.user.user_metadata?.username || session.user.email!.split('@')[0];
-                        const userType = session.user.user_metadata?.user_type === 'padre-docente' ? 'padre-docente' : 'usuario';
-                        const newUser = {
-                            id: session.user.id,
-                            email: session.user.email!,
-                            name: nickname,
-                            username: nickname,
-                            user_type: userType
-                        };
-                        let createdUser = null;
-                        let createError = null;
-                        for (let i = 0; i < 3; i++) {
+                        // Solo crear usuario si es un registro nuevo (no en login ni actualización de avatar)
+                        if (session.user.created_at === session.user.updated_at) {
+                            console.log('Usuario no encontrado en tabla users, creando...');
+                            const nickname = session.user.user_metadata?.username || session.user.email!.split('@')[0];
+                            const userType = session.user.user_metadata?.user_type === 'padre-docente' ? 'padre-docente' : 'usuario';
+                            const newUser = {
+                                id: session.user.id,
+                                email: session.user.email!,
+                                name: nickname,
+                                username: nickname,
+                                user_type: userType
+                            };
                             const { data, error } = await supabase
                                 .from('users')
                                 .insert([newUser])
                                 .select('*')
                                 .single();
-                            console.log(`Intento ${i + 1} de inserción en users:`, { data, error });
                             if (data) {
-                                createdUser = data;
-                                break;
+                                console.log('✅ Usuario creado exitosamente:', data.username);
+                                setUser({
+                                    id: data.id,
+                                    email: data.email,
+                                    name: data.name,
+                                    username: data.username,
+                                    userType: data.user_type === 'padre-docente' ? 'padre-docente' : 'usuario',
+                                    avatar: data.avatar,
+                                    bio: data.bio
+                                });
+                            } else {
+                                console.error('❌ Error creando usuario en tabla users:', error);
                             }
-                            if (error) {
-                                createError = error;
-                                await new Promise(res => setTimeout(res, 500));
-                            }
-                        }
-                        if (createdUser) {
-                            console.log('✅ Usuario creado exitosamente:', createdUser.username);
-                            setUser({
-                                id: createdUser.id,
-                                email: createdUser.email,
-                                name: createdUser.name,
-                                username: createdUser.username,
-                                userType: createdUser.user_type === 'padre-docente' ? 'padre-docente' : 'usuario',
-                                avatar: createdUser.avatar,
-                                bio: createdUser.bio
-                            });
                         } else {
-                            console.error('❌ Error creando usuario en tabla users:', createError);
+                            console.log('No se crea usuario, solo login o actualización.');
                         }
                     } else {
                         console.log('✅ Usuario encontrado en BD:', userById.username);
