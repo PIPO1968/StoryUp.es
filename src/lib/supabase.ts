@@ -12,7 +12,7 @@ export interface DatabaseUser {
     email: string
     avatar?: string
     bio?: string
-    user_type: 'user' | 'educator'
+    user_type: 'usuario' | 'padre-docente'
     school?: string
     grade?: string
     followers: number

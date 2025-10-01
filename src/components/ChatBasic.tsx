@@ -50,7 +50,7 @@ function ChatBasic({ currentUser }) {
         const messageObj = {
             sender_id: currentUser.id,
             receiver_id: selectedUser.id,
-            text: newMessage.trim(),
+            content: newMessage.trim(), // Cambiado de 'text' a 'content'
             timestamp: new Date().toISOString(),
         };
         const { error } = await supabase.from('chat_messages').insert(messageObj);
@@ -87,7 +87,7 @@ function ChatBasic({ currentUser }) {
                             messages.map((msg, idx) => (
                                 <div key={idx} style={{ marginBottom: 8, textAlign: msg.sender_id === currentUser.id ? 'right' : 'left' }}>
                                     <span style={{ background: msg.sender_id === currentUser.id ? '#dbeafe' : '#fef3c7', padding: '4px 8px', borderRadius: 6 }}>
-                                        {msg.text}
+                                        {msg.content}
                                     </span>
                                     <div style={{ fontSize: 10, color: '#888' }}>{new Date(msg.timestamp).toLocaleString()}</div>
                                 </div>
