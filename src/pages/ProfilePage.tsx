@@ -147,6 +147,21 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
+                {/* Bloque de usuarios totales y por tipo */}
+                <div className="flex gap-8 mb-8">
+                    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+                        <span className="text-2xl font-bold text-blue-600">{usersList.length}</span>
+                        <span className="text-gray-600">Usuarios totales</span>
+                    </div>
+                    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+                        <span className="text-xl font-bold text-green-700">{usersList.filter(u => u.userType === 'padre-docente').length}</span>
+                        <span className="text-gray-600">Padres/Docentes</span>
+                    </div>
+                    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+                        <span className="text-xl font-bold text-blue-700">{usersList.filter(u => u.userType === 'usuario').length}</span>
+                        <span className="text-gray-600">Usuarios</span>
+                    </div>
+                </div>
                 {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* Editar perfil - 3/5 */}
