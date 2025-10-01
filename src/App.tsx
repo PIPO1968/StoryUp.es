@@ -35,37 +35,30 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Verificar sesión existente en Supabase
+        // Verificar sesión existente en Supabase y forzar inserción si no existe
         const checkSession = async () => {
             console.log('🔍 Verificando sesión en Supabase...')
-
             try {
                 const { data: { session }, error } = await supabase.auth.getSession()
-
                 if (error) {
                     console.error('Error obteniendo sesión:', error)
-                    console.log('❌ Error en checkSession - estableciendo loading: false')
                     setLoading(false)
                     return
                 }
-
                 if (session?.user) {
                     console.log('✅ Sesión encontrada en Supabase:', session.user.email)
-
                     // Buscar usuario por id de sesión en la tabla users
-                    const { data: userById, error: userIdError } = await supabase
+                    let { data: userById, error: userIdError } = await supabase
                         .from('users')
                         .select('*')
                         .eq('id', session.user.id)
                         .single();
-
                     if (userIdError && userIdError.code !== 'PGRST116') {
                         console.error('Error consultando usuario por id:', userIdError);
                         setUser(null);
                         setLoading(false);
                         return;
                     }
-
                     if (!userById) {
                         console.log('Usuario no encontrado en tabla users, creando...');
                         // Crear usuario en tabla si no existe
@@ -78,15 +71,25 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             username: nickname,
                             user_type: userType
                         };
-                        const { data: createdUser, error: createError } = await supabase
-                            .from('users')
-                            .insert([newUser])
-                            .select()
-                            .single();
-                        if (createError) {
-                            console.error('Error creando usuario:', createError);
-                            console.log('❌ Error creando usuario - estableciendo loading: false');
-                        } else {
+                        // Intentar crear usuario hasta que exista en la tabla
+                        let createdUser = null;
+                        let createError = null;
+                        for (let i = 0; i < 3; i++) {
+                            const { data, error } = await supabase
+                                .from('users')
+                                .insert([newUser])
+                                .select()
+                                .single();
+                            if (data) {
+                                createdUser = data;
+                                break;
+                            }
+                            if (error) {
+                                createError = error;
+                                await new Promise(res => setTimeout(res, 500));
+                            }
+                        }
+                        if (createdUser) {
                             console.log('✅ Usuario creado exitosamente:', createdUser.username);
                             setUser({
                                 id: createdUser.id,
@@ -97,6 +100,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                                 avatar: createdUser.avatar,
                                 bio: createdUser.bio
                             });
+                        } else {
+                            console.error('Error creando usuario:', createError);
                         }
                     } else {
                         console.log('✅ Usuario encontrado en BD:', userById.username);
@@ -108,11 +113,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             } catch (error) {
                 console.error('❌ Error verificando sesión:', error)
             }
-
-            console.log('✅ checkSession completado - estableciendo loading: false')
             setLoading(false)
         }
-
         checkSession()
 
         // Escuchar cambios de autenticación
