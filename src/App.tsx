@@ -69,13 +69,14 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     if (!userById) {
                         console.log('Usuario no encontrado en tabla users, creando...');
                         // Crear usuario en tabla si no existe
-                        const nickname = session.user.user_metadata?.username || '';
+                        const nickname = session.user.user_metadata?.username || session.user.email!.split('@')[0];
+                        const userType = session.user.user_metadata?.user_type === 'padre-docente' ? 'padre-docente' : 'usuario';
                         const newUser = {
                             id: session.user.id,
                             email: session.user.email!,
                             name: nickname,
                             username: nickname,
-                            user_type: session.user.user_metadata?.user_type || 'usuario'
+                            user_type: userType
                         };
                         const { data: createdUser, error: createError } = await supabase
                             .from('users')
@@ -87,7 +88,15 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             console.log('❌ Error creando usuario - estableciendo loading: false');
                         } else {
                             console.log('✅ Usuario creado exitosamente:', createdUser.username);
-                            setUser(createdUser);
+                            setUser({
+                                id: createdUser.id,
+                                email: createdUser.email,
+                                name: createdUser.name,
+                                username: createdUser.username,
+                                userType: createdUser.user_type === 'padre-docente' ? 'padre-docente' : 'usuario',
+                                avatar: createdUser.avatar,
+                                bio: createdUser.bio
+                            });
                         }
                     } else {
                         console.log('✅ Usuario encontrado en BD:', userById.username);
