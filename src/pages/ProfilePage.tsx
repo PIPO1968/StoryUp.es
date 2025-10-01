@@ -218,16 +218,17 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             </CardContent>
                         </Card>
                     </div>
-                    {/* Trofeos y Logros - 2/5 */}
-                    <div className="md:w-2/5 w-full flex flex-col gap-6">
+                    {/* Trofeos y Logros juntos - 2/5 */}
+                    <div className="md:w-2/5 w-full">
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
                                     <Trophy className="h-5 w-5" />
-                                    Trofeos ({userTrophies.length})
+                                    Trofeos y Logros
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
+                                {/* Trofeos */}
                                 {userTrophies.length === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
                                         <Trophy className="mx-auto h-12 w-12 mb-4 text-gray-300" />
@@ -245,20 +246,16 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         ))}
                                     </div>
                                 )}
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Users className="h-5 w-5" />
-                                    Logros
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                {/* Aquí puedes mostrar logros personalizados si existen */}
-                                <div className="text-center py-8 text-gray-500">
-                                    <Users className="mx-auto h-12 w-12 mb-4 text-gray-300" />
-                                    <p>Aún no tienes logros especiales</p>
+                                {/* Logros */}
+                                <div className="mt-8">
+                                    <CardTitle className="flex items-center gap-2 text-base">
+                                        <Users className="h-5 w-5" />
+                                        Logros
+                                    </CardTitle>
+                                    <div className="text-center py-8 text-gray-500">
+                                        <Users className="mx-auto h-12 w-12 mb-4 text-gray-300" />
+                                        <p>Aún no tienes logros especiales</p>
+                                    </div>
                                 </div>
                             </CardContent>
                         </Card>
