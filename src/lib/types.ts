@@ -1,0 +1,127 @@
+export interface User {
+    id: string;
+    username: string;
+    name: string;
+    email: string;
+    avatar: string;
+    bio: string;
+    school?: string;
+    grade?: string;
+    userType: 'user' | 'educator'; // Solo dos tipos: usuario y educador (padre/docente)
+    followers: number;
+    following: number;
+    trophies: string[];
+    favorites?: string[]; // IDs de usuarios favoritos (para educadores)
+    friends?: string[]; // IDs de amigos (para educadores)
+    bannedWords?: string[]; // Palabras prohibidas (para educadores)
+    isVerified?: boolean;
+    permissions?: {
+        canModerate: boolean;
+        canCreateContests: boolean;
+        canCreateNews: boolean;
+        canBanUsers: boolean;
+    };
+}
+
+export interface Story {
+    id: string;
+    userId: string;
+    user: User;
+    content: string;
+    image?: string;
+    likes: number;
+    comments: Comment[];
+    timestamp: Date;
+    isLiked: boolean;
+    isNews?: boolean; // Para noticias creadas por educadores
+    visibility: 'public' | 'friends' | 'private';
+}
+
+export interface Comment {
+    id: string;
+    userId: string;
+    user: User;
+    content: string;
+    timestamp: Date;
+}
+
+export interface Trophy {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    color: string;
+    earnedAt: Date;
+    category?: 'academic' | 'social' | 'participation' | 'behavior';
+}
+
+export interface Contest {
+    id: string;
+    creatorId: string;
+    creator: User;
+    title: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+    winner?: string; // ID del ganador
+    isActive: boolean;
+    canSelectWinner: boolean; // Se activa una semana después del fin
+}
+
+export interface News {
+    id: string;
+    creatorId: string;
+    creator: User;
+    title: string;
+    content: string;
+    timestamp: Date;
+}
+
+export interface ChatMessage {
+    id: string;
+    senderId: string;
+    receiverId: string;
+    content: string;
+    timestamp: Date;
+    isRead: boolean;
+    formatting?: {
+        bold?: boolean;
+        underline?: boolean;
+        image?: string;
+        youtubeUrl?: string;
+    };
+}
+
+export interface Chat {
+    id: string;
+    participants: User[];
+    messages: ChatMessage[];
+    lastMessage: ChatMessage;
+    createdAt: Date;
+    isPrivate: boolean; // Solo visible para los participantes
+}export interface StatisticsData {
+    totalStories: number;
+    totalLikes: number;
+    totalComments: number;
+    totalTrophies: number;
+    weeklyGrowth: {
+        stories: number;
+        likes: number;
+        comments: number;
+    };
+    monthlyStats: Array<{
+        month: string;
+        stories: number;
+        likes: number;
+    }>;
+}
+
+export interface CreateStoryData {
+    content: string;
+    image?: File;
+}
+
+export interface LoginCredentials {
+    email: string;
+    password: string;
+}
