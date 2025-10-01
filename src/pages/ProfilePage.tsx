@@ -155,11 +155,57 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             <CardContent className="p-6">
                                 <div className="flex flex-col items-center md:items-start">
                                     <Avatar className="w-24 h-24">
-                                        <AvatarImage src={user.avatar} alt={user.name} />
+                                        <AvatarImage src={avatarUrl || user.avatar} alt={user.name} />
                                         <AvatarFallback className="text-lg">
                                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                         </AvatarFallback>
                                     </Avatar>
+                                    {/* Buscador de imágenes para avatar */}
+                                    <div className="mt-4 w-full flex flex-col items-center">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            ref={fileInputRef}
+                                            style={{ display: 'none' }}
+                                            onChange={async (e) => {
+                                                const file = e.target.files?.[0];
+                                                if (!file) return;
+                                                setUploading(true);
+                                                // Subir imagen a Supabase Storage
+                                                const fileExt = file.name.split('.').pop();
+                                                const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+                                                const { data, error } = await supabase.storage
+                                                    .from('avatars')
+                                                    .upload(fileName, file, {
+                                                        cacheControl: '3600',
+                                                        upsert: true
+                                                    });
+                                                if (error) {
+                                                    alert('Error subiendo imagen: ' + error.message);
+                                                    setUploading(false);
+                                                    return;
+                                                }
+                                                // Obtener URL pública
+                                                const { data: urlData } = supabase.storage
+                                                    .from('avatars')
+                                                    .getPublicUrl(fileName);
+                                                if (urlData?.publicUrl) {
+                                                    setAvatarUrl(urlData.publicUrl);
+                                                    await updateProfile({ avatar: urlData.publicUrl });
+                                                }
+                                                setUploading(false);
+                                            }}
+                                        />
+                                        <Button
+                                            variant="outline"
+                                            className="mt-2"
+                                            disabled={uploading}
+                                            onClick={() => fileInputRef.current?.click()}
+                                        >
+                                            <Upload className="mr-2 h-4 w-4" />
+                                            {uploading ? 'Subiendo...' : 'Cambiar avatar'}
+                                        </Button>
+                                    </div>
                                     <div className="mt-6 w-full">
                                         <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
                                         <p className="text-gray-600">@{user.username}</p>

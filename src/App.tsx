@@ -1,3 +1,9 @@
+// Declaración global para evitar error de tipo con window.supabaseUsersError
+declare global {
+    interface Window {
+        supabaseUsersError?: string;
+    }
+}
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { createClient } from '@supabase/supabase-js'
@@ -848,13 +854,22 @@ function HomePage() {
                     });
                     setAllUsers(data);
                     console.log('Conteo de usuarios:', data.length);
+                    if (typeof window !== 'undefined') {
+                        window.supabaseUsersError = '';
+                    }
                 } else {
                     setAllUsers([]);
                     console.log('No se obtuvo un array de usuarios o hubo error.');
+                    if (typeof window !== 'undefined') {
+                        window.supabaseUsersError = error ? (error.message || JSON.stringify(error)) : 'No se obtuvo un array de usuarios.';
+                    }
                 }
             } catch (error) {
                 console.error('Error en loadUsers:', error);
                 setAllUsers([]);
+                if (typeof window !== 'undefined') {
+                    window.supabaseUsersError = error?.message || JSON.stringify(error);
+                }
             }
         }
         loadUsers()
@@ -1732,6 +1747,12 @@ function HomePage() {
                                 <span>🟢 Online: <strong>{user ? 1 : 0}</strong></span>
                             </div>
                         </div>
+                        {/* DEBUG: Mostrar error de Supabase si existe */}
+                        {typeof window !== 'undefined' && window.supabaseUsersError && (
+                            <div style={{ color: 'red', fontSize: '0.85rem', marginLeft: '1rem' }}>
+                                Error Supabase: {window.supabaseUsersError}
+                            </div>
+                        )}
 
                         {/* CENTRO: Fecha y Hora */}
                         <div style={{
