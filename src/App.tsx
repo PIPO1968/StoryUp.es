@@ -839,10 +839,18 @@ function HomePage() {
                 const { data, error } = await supabase
                     .from('users')
                     .select('*')
+                console.log('Respuesta completa de Supabase:', { data, error });
                 if (!error) {
-                    console.log('Usuarios obtenidos de Supabase:', data);
-                    setAllUsers(Array.isArray(data) ? data : []);
-                    console.log('Conteo de usuarios:', Array.isArray(data) ? data.length : 0);
+                    if (Array.isArray(data)) {
+                        data.forEach((u, i) => {
+                            console.log(`Usuario[${i}]:`, u);
+                        });
+                        setAllUsers(data);
+                        console.log('Conteo de usuarios:', data.length);
+                    } else {
+                        setAllUsers([]);
+                        console.log('No se obtuvo un array de usuarios.');
+                    }
                 } else {
                     console.error('Error obteniendo usuarios:', error);
                     setAllUsers([]);
