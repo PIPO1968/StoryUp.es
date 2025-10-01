@@ -840,12 +840,16 @@ function HomePage() {
                     .from('users')
                     .select('*')
                 if (!error) {
-                    setAllUsers(Array.isArray(data) ? data : [])
+                    console.log('Usuarios obtenidos de Supabase:', data);
+                    setAllUsers(Array.isArray(data) ? data : []);
+                    console.log('Conteo de usuarios:', Array.isArray(data) ? data.length : 0);
                 } else {
-                    setAllUsers([])
+                    console.error('Error obteniendo usuarios:', error);
+                    setAllUsers([]);
                 }
             } catch (error) {
-                setAllUsers([])
+                console.error('Error en loadUsers:', error);
+                setAllUsers([]);
             }
         }
         loadUsers()
