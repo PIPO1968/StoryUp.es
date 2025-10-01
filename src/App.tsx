@@ -79,7 +79,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                                 .insert([newUser])
                                 .select()
                                 .single();
-                            console.log(`Intento ${i+1} de inserción en users:`, { data, error });
+                            console.log(`Intento ${i + 1} de inserción en users:`, { data, error });
                             if (data) {
                                 createdUser = data;
                                 break;

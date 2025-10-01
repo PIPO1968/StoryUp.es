@@ -33,6 +33,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     });
     const [userType, setUserType] = useState(user?.userType || 'usuario');
     const [fullUser, setFullUser] = useState<User | null>(user);
+    const [usersList, setUsersList] = useState<User[]>([]);
     const userTrophies: any[] = [];
     const joinDate = new Date();
 
@@ -45,6 +46,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         'https://kvvsbomvoxvvunxkkjyf.supabase.co',
                         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
                     );
+                    // Consulta usuario actual
                     const { data, error } = await supabase
                         .from('users')
                         .select('*')
@@ -58,6 +60,16 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             bio: data.bio || '',
                             username: data.username || ''
                         });
+                    }
+                    // Consulta todos los usuarios
+                    const { data: allUsers, error: errorAll } = await supabase
+                        .from('users')
+                        .select('*');
+                    if (allUsers) {
+                        setUsersList(allUsers);
+                    }
+                    if (errorAll) {
+                        console.error('Error obteniendo listado de usuarios:', errorAll);
                     }
                 } catch (err) {
                     console.error('Error recargando datos de usuario:', err);
@@ -129,6 +141,35 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
             <div className="max-w-7xl mx-auto space-y-8">
+                {/* Bloque de usuarios totales y tipos */}
+                <div className="mb-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Users className="h-5 w-5" />
+                                Usuarios registrados
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center">
+                                <div>
+                                    <span className="text-2xl font-bold">{usersList.length}</span>
+                                    <span className="ml-2 text-gray-600">usuarios</span>
+                                </div>
+                                <div className="flex gap-4">
+                                    {['usuario', 'padre-docente'].map(type => {
+                                        const count = usersList.filter(u => u.userType === type).length;
+                                        return (
+                                            <Badge key={type} className={getUserTypeColor(type)}>
+                                                {getUserTypeLabel(type)}: {count}
+                                            </Badge>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
                     <Button variant="ghost" onClick={onBack}>
