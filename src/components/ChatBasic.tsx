@@ -55,14 +55,20 @@ function ChatBasic({ currentUser }) {
                 'postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'chat_messages' },
                 (payload) => {
-                    console.log('Nuevo mensaje recibido:', payload); // Depuración
                     const newMessage = payload.new;
+                    console.log('Nuevo mensaje recibido:', newMessage); // Depuración
                     if (
                         (newMessage.sender_id === currentUser.id && newMessage.receiver_id === selectedUser?.id) ||
                         (newMessage.sender_id === selectedUser?.id && newMessage.receiver_id === currentUser.id)
                     ) {
-                        console.log('Mensaje válido para agregar:', newMessage); // Depuración
-                        setMessages((prev) => [...prev, newMessage]);
+                        setMessages((prev) => {
+                            // Evitar duplicados
+                            if (!prev.find((msg) => msg.id === newMessage.id)) {
+                                console.log('Mensaje válido para agregar:', newMessage); // Depuración
+                                return [...prev, newMessage];
+                            }
+                            return prev;
+                        });
                     }
                 }
             )
