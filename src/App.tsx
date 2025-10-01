@@ -85,15 +85,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                                 .single();
                             if (data) {
                                 console.log('✅ Usuario creado exitosamente:', data.username);
-                                setUser({
-                                    id: data.id,
-                                    email: data.email,
-                                    name: data.name,
-                                    username: data.username,
-                                    userType: data.user_type === 'padre-docente' ? 'padre-docente' : 'usuario',
-                                    avatar: data.avatar,
-                                    bio: data.bio
-                                });
+                                setUser(data);
                             } else {
                                 console.error('❌ Error creando usuario en tabla users:', error);
                             }
@@ -161,17 +153,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             setUser(sessionUser);
                         } else {
                             console.log('✅ Usuario encontrado en BD:', userData.username)
-                            // Mapear campos de BD a interfaz TypeScript
-                            const mappedUser = {
-                                id: userData.id,
-                                email: userData.email,
-                                name: userData.name,
-                                username: userData.username,
-                                userType: (userData.user_type === 'usuario' ? 'usuario' : userData.user_type === 'padre-docente' ? 'padre-docente' : 'usuario') as 'usuario' | 'padre-docente',
-                                avatar: userData.avatar,
-                                bio: userData.bio
-                            }
-                            setUser(mappedUser)
+                            // Usar el usuario tal como está en la base de datos
+                            setUser(userData)
                         }
                     } catch (timeoutError) {
                         console.warn('⚠️ Timeout en consulta BD, usando datos de sesión:', timeoutError.message)
