@@ -1,32 +1,9 @@
-export interface User {
-    id: string;
-    username: string;
-    name: string;
-    email: string;
-    avatar: string;
-    bio: string;
-    school?: string;
-    grade?: string;
-    userType: 'user' | 'educator'; // Solo dos tipos: usuario y educador (padre/docente)
-    followers: number;
-    following: number;
-    trophies: string[];
-    favorites?: string[]; // IDs de usuarios favoritos (para educadores)
-    friends?: string[]; // IDs de amigos (para educadores)
-    bannedWords?: string[]; // Palabras prohibidas (para educadores)
-    isVerified?: boolean;
-    permissions?: {
-        canModerate: boolean;
-        canCreateContests: boolean;
-        canCreateNews: boolean;
-        canBanUsers: boolean;
-    };
-}
+import { DatabaseUser } from './supabase';
 
 export interface Story {
     id: string;
     userId: string;
-    user: User;
+    user: DatabaseUser;
     content: string;
     image?: string;
     likes: number;
@@ -40,7 +17,7 @@ export interface Story {
 export interface Comment {
     id: string;
     userId: string;
-    user: User;
+    user: DatabaseUser;
     content: string;
     timestamp: Date;
 }
@@ -58,7 +35,7 @@ export interface Trophy {
 export interface Contest {
     id: string;
     creatorId: string;
-    creator: User;
+    creator: DatabaseUser;
     title: string;
     description: string;
     startDate: Date;
@@ -71,7 +48,7 @@ export interface Contest {
 export interface News {
     id: string;
     creatorId: string;
-    creator: User;
+    creator: DatabaseUser;
     title: string;
     content: string;
     timestamp: Date;
@@ -94,7 +71,7 @@ export interface ChatMessage {
 
 export interface Chat {
     id: string;
-    participants: User[];
+    participants: DatabaseUser[];
     messages: ChatMessage[];
     lastMessage: ChatMessage;
     createdAt: Date;

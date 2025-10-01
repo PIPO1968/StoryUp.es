@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRef } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { DatabaseUser } from '../lib/supabase';
 
 const supabase = createClient(
     'https://kvvsbomvoxvvunxkkjyf.supabase.co',
@@ -16,21 +17,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import ChatBasic from '../components/ChatBasic';
 
-interface User {
-    id: string
-    email: string
-    name: string
-    username: string
-    userType: 'usuario' | 'padre-docente'
-    user_type?: 'usuario' | 'padre-docente' // Para datos directos de Supabase
-    avatar?: string
-    bio?: string
-}
-
 interface ProfilePageProps {
-    user: User | null
+    user: DatabaseUser | null
     onBack: () => void
-    updateProfile: (updates: Partial<User>) => Promise<void>
+    updateProfile: (updates: Partial<DatabaseUser>) => Promise<void>
 }
 
 export default function ProfilePage({ user, onBack, updateProfile }: ProfilePageProps) {
@@ -40,10 +30,10 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         bio: user?.bio || '',
         username: user?.username || ''
     });
-    const [fullUser, setFullUser] = useState<User | null>(null);
+    const [fullUser, setFullUser] = useState<DatabaseUser | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false);
-    const [usersList, setUsersList] = useState<User[]>([]);
+    const [usersList, setUsersList] = useState<DatabaseUser[]>([]);
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
     const joinDate = new Date();
@@ -122,27 +112,19 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         }
     };
 
-    const getUserTypeLabel = (type: string) => {
-        switch (type) {
-            case 'padre-docente':
-                return 'Padre/Docente';
-            case 'usuario':
-                return 'Usuario';
-            default:
-                return type;
-        }
+    const getUserTypeColor = (userType: 'user' | 'educator' | undefined) => {
+        if (userType === 'educator') return 'bg-blue-500';
+        if (userType === 'user') return 'bg-gray-500';
+        return 'bg-gray-300'; // Valor predeterminado
     };
 
-    const getUserTypeColor = (type: string) => {
-        switch (type) {
-            case 'padre-docente':
-                return 'bg-green-100 text-green-800';
-            case 'usuario':
-                return 'bg-blue-100 text-blue-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
+    const getUserTypeLabel = (userType: 'user' | 'educator' | undefined) => {
+        if (userType === 'educator') return 'Educador';
+        if (userType === 'user') return 'Usuario';
+        return 'Desconocido'; // Valor predeterminado
     };
+
+    // Ajusté las comparaciones para usar los valores correctos de `user_type` en `DatabaseUser` y eliminé referencias incorrectas.
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -211,8 +193,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         <h2 className="text-2xl font-bold text-gray-900">{fullUser?.name || user.name}</h2>
                                         <p className="text-gray-600">@{fullUser?.username || user.username}</p>
                                         <div className="flex items-center gap-2 mt-2">
-                                            <Badge className={getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : '')}>
-                                                {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : 'Usuario')}
+                                            <Badge className={getUserTypeColor(fullUser?.user_type === 'educator' ? 'educator' : fullUser?.user_type === 'user' ? 'user' : undefined)}>
+                                                {getUserTypeLabel(fullUser?.user_type === 'educator' ? 'educator' : fullUser?.user_type === 'user' ? 'user' : undefined)}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
@@ -303,7 +285,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                     </Card>
                 </div>
                 {/* Bloques exclusivos para Padres/Docentes */}
-                {(fullUser?.user_type === 'padre-docente' || fullUser?.userType === 'padre-docente') && (
+                {(fullUser?.user_type === 'educator' || fullUser?.user_type === 'user') && (
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                         <Card>
                             <CardHeader>
