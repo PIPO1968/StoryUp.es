@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { ArrowLeft, Edit, Calendar, Trophy, Users, BookOpen, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +36,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     const [fullUser, setFullUser] = useState<User | null>(user);
     const [usersList, setUsersList] = useState<User[]>([]);
     const userTrophies: any[] = [];
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const joinDate = new Date();
 
     useEffect(() => {
@@ -159,7 +161,26 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <Button variant="outline" size="sm" className="mt-3">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        ref={fileInputRef}
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                // Aquí podrías subir la imagen a Supabase Storage o procesarla
+                                                console.log('Imagen seleccionada:', file.name);
+                                                // Por ahora solo mostramos el nombre en consola
+                                            }
+                                        }}
+                                    />
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-3"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
                                         <Upload className="mr-2 h-4 w-4" />
                                         Cambiar foto
                                     </Button>
