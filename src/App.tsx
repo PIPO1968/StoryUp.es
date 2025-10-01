@@ -52,14 +52,20 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (session?.user) {
                     console.log('✅ Sesión encontrada en Supabase:', session.user.email)
 
-                    // Buscar datos completos del usuario en la tabla users
-                    const { data: userData, error: userError } = await supabase
+                    // Buscar todos los usuarios con ese email
+                    const { data: userList, error: userError } = await supabase
                         .from('users')
                         .select('*')
                         .eq('email', session.user.email)
-                        .single()
 
-                    if (userError || !userData) {
+                    if (userError) {
+                        console.error('Error consultando usuarios:', userError)
+                        setUser(null)
+                        setLoading(false)
+                        return
+                    }
+
+                    if (!userList || userList.length === 0) {
                         console.log('Usuario no encontrado en tabla users, creando...')
                         // Crear usuario en tabla si no existe
                         const newUser = {
@@ -84,8 +90,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             setUser(createdUser)
                         }
                     } else {
-                        console.log('✅ Usuario encontrado en BD:', userData.username)
-                        setUser(userData)
+                        // Si hay más de un usuario, buscar el que coincida con el id de sesión
+                        const foundUser = userList.find(u => u.id === session.user.id) || userList[0];
+                        console.log('✅ Usuario encontrado en BD:', foundUser.username)
+                        setUser(foundUser)
                     }
                 } else {
                     console.log('ℹ️ No hay sesión activa')
@@ -243,21 +251,35 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             if (data.user) {
                 console.log('✅ Registro exitoso:', data.user.email)
 
-                // Crear entrada en tabla users
-                const newUser = {
-                    id: data.user.id,
-                    email: data.user.email!,
-                    name: username,
-                    username: username,
-                    user_type: userType
+                // Verificar si ya existe un usuario con ese email en la tabla users
+                const { data: existingUsers, error: selectError } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('email', data.user.email)
+
+                if (selectError) {
+                    console.error('Error consultando usuarios existentes:', selectError)
                 }
 
-                const { error: insertError } = await supabase
-                    .from('users')
-                    .insert([newUser])
+                if (!existingUsers || existingUsers.length === 0) {
+                    // Crear entrada en tabla users solo si no existe
+                    const newUser = {
+                        id: data.user.id,
+                        email: data.user.email!,
+                        name: username,
+                        username: username,
+                        user_type: userType
+                    }
 
-                if (insertError) {
-                    console.error('Error creando usuario en tabla:', insertError)
+                    const { error: insertError } = await supabase
+                        .from('users')
+                        .insert([newUser])
+
+                    if (insertError) {
+                        console.error('Error creando usuario en tabla:', insertError)
+                    }
+                } else {
+                    console.log('El usuario ya existe en la tabla users, no se inserta duplicado.')
                 }
             }
         } catch (error) {
