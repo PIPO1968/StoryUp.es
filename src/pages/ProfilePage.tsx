@@ -34,6 +34,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     });
     const [userType, setUserType] = useState(user?.userType || 'usuario');
     const [fullUser, setFullUser] = useState<User | null>(user);
+        const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatar || '');
     const [usersList, setUsersList] = useState<User[]>([]);
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -156,7 +157,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             <CardContent className="p-6">
                                 <div className="flex flex-col items-center md:items-start">
                                     <Avatar className="w-24 h-24">
-                                        <AvatarImage src={user.avatar} alt={user.name} />
+                                        <AvatarImage src={avatarUrl || user.avatar} alt={user.name} />
                                         <AvatarFallback className="text-lg">
                                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                         </AvatarFallback>
@@ -168,10 +169,46 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         ref={fileInputRef}
                                         onChange={async (e) => {
                                             const file = e.target.files?.[0];
-                                            if (file) {
-                                                // Aquí podrías subir la imagen a Supabase Storage o procesarla
-                                                console.log('Imagen seleccionada:', file.name);
-                                                // Por ahora solo mostramos el nombre en consola
+                                            if (file && user) {
+                                                try {
+                                                    const { createClient } = await import('@supabase/supabase-js');
+                                                    const supabase = createClient(
+                                                        'https://kvvsbomvoxvvunxkkjyf.supabase.co',
+                                                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
+                                                    );
+                                                    // Subir imagen a Supabase Storage
+                                                    const fileExt = file.name.split('.').pop();
+                                                    const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+                                                    const { data: uploadData, error: uploadError } = await supabase.storage
+                                                        .from('avatars')
+                                                        .upload(fileName, file, {
+                                                            cacheControl: '3600',
+                                                            upsert: true
+                                                        });
+                                                    if (uploadError) {
+                                                        console.error('Error subiendo imagen:', uploadError.message);
+                                                        return;
+                                                    }
+                                                    // Obtener URL pública
+                                                    const { data: publicUrlData } = supabase.storage
+                                                        .from('avatars')
+                                                        .getPublicUrl(fileName);
+                                                    const url = publicUrlData?.publicUrl;
+                                                    if (url) {
+                                                        // Actualizar avatar en la base de datos
+                                                        const { error: updateError } = await supabase
+                                                            .from('users')
+                                                            .update({ avatar: url })
+                                                            .eq('id', user.id);
+                                                        if (updateError) {
+                                                            console.error('Error actualizando avatar en DB:', updateError.message);
+                                                        } else {
+                                                            setAvatarUrl(url);
+                                                        }
+                                                    }
+                                                } catch (err) {
+                                                    console.error('Error procesando imagen:', err);
+                                                }
                                             }
                                         }}
                                     />
