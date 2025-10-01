@@ -34,7 +34,7 @@ function ChatBasic({ currentUser }) {
                 .from('chat_messages')
                 .select('*')
                 .or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${selectedUser.id}),(sender_id.eq.${selectedUser.id},receiver_id.eq.${currentUser.id})`)
-                .order('timestamp', { ascending: true });
+                .order('created_at', { ascending: true });
             if (data) {
                 setMessages(data);
             }
@@ -43,6 +43,26 @@ function ChatBasic({ currentUser }) {
         fetchMessages();
     }, [selectedUser, currentUser]);
 
+    // Sincronización en tiempo real
+    useEffect(() => {
+        const subscription = supabase
+            .from('chat_messages')
+            .on('INSERT', payload => {
+                const newMessage = payload.new;
+                if (
+                    (newMessage.sender_id === currentUser.id && newMessage.receiver_id === selectedUser?.id) ||
+                    (newMessage.sender_id === selectedUser?.id && newMessage.receiver_id === currentUser.id)
+                ) {
+                    setMessages(prev => [...prev, newMessage]);
+                }
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeSubscription(subscription);
+        };
+    }, [currentUser, selectedUser]);
+
     // Enviar mensaje
     async function sendMessage() {
         setErrorMsg('');
@@ -50,8 +70,8 @@ function ChatBasic({ currentUser }) {
         const messageObj = {
             sender_id: currentUser.id,
             receiver_id: selectedUser.id,
-            content: newMessage.trim(), // Cambiado de 'text' a 'content'
-            timestamp: new Date().toISOString(),
+            content: newMessage.trim(),
+            created_at: new Date().toISOString(), // Cambiado de 'timestamp' a 'created_at'
         };
         const { error } = await supabase.from('chat_messages').insert(messageObj);
         if (!error) {
@@ -89,7 +109,7 @@ function ChatBasic({ currentUser }) {
                                     <span style={{ background: msg.sender_id === currentUser.id ? '#dbeafe' : '#fef3c7', padding: '4px 8px', borderRadius: 6 }}>
                                         {msg.content}
                                     </span>
-                                    <div style={{ fontSize: 10, color: '#888' }}>{new Date(msg.timestamp).toLocaleString()}</div>
+                                    <div style={{ fontSize: 10, color: '#888' }}>{new Date(msg.created_at).toLocaleString()}</div>
                                 </div>
                             ))
                         )

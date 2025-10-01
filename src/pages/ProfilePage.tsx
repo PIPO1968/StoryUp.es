@@ -42,13 +42,14 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         async function fetchUserData() {
             if (user) {
                 try {
-                    // Consulta usuario actual SIEMPRE desde Supabase
+                    // Consulta usuario actual desde Supabase
                     const { data, error } = await supabase
                         .from('users')
                         .select('*')
                         .eq('id', user.id)
                         .single();
                     if (data) {
+                        console.log('Datos del usuario obtenidos de Supabase:', data); // Depuración
                         setFullUser(data);
                         setAvatarUrl(data.avatar || '');
                         setEditForm({
@@ -56,6 +57,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             bio: data.bio || '',
                             username: data.username || ''
                         });
+                        // Almacenar en caché local
+                        localStorage.setItem('fullUser', JSON.stringify(data));
                     }
                     // Consulta todos los usuarios
                     const { data: allUsers, error: errorAll } = await supabase
@@ -69,6 +72,19 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                     }
                 } catch (err) {
                     console.error('Error recargando datos de usuario:', err);
+                }
+            } else {
+                // Cargar desde caché local si está disponible
+                const cachedUser = localStorage.getItem('fullUser');
+                if (cachedUser) {
+                    const parsedUser = JSON.parse(cachedUser);
+                    setFullUser(parsedUser);
+                    setAvatarUrl(parsedUser.avatar || '');
+                    setEditForm({
+                        name: parsedUser.name || '',
+                        bio: parsedUser.bio || '',
+                        username: parsedUser.username || ''
+                    });
                 }
             }
         }
