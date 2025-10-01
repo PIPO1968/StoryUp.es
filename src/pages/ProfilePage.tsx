@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRef } from 'react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+    'https://kvvsbomvoxvvunxkkjyf.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
+);
 import { ArrowLeft, Edit, Calendar, Trophy, Users, BookOpen, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,11 +51,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         async function fetchUserData() {
             if (user) {
                 try {
-                    const { createClient } = await import('@supabase/supabase-js');
-                    const supabase = createClient(
-                        'https://kvvsbomvoxvvunxkkjyf.supabase.co',
-                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
-                    );
                     // Consulta usuario actual
                     const { data, error } = await supabase
                         .from('users')
@@ -175,11 +176,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                 setUploading(true);
                                                 try {
                                                     console.log('[Avatar] Iniciando subida de imagen:', file.name);
-                                                    const { createClient } = await import('@supabase/supabase-js');
-                                                    const supabase = createClient(
-                                                        'https://kvvsbomvoxvvunxkkjyf.supabase.co',
-                                                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
-                                                    );
                                                     // Subir imagen a Supabase Storage
                                                     const fileExt = file.name.split('.').pop();
                                                     const fileName = `${user.id}_${Date.now()}.${fileExt}`;
