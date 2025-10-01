@@ -33,7 +33,7 @@ function ChatBasic({ currentUser }) {
             const { data, error } = await supabase
                 .from('chat_messages')
                 .select('*')
-                .or(`(from.eq.${currentUser.id},to.eq.${selectedUser.id}),(from.eq.${selectedUser.id},to.eq.${currentUser.id})`)
+                .or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${selectedUser.id}),(sender_id.eq.${selectedUser.id},receiver_id.eq.${currentUser.id})`)
                 .order('timestamp', { ascending: true });
             if (data) {
                 setMessages(data);
@@ -48,8 +48,8 @@ function ChatBasic({ currentUser }) {
         setErrorMsg('');
         if (!newMessage.trim() || !selectedUser) return;
         const messageObj = {
-            from: currentUser.id,
-            to: selectedUser.id,
+            sender_id: currentUser.id,
+            receiver_id: selectedUser.id,
             text: newMessage.trim(),
             timestamp: new Date().toISOString(),
         };
@@ -85,8 +85,8 @@ function ChatBasic({ currentUser }) {
                     {loading ? <div>Cargando mensajes...</div> : (
                         messages.length === 0 ? <div>No hay mensajes aún.</div> : (
                             messages.map((msg, idx) => (
-                                <div key={idx} style={{ marginBottom: 8, textAlign: msg.from === currentUser.id ? 'right' : 'left' }}>
-                                    <span style={{ background: msg.from === currentUser.id ? '#dbeafe' : '#fef3c7', padding: '4px 8px', borderRadius: 6 }}>
+                                <div key={idx} style={{ marginBottom: 8, textAlign: msg.sender_id === currentUser.id ? 'right' : 'left' }}>
+                                    <span style={{ background: msg.sender_id === currentUser.id ? '#dbeafe' : '#fef3c7', padding: '4px 8px', borderRadius: 6 }}>
                                         {msg.text}
                                     </span>
                                     <div style={{ fontSize: 10, color: '#888' }}>{new Date(msg.timestamp).toLocaleString()}</div>
