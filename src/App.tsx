@@ -71,7 +71,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             username: nickname,
                             user_type: userType
                         };
-                        // Intentar crear usuario hasta que exista en la tabla
                         let createdUser = null;
                         let createError = null;
                         for (let i = 0; i < 3; i++) {
@@ -80,6 +79,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                                 .insert([newUser])
                                 .select()
                                 .single();
+                            console.log(`Intento ${i+1} de inserción en users:`, { data, error });
                             if (data) {
                                 createdUser = data;
                                 break;
@@ -101,7 +101,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                                 bio: createdUser.bio
                             });
                         } else {
-                            console.error('Error creando usuario:', createError);
+                            console.error('❌ Error creando usuario en tabla users:', createError);
                         }
                     } else {
                         console.log('✅ Usuario encontrado en BD:', userById.username);
