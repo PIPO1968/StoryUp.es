@@ -112,15 +112,15 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         }
     };
 
-    const getUserTypeColor = (userType: 'user' | 'educator' | undefined) => {
-        if (userType === 'educator') return 'bg-blue-500';
-        if (userType === 'user') return 'bg-gray-500';
+    const getUserTypeColor = (userType: 'usuario' | 'padre-docente' | undefined) => {
+        if (userType === 'padre-docente') return 'bg-blue-500';
+        if (userType === 'usuario') return 'bg-gray-500';
         return 'bg-gray-300'; // Valor predeterminado
     };
 
-    const getUserTypeLabel = (userType: 'user' | 'educator' | undefined) => {
-        if (userType === 'educator') return 'Educador';
-        if (userType === 'user') return 'Usuario';
+    const getUserTypeLabel = (userType: 'usuario' | 'padre-docente' | undefined) => {
+        if (userType === 'padre-docente') return 'Padre/Docente';
+        if (userType === 'usuario') return 'Usuario';
         return 'Desconocido'; // Valor predeterminado
     };
 
@@ -193,8 +193,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         <h2 className="text-2xl font-bold text-gray-900">{fullUser?.name || user.name}</h2>
                                         <p className="text-gray-600">@{fullUser?.username || user.username}</p>
                                         <div className="flex items-center gap-2 mt-2">
-                                            <Badge className={getUserTypeColor(fullUser?.user_type === 'educator' ? 'educator' : fullUser?.user_type === 'user' ? 'user' : undefined)}>
-                                                {getUserTypeLabel(fullUser?.user_type === 'educator' ? 'educator' : fullUser?.user_type === 'user' ? 'user' : undefined)}
+                                            <Badge className={getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}>
+                                                {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
@@ -285,7 +285,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                     </Card>
                 </div>
                 {/* Bloques exclusivos para Padres/Docentes */}
-                {(fullUser?.user_type === 'educator' || fullUser?.user_type === 'user') && (
+                {(fullUser?.user_type === 'padre-docente' || fullUser?.user_type === 'usuario') && (
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                         <Card>
                             <CardHeader>
