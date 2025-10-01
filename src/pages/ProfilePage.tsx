@@ -39,6 +39,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     const joinDate = new Date();
 
     useEffect(() => {
+        console.log('Valor de user:', user); // Depuración
         async function fetchUserData() {
             if (user) {
                 try {
@@ -65,6 +66,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         .from('users')
                         .select('*');
                     if (allUsers) {
+                        console.log('Lista de usuarios obtenida:', allUsers); // Depuración
                         setUsersList(allUsers);
                     }
                     if (errorAll) {
@@ -78,6 +80,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                 const cachedUser = localStorage.getItem('fullUser');
                 if (cachedUser) {
                     const parsedUser = JSON.parse(cachedUser);
+                    console.log('Usuario cargado desde caché local:', parsedUser); // Depuración
                     setFullUser(parsedUser);
                     setAvatarUrl(parsedUser.avatar || '');
                     setEditForm({
