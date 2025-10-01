@@ -34,7 +34,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     });
     const [userType, setUserType] = useState(user?.userType || 'usuario');
     const [fullUser, setFullUser] = useState<User | null>(user);
-        const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatar || '');
+    const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatar || '');
+    const [uploading, setUploading] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<User[]>([]);
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -169,7 +170,9 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         ref={fileInputRef}
                                         onChange={async (e) => {
                                             const file = e.target.files?.[0];
+                                            if (uploading) return;
                                             if (file && user) {
+                                                setUploading(true);
                                                 try {
                                                     const { createClient } = await import('@supabase/supabase-js');
                                                     const supabase = createClient(
@@ -187,6 +190,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                         });
                                                     if (uploadError) {
                                                         console.error('Error subiendo imagen:', uploadError.message);
+                                                        setUploading(false);
                                                         return;
                                                     }
                                                     // Obtener URL pública
@@ -209,6 +213,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                 } catch (err) {
                                                     console.error('Error procesando imagen:', err);
                                                 }
+                                                setUploading(false);
                                             }
                                         }}
                                     />
@@ -216,7 +221,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         variant="outline"
                                         size="sm"
                                         className="mt-3"
-                                        onClick={() => fileInputRef.current?.click()}
+                                        onClick={() => !uploading && fileInputRef.current?.click()}
+                                        disabled={uploading}
                                     >
                                         <Upload className="mr-2 h-4 w-4" />
                                         Cambiar foto
