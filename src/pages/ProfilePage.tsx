@@ -141,13 +141,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
             <div className="max-w-7xl mx-auto space-y-8">
-                
                 {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
-                    <Button variant="ghost" onClick={onBack}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Volver
-                    </Button>
+                <div className="mb-8">
                     <h1 className="text-3xl font-bold">Mi Perfil</h1>
                 </div>
 
