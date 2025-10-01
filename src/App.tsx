@@ -599,7 +599,15 @@ function HomePage() {
     const [showLanguageDropdown, setShowLanguageDropdown] = useState(false)
 
     // Estado para la página actual (sin localStorage)
-    const [currentPage, setCurrentPage] = useState('inicio')
+    const [currentPage, setCurrentPage] = useState(() => {
+        // Recuperar la última página visitada
+        try {
+            const savedPage = sessionStorage.getItem('storyup_current_page')
+            return savedPage || 'inicio'
+        } catch {
+            return 'inicio'
+        }
+    })
 
     const [totalUsers, setTotalUsers] = useState(0)
 
@@ -1272,11 +1280,17 @@ function HomePage() {
     // Función para cambiar página (sin localStorage)
     const changePage = (page: string) => {
         setCurrentPage(page)
+        try {
+            sessionStorage.setItem('storyup_current_page', page)
+        } catch { }
     }
 
     // Reset de navegación al hacer logout
     const handleSignOut = () => {
         setCurrentPage('inicio')
+        try {
+            sessionStorage.setItem('storyup_current_page', 'inicio')
+        } catch { }
         signOut()
     }
 
