@@ -784,30 +784,25 @@ function HomePage() {
         }
     }
 
-    // Funciones del chat con Supabase
+    // Estado para usuarios reales de Supabase
     const [allUsers, setAllUsers] = useState<User[]>([])
 
-    // Cargar usuarios desde Supabase
+    // Cargar usuarios reales desde Supabase
     useEffect(() => {
         const loadUsers = async () => {
-            console.log('👥 Cargando usuarios desde Supabase...')
-
             try {
                 const { data, error } = await supabase
                     .from('users')
                     .select('*')
-
-                if (error) {
-                    console.error('Error cargando usuarios:', error)
+                if (!error) {
+                    setAllUsers(Array.isArray(data) ? data : [])
                 } else {
-                    setAllUsers(data || [])
-                    console.log('✅ Usuarios cargados:', data?.length || 0)
+                    setAllUsers([])
                 }
             } catch (error) {
-                console.error('Error en loadUsers:', error)
+                setAllUsers([])
             }
         }
-
         loadUsers()
     }, [])
 
@@ -1369,11 +1364,9 @@ function HomePage() {
         return () => clearInterval(timer)
     }, [])
 
-    // Actualizar contador de usuarios y verificar cambios cada segundo
+    // Actualizar contador de usuarios solo con datos reales
     useEffect(() => {
-        // El conteo de usuarios ahora se maneja desde el estado de allUsers
         setTotalUsers(allUsers.length)
-        console.log('👥 Total usuarios:', allUsers.length)
     }, [allUsers])
 
     // Cargar mensajes desde Supabase al iniciar
