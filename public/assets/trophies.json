@@ -1,0 +1,158 @@
+{
+    "trophies": [
+        {
+            "id": "1",
+            "name": "Primer Paso",
+            "description": "Publica tu primera historia",
+            "image": "Premio1.png",
+            "color": "bg-blue-500"
+        },
+        {
+            "id": "2",
+            "name": "Sociable",
+            "description": "Consigue 10 likes en tus historias",
+            "image": "Premio2.png.png",
+            "color": "bg-green-500"
+        },
+        {
+            "id": "3",
+            "name": "Popular",
+            "description": "Alcanza 50 seguidores",
+            "image": "Premio3.png",
+            "color": "bg-yellow-500"
+        },
+        {
+            "id": "4",
+            "name": "Escritor",
+            "description": "Publica 25 historias",
+            "image": "Premio4.png",
+            "color": "bg-purple-500"
+        },
+        {
+            "id": "5",
+            "name": "Conversador",
+            "description": "Envía 50 mensajes en el chat",
+            "image": "Premio5.png",
+            "color": "bg-indigo-500"
+        },
+        {
+            "id": "6",
+            "name": "Influencer",
+            "description": "Consigue 100 likes en total",
+            "image": "Premio6.png",
+            "color": "bg-pink-500"
+        },
+        {
+            "id": "7",
+            "name": "Colaborador",
+            "description": "Comenta en 20 historias diferentes",
+            "image": "Premio7.png",
+            "color": "bg-red-500"
+        },
+        {
+            "id": "8",
+            "name": "Mentor",
+            "description": "Ayuda a 5 compañeros nuevos",
+            "image": "Premio8.png",
+            "color": "bg-orange-500"
+        },
+        {
+            "id": "9",
+            "name": "Explorador",
+            "description": "Visita todas las secciones de StoryUp",
+            "image": "Premio9.png",
+            "color": "bg-teal-500"
+        },
+        {
+            "id": "10",
+            "name": "Estrella",
+            "description": "Consigue 200 likes en una historia",
+            "image": "Premio10.png",
+            "color": "bg-yellow-600"
+        },
+        {
+            "id": "11",
+            "name": "Veterano",
+            "description": "Lleva 6 meses en StoryUp",
+            "image": "Premio11.png",
+            "color": "bg-gray-600"
+        },
+        {
+            "id": "12",
+            "name": "Creativo",
+            "description": "Publica 10 historias con imágenes",
+            "image": "Premio12.png",
+            "color": "bg-cyan-500"
+        },
+        {
+            "id": "13",
+            "name": "Académico",
+            "description": "Comparte 15 proyectos educativos",
+            "image": "Premio13.jpg",
+            "color": "bg-blue-600"
+        },
+        {
+            "id": "14",
+            "name": "Líder",
+            "description": "Organiza 3 eventos escolares",
+            "image": "Premio14.jpg",
+            "color": "bg-green-600"
+        },
+        {
+            "id": "15",
+            "name": "Inspirador",
+            "description": "Tus historias inspiran a 50 personas",
+            "image": "Premio15.jpg",
+            "color": "bg-purple-600"
+        },
+        {
+            "id": "16",
+            "name": "Deportista",
+            "description": "Comparte 10 actividades deportivas",
+            "image": "Premio16.png",
+            "color": "bg-red-600"
+        },
+        {
+            "id": "17",
+            "name": "Artista",
+            "description": "Publica 20 creaciones artísticas",
+            "image": "Premio17.png",
+            "color": "bg-pink-600"
+        },
+        {
+            "id": "18",
+            "name": "Científico",
+            "description": "Comparte 15 experimentos",
+            "image": "Premio18.png",
+            "color": "bg-indigo-600"
+        },
+        {
+            "id": "19",
+            "name": "Tecnólogo",
+            "description": "Publica 10 proyectos tech",
+            "image": "Premio19.png",
+            "color": "bg-slate-600"
+        },
+        {
+            "id": "20",
+            "name": "Embajador",
+            "description": "Invita a 10 nuevos usuarios",
+            "image": "Premio20.png",
+            "color": "bg-emerald-600"
+        },
+        {
+            "id": "21",
+            "name": "Leyenda",
+            "description": "Consigue todos los trofeos",
+            "image": "Premio21.png",
+            "color": "bg-amber-600"
+        },
+        {
+            "id": "22",
+            "name": "Campeón",
+            "description": "Gana el concurso mensual",
+            "image": "Premio22.png",
+            "color": "bg-gold-600"
+        }
+    ]
+}
