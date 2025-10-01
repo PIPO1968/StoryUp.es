@@ -31,17 +31,38 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         bio: user?.bio || '',
         username: user?.username || ''
     });
+    const [userType, setUserType] = useState(user?.userType || 'usuario');
     const userTrophies: any[] = [];
     const joinDate = new Date();
 
     useEffect(() => {
-        if (user) {
-            setEditForm({
-                name: user.name || '',
-                bio: user.bio || '',
-                username: user.username || ''
-            });
+        async function fetchUserType() {
+            if (user) {
+                try {
+                    const { createClient } = await import('@supabase/supabase-js');
+                    const supabase = createClient(
+                        'https://kvvsbomvoxvvunxkkjyf.supabase.co',
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
+                    );
+                    const { data, error } = await supabase
+                        .from('users')
+                        .select('user_type')
+                        .eq('id', user.id)
+                        .single();
+                    if (data && data.user_type) {
+                        setUserType(data.user_type);
+                    }
+                } catch (err) {
+                    console.error('Error recargando tipo de usuario:', err);
+                }
+            }
         }
+        fetchUserType();
+        setEditForm({
+            name: user?.name || '',
+            bio: user?.bio || '',
+            username: user?.username || ''
+        });
     }, [user]);
 
     if (!user) {
@@ -81,19 +102,19 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         }
     };
 
-    const getUserTypeLabel = (userType: string) => {
-        switch (userType) {
+    const getUserTypeLabel = (type: string) => {
+        switch (type) {
             case 'padre-docente':
                 return 'Padre/Docente';
             case 'usuario':
                 return 'Estudiante';
             default:
-                return userType;
+                return type;
         }
     };
 
-    const getUserTypeColor = (userType: string) => {
-        switch (userType) {
+    const getUserTypeColor = (type: string) => {
+        switch (type) {
             case 'padre-docente':
                 return 'bg-green-100 text-green-800';
             case 'usuario':
@@ -137,8 +158,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                     <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
                                     <p className="text-gray-600">@{user.username}</p>
                                     <div className="flex items-center gap-2 mt-2">
-                                        <Badge className={getUserTypeColor(user.userType)}>
-                                            {getUserTypeLabel(user.userType)}
+                                        <Badge className={getUserTypeColor(userType)}>
+                                            {getUserTypeLabel(userType)}
                                         </Badge>
                                     </div>
                                     <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
@@ -270,7 +291,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                 </div>
 
                 {/* Bloques exclusivos para Padres/Docentes */}
-                {user.userType === 'padre-docente' && (
+                {userType === 'padre-docente' && (
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                         <Card>
                             <CardHeader>
