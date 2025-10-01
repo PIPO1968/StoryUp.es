@@ -105,20 +105,20 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="max-w-7xl mx-auto space-y-8">
                 {/* Header */}
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4 mb-8">
                     <Button variant="ghost" onClick={onBack}>
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Volver
                     </Button>
-                    <h1 className="text-2xl font-bold">Mi Perfil</h1>
+                    <h1 className="text-3xl font-bold">Mi Perfil</h1>
                 </div>
 
                 {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-8">
                     {/* Editar perfil - 3/5 */}
-                    <div className="md:w-3/5 w-full">
+                    <div className="md:w-7/12 w-full">
                         <Card>
                             <CardContent className="p-6">
                                 <div className="flex flex-col items-center md:items-start">
@@ -218,8 +218,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             </CardContent>
                         </Card>
                     </div>
-                    {/* Trofeos y Logros juntos - 2/5 */}
-                    <div className="md:w-2/5 w-full">
+                    {/* Trofeos y Logros juntos - 5/12 */}
+                    <div className="md:w-5/12 w-full">
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
@@ -251,7 +251,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                 </div>
 
                 {/* Chat debajo ocupando todo el ancho */}
-                <div className="w-full mt-6">
+                <div className="w-full mt-8">
                     <Card>
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
