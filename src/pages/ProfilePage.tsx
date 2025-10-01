@@ -145,12 +145,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-            <div className="max-w-7xl mx-auto space-y-8">
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold">Mi Perfil</h1>
-                </div>
-
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
                 {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* Editar perfil - 3/5 */}
@@ -159,176 +155,75 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             <CardContent className="p-6">
                                 <div className="flex flex-col items-center md:items-start">
                                     <Avatar className="w-24 h-24">
-                                        <AvatarImage src={avatarUrl || user.avatar} alt={user.name} />
+                                        <AvatarImage src={user.avatar} alt={user.name} />
                                         <AvatarFallback className="text-lg">
                                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
-                                        ref={fileInputRef}
-                                        onChange={async (e) => {
-                                            const file = e.target.files?.[0];
-                                            if (uploading) return;
-                                            if (file && user) {
-                                                setUploading(true);
-                                                try {
-                                                    console.log('[Avatar] Iniciando subida de imagen:', file.name);
-                                                    // Subir imagen a Supabase Storage
-                                                    const fileExt = file.name.split('.').pop();
-                                                    const fileName = `${user.id}_${Date.now()}.${fileExt}`;
-                                                    console.log('[Avatar] Subiendo a bucket avatars como:', fileName);
-                                                    const { data: uploadData, error: uploadError } = await supabase.storage
-                                                        .from('avatars')
-                                                        .upload(fileName, file, {
-                                                            cacheControl: '3600',
-                                                            upsert: true
-                                                        });
-                                                    if (uploadError) {
-                                                        console.error('[Avatar] Error subiendo imagen:', uploadError.message);
-                                                        setUploading(false);
-                                                        return;
-                                                    }
-                                                    console.log('[Avatar] Imagen subida correctamente:', uploadData);
-                                                    // Obtener URL pública
-                                                    const { data: publicUrlData } = supabase.storage
-                                                        .from('avatars')
-                                                        .getPublicUrl(fileName);
-                                                    const url = publicUrlData?.publicUrl;
-                                                    console.log('[Avatar] URL pública obtenida:', url);
-                                                    if (url) {
-                                                        // Actualizar avatar en la base de datos
-                                                        const { error: updateError } = await supabase
-                                                            .from('users')
-                                                            .update({ avatar: url })
-                                                            .eq('id', user.id);
-                                                        if (updateError) {
-                                                            console.error('[Avatar] Error actualizando avatar en DB:', updateError.message);
-                                                        } else {
-                                                            setAvatarUrl(url);
-                                                            console.log('[Avatar] Avatar actualizado en DB y en la interfaz.');
-                                                        }
-                                                    }
-                                                } catch (err) {
-                                                    console.error('[Avatar] Error procesando imagen:', err);
-                                                }
-                                                setUploading(false);
-                                            }
-                                        }}
-                                    />
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="mt-3"
-                                        onClick={() => !uploading && fileInputRef.current?.click()}
-                                        disabled={uploading}
-                                    >
-                                        <Upload className="mr-2 h-4 w-4" />
-                                        Cambiar foto
-                                    </Button>
-                                </div>
-                                <div className="mt-6">
-                                    <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
-                                    <p className="text-gray-600">@{user.username}</p>
-                                    <div className="flex items-center gap-2 mt-2">
-                                        <Badge className={getUserTypeColor(userType)}>
-                                            {getUserTypeLabel(userType)}
-                                        </Badge>
+                                    <div className="mt-6 w-full">
+                                        <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
+                                        <p className="text-gray-600">@{user.username}</p>
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <Badge className={getUserTypeColor(userType)}>
+                                                {getUserTypeLabel(userType)}
+                                            </Badge>
+                                        </div>
+                                        <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
+                                            <Calendar className="h-4 w-4" />
+                                            Se unió en {joinDate.toLocaleDateString('es-ES', {
+                                                month: 'long',
+                                                year: 'numeric'
+                                            })}
+                                        </div>
+                                        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button variant="outline" className="mt-4">
+                                                    <Edit className="mr-2 h-4 w-4" />
+                                                    Editar perfil
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>Editar perfil</DialogTitle>
+                                                </DialogHeader>
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <label htmlFor="name" className="text-sm font-medium">
+                                                            Nombre completo
+                                                        </label>
+                                                        <Input id="name" name="name" value={editForm.name} onChange={handleInputChange} placeholder="Tu nombre completo" />
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="username" className="text-sm font-medium">Nombre de usuario</label>
+                                                        <Input id="username" name="username" value={editForm.username} onChange={handleInputChange} placeholder="Tu nombre de usuario" />
+                                                    </div>
+                                                    <div>
+                                                        <label htmlFor="bio" className="text-sm font-medium">Biografía</label>
+                                                        <Textarea id="bio" name="bio" value={editForm.bio} onChange={handleInputChange} placeholder="Cuéntanos algo sobre ti..." rows={3} />
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Button onClick={handleSaveProfile} className="flex-1">Guardar cambios</Button>
+                                                        <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancelar</Button>
+                                                    </div>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
-                                    <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
-                                        <Calendar className="h-4 w-4" />
-                                        Se unió en {joinDate.toLocaleDateString('es-ES', {
-                                            month: 'long',
-                                            year: 'numeric'
-                                        })}
-                                    </div>
-                                    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                                        <DialogTrigger asChild>
-                                            <Button variant="outline" className="mt-4">
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                Editar perfil
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent>
-                                            <DialogHeader>
-                                                <DialogTitle>Editar perfil</DialogTitle>
-                                            </DialogHeader>
-                                            <div className="space-y-4">
-                                                <div>
-                                                    <label htmlFor="name" className="text-sm font-medium">
-                                                        Nombre completo
-                                                    </label>
-                                                    <Input
-                                                        id="name"
-                                                        name="name"
-                                                        value={editForm.name}
-                                                        onChange={handleInputChange}
-                                                        placeholder="Tu nombre completo"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label htmlFor="username" className="text-sm font-medium">
-                                                        Nombre de usuario
-                                                    </label>
-                                                    <Input
-                                                        id="username"
-                                                        name="username"
-                                                        value={editForm.username}
-                                                        onChange={handleInputChange}
-                                                        placeholder="Tu nombre de usuario"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label htmlFor="bio" className="text-sm font-medium">
-                                                        Biografía
-                                                    </label>
-                                                    <Textarea
-                                                        id="bio"
-                                                        name="bio"
-                                                        value={editForm.bio}
-                                                        onChange={handleInputChange}
-                                                        placeholder="Cuéntanos algo sobre ti..."
-                                                        rows={3}
-                                                    />
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Button onClick={handleSaveProfile} className="flex-1">
-                                                        Guardar cambios
-                                                    </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        onClick={() => setIsEditDialogOpen(false)}
-                                                    >
-                                                        Cancelar
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
-                                    {user.bio && (
-                                        <p className="text-gray-700 mt-4">{user.bio}</p>
-                                    )}
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
-                    {/* Trofeos y Logros juntos - 5/12 */}
+                    {/* Trofeos/Logros - 2/5 */}
                     <div className="md:w-5/12 w-full">
                         <Card>
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Trophy className="h-5 w-5" />
-                                    Trofeos y Logros
-                                </CardTitle>
+                                <CardTitle>Trofeos y logros</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {userTrophies.length === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
                                         <Trophy className="mx-auto h-12 w-12 mb-4 text-gray-300" />
-                                        <p>Aún no has obtenido trofeos</p>
-                                        <p className="text-sm mt-2">¡Escribe historias y participa para ganar trofeos!</p>
+                                        <p>Aún no tienes trofeos ni logros.</p>
                                     </div>
                                 ) : (
                                     <div className="grid gap-4 md:grid-cols-2">
@@ -345,7 +240,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </Card>
                     </div>
                 </div>
-
                 {/* Chat debajo ocupando todo el ancho */}
                 <div className="w-full mt-8">
                     <Card>
@@ -364,7 +258,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </CardContent>
                     </Card>
                 </div>
-
                 {/* Bloques exclusivos para Padres/Docentes */}
                 {userType === 'padre-docente' && (
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
