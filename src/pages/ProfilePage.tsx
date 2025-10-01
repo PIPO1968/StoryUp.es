@@ -174,6 +174,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                             if (file && user) {
                                                 setUploading(true);
                                                 try {
+                                                    console.log('[Avatar] Iniciando subida de imagen:', file.name);
                                                     const { createClient } = await import('@supabase/supabase-js');
                                                     const supabase = createClient(
                                                         'https://kvvsbomvoxvvunxkkjyf.supabase.co',
@@ -182,6 +183,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                     // Subir imagen a Supabase Storage
                                                     const fileExt = file.name.split('.').pop();
                                                     const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+                                                    console.log('[Avatar] Subiendo a bucket avatars como:', fileName);
                                                     const { data: uploadData, error: uploadError } = await supabase.storage
                                                         .from('avatars')
                                                         .upload(fileName, file, {
@@ -189,15 +191,17 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                             upsert: true
                                                         });
                                                     if (uploadError) {
-                                                        console.error('Error subiendo imagen:', uploadError.message);
+                                                        console.error('[Avatar] Error subiendo imagen:', uploadError.message);
                                                         setUploading(false);
                                                         return;
                                                     }
+                                                    console.log('[Avatar] Imagen subida correctamente:', uploadData);
                                                     // Obtener URL pública
                                                     const { data: publicUrlData } = supabase.storage
                                                         .from('avatars')
                                                         .getPublicUrl(fileName);
                                                     const url = publicUrlData?.publicUrl;
+                                                    console.log('[Avatar] URL pública obtenida:', url);
                                                     if (url) {
                                                         // Actualizar avatar en la base de datos
                                                         const { error: updateError } = await supabase
@@ -205,13 +209,14 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                             .update({ avatar: url })
                                                             .eq('id', user.id);
                                                         if (updateError) {
-                                                            console.error('Error actualizando avatar en DB:', updateError.message);
+                                                            console.error('[Avatar] Error actualizando avatar en DB:', updateError.message);
                                                         } else {
                                                             setAvatarUrl(url);
+                                                            console.log('[Avatar] Avatar actualizado en DB y en la interfaz.');
                                                         }
                                                     }
                                                 } catch (err) {
-                                                    console.error('Error procesando imagen:', err);
+                                                    console.error('[Avatar] Error procesando imagen:', err);
                                                 }
                                                 setUploading(false);
                                             }
