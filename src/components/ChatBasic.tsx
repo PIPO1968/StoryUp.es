@@ -30,13 +30,17 @@ function ChatBasic({ currentUser }) {
         if (!selectedUser) return;
         async function fetchMessages() {
             setLoading(true);
+            console.log('Cargando mensajes entre:', currentUser.id, 'y', selectedUser.id); // Depuración
             const { data, error } = await supabase
                 .from('chat_messages')
                 .select('*')
                 .or(`(sender_id.eq.${currentUser.id},receiver_id.eq.${selectedUser.id}),(sender_id.eq.${selectedUser.id},receiver_id.eq.${currentUser.id})`)
                 .order('created_at', { ascending: true });
             if (data) {
+                console.log('Mensajes cargados:', data); // Depuración
                 setMessages(data);
+            } else {
+                console.error('Error cargando mensajes:', error); // Depuración
             }
             setLoading(false);
         }
@@ -46,20 +50,26 @@ function ChatBasic({ currentUser }) {
     // Sincronización en tiempo real
     useEffect(() => {
         const subscription = supabase
-            .from('chat_messages')
-            .on('INSERT', payload => {
-                const newMessage = payload.new;
-                if (
-                    (newMessage.sender_id === currentUser.id && newMessage.receiver_id === selectedUser?.id) ||
-                    (newMessage.sender_id === selectedUser?.id && newMessage.receiver_id === currentUser.id)
-                ) {
-                    setMessages(prev => [...prev, newMessage]);
+            .channel('custom-all-channel')
+            .on(
+                'postgres_changes',
+                { event: 'INSERT', schema: 'public', table: 'chat_messages' },
+                (payload) => {
+                    console.log('Nuevo mensaje recibido:', payload); // Depuración
+                    const newMessage = payload.new;
+                    if (
+                        (newMessage.sender_id === currentUser.id && newMessage.receiver_id === selectedUser?.id) ||
+                        (newMessage.sender_id === selectedUser?.id && newMessage.receiver_id === currentUser.id)
+                    ) {
+                        console.log('Mensaje válido para agregar:', newMessage); // Depuración
+                        setMessages((prev) => [...prev, newMessage]);
+                    }
                 }
-            })
+            )
             .subscribe();
 
         return () => {
-            supabase.removeSubscription(subscription);
+            supabase.removeChannel(subscription);
         };
     }, [currentUser, selectedUser]);
 
