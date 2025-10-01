@@ -1722,15 +1722,7 @@ function HomePage() {
                     }}>
                         {/* IZQUIERDA: Estadísticas usuarios */}
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <div style={{
-                                display: 'flex',
-                                gap: '1rem',
-                                fontSize: '0.9rem',
-                                color: '#6b7280'
-                            }}>
-                                <span>👥 Inscritos: <strong>{totalUsers}</strong></span>
-                                <span>🟢 Online: <strong>1</strong></span>
-                            </div>
+                            {/* Aquí puedes agregar otros elementos del header si lo necesitas */}
                         </div>
 
                         {/* CENTRO: Fecha y Hora */}
