@@ -6,36 +6,48 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ChatMessage } from '@/components/ChatMessage';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '../lib/auth';
 import { mockChats, mockUsers } from '@/lib/data';
-import { Chat as ChatType, ChatMessage as ChatMessageType, User } from '@/lib/types';
+import { Chat as ChatType, ChatMessage as ChatMessageType } from '@/lib/types';
+import { DatabaseUser } from '../lib/supabase';
 
 export default function Chat() {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [currentUser, setCurrentUser] = useState<DatabaseUser | null>(null);
     const [selectedChat, setSelectedChat] = useState<ChatType | null>(null);
     const [newMessage, setNewMessage] = useState('');
     const [chats] = useState<ChatType[]>(mockChats);
 
     useEffect(() => {
-        const user = getCurrentUser();
-        if (!user) {
-            navigate('/');
-            return;
-        }
-        setCurrentUser(user);
-    }, [navigate]);
+        getCurrentUser().then(user => {
+            if (user) {
+                setCurrentUser({
+                    id: user.id,
+                    username: user.username,
+                    name: user.name,
+                    avatar: user.avatar,
+                    bio: user.bio,
+                    user_type: user.user_type,
+                    email: user.email || '',
+                    followers: user.followers || 0,
+                    following: user.following || 0,
+                    trophies: user.trophies || [],
+                    created_at: user.created_at || new Date().toISOString(),
+                });
+            }
+        });
+    }, []);
 
     const handleSendMessage = () => {
         if (!newMessage.trim() || !selectedChat || !currentUser) return;
 
-        const message: ChatMessageType = {
-            id: Date.now().toString(),
+        const message = {
+            id: `${Date.now()}`,
             senderId: currentUser.id,
             receiverId: selectedChat.participants.find(p => p.id !== currentUser.id)?.id || '',
             content: newMessage,
             timestamp: new Date(),
-            isRead: false
+            isRead: false,
         };
 
         selectedChat.messages.push(message);

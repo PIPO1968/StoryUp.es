@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCurrentUser, updateUser } from '@/lib/auth';
+import { getCurrentUser, updateUser } from '../lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,10 +42,16 @@ export default function EducatorProfile() {
     const [bannedWord, setBannedWord] = useState('');
 
     useEffect(() => {
-        const currentUser = getCurrentUser();
-        if (currentUser && currentUser.userType === 'educator') {
-            setUser(currentUser);
-        }
+        getCurrentUser().then(user => {
+            setUser({
+                id: user.id,
+                username: user.username || '',
+                name: user.name || '',
+                avatar: user.avatar || '',
+                bio: user.bio || '',
+                userType: user.userType || 'user',
+            });
+        });
     }, []);
 
     const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

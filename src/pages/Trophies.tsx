@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { TrophyCard } from '@/components/TrophyCard';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '../lib/auth';
 import { mockTrophies } from '@/lib/data';
 import { User, Trophy as TrophyType } from '@/lib/types';
 

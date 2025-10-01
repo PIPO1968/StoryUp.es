@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,15 +6,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PenTool, Image, Send } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '../lib/auth';
 import { toast } from 'sonner';
 
 export default function CreateStory() {
     const [content, setContent] = useState('');
     const [image, setImage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [user, setUser] = useState<any>(null);
     const navigate = useNavigate();
-    const user = getCurrentUser();
+
+    useEffect(() => {
+        getCurrentUser().then(user => {
+            setUser({
+                id: user.id,
+                username: user.username || '',
+                name: user.name || '',
+                avatar: user.avatar || '',
+                bio: user.bio || '',
+                userType: user.userType || 'user',
+            });
+        });
+    }, []);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];

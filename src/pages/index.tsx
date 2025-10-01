@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '../lib/auth';
 
 export default function WelcomePage() {
     const navigate = useNavigate();

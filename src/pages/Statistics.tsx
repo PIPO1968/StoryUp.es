@@ -11,10 +11,27 @@ import {
     TrendingUp,
     Calendar
 } from 'lucide-react';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser } from '../lib/auth';
+import { useEffect, useState } from 'react';
 
 export default function Statistics() {
-    const user = getCurrentUser();
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        getCurrentUser().then(user => {
+            setUser({
+                id: user.id,
+                username: user.username || '',
+                name: user.name || '',
+                avatar: user.avatar || '',
+                bio: user.bio || '',
+                userType: user.userType || 'user',
+                followers: user.followers || 0,
+                following: user.following || 0,
+                trophies: user.trophies || [],
+            });
+        });
+    }, []);
 
     const stats = {
         totalStories: 24,
