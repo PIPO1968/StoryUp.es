@@ -228,7 +228,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {/* Trofeos */}
                                 {userTrophies.length === 0 ? (
                                     <div className="text-center py-8 text-gray-500">
                                         <Trophy className="mx-auto h-12 w-12 mb-4 text-gray-300" />
@@ -246,17 +245,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         ))}
                                     </div>
                                 )}
-                                {/* Logros */}
-                                <div className="mt-8">
-                                    <CardTitle className="flex items-center gap-2 text-base">
-                                        <Users className="h-5 w-5" />
-                                        Logros
-                                    </CardTitle>
-                                    <div className="text-center py-8 text-gray-500">
-                                        <Users className="mx-auto h-12 w-12 mb-4 text-gray-300" />
-                                        <p>Aún no tienes logros especiales</p>
-                                    </div>
-                                </div>
                             </CardContent>
                         </Card>
                     </div>
