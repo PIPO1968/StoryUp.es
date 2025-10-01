@@ -67,7 +67,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             email: session.user.email!,
                             name: session.user.email!.split('@')[0],
                             username: session.user.email!.split('@')[0],
-                            user_type: 'usuario'
+                            user_type: 'usuario' as 'usuario' | 'padre-docente'
                         }
 
                         const { data: createdUser, error: createError } = await supabase
@@ -151,7 +151,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                                 email: userData.email,
                                 name: userData.name,
                                 username: userData.username,
-                                userType: (userData.user_type === 'user' ? 'usuario' : 'padre-docente') as 'usuario' | 'padre-docente',
+                                userType: (userData.user_type === 'usuario' ? 'usuario' : userData.user_type === 'padre-docente' ? 'padre-docente' : 'usuario') as 'usuario' | 'padre-docente',
                                 avatar: userData.avatar,
                                 bio: userData.bio
                             }
