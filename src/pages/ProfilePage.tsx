@@ -32,11 +32,12 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         username: user?.username || ''
     });
     const [userType, setUserType] = useState(user?.userType || 'usuario');
+    const [fullUser, setFullUser] = useState<User | null>(user);
     const userTrophies: any[] = [];
     const joinDate = new Date();
 
     useEffect(() => {
-        async function fetchUserType() {
+        async function fetchUserData() {
             if (user) {
                 try {
                     const { createClient } = await import('@supabase/supabase-js');
@@ -46,23 +47,24 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                     );
                     const { data, error } = await supabase
                         .from('users')
-                        .select('user_type')
+                        .select('*')
                         .eq('id', user.id)
                         .single();
-                    if (data && data.user_type) {
+                    if (data) {
+                        setFullUser(data);
                         setUserType(data.user_type);
+                        setEditForm({
+                            name: data.name || '',
+                            bio: data.bio || '',
+                            username: data.username || ''
+                        });
                     }
                 } catch (err) {
-                    console.error('Error recargando tipo de usuario:', err);
+                    console.error('Error recargando datos de usuario:', err);
                 }
             }
         }
-        fetchUserType();
-        setEditForm({
-            name: user?.name || '',
-            bio: user?.bio || '',
-            username: user?.username || ''
-        });
+        fetchUserData();
     }, [user]);
 
     if (!user) {
@@ -107,7 +109,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
             case 'padre-docente':
                 return 'Padre/Docente';
             case 'usuario':
-                return 'Estudiante';
+                return 'Usuario';
             default:
                 return type;
         }
