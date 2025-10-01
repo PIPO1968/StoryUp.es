@@ -40,10 +40,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         bio: user?.bio || '',
         username: user?.username || ''
     });
-    // Prioriza userType, pero si no existe, usa user_type
-    const [userType, setUserType] = useState((user?.userType ?? user?.user_type) || 'usuario');
-    const [fullUser, setFullUser] = useState<User | null>(user);
-    const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatar || '');
+    const [fullUser, setFullUser] = useState<User | null>(null);
+    const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<User[]>([]);
     const userTrophies: any[] = [];
@@ -54,7 +52,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         async function fetchUserData() {
             if (user) {
                 try {
-                    // Consulta usuario actual
+                    // Consulta usuario actual SIEMPRE desde Supabase
                     const { data, error } = await supabase
                         .from('users')
                         .select('*')
@@ -62,7 +60,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         .single();
                     if (data) {
                         setFullUser(data);
-                        setUserType(data.user_type);
+                        setAvatarUrl(data.avatar || '');
                         setEditForm({
                             name: data.name || '',
                             bio: data.bio || '',
@@ -210,11 +208,11 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                         </Button>
                                     </div>
                                     <div className="mt-6 w-full">
-                                        <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
-                                        <p className="text-gray-600">@{user.username}</p>
+                                        <h2 className="text-2xl font-bold text-gray-900">{fullUser?.name || user.name}</h2>
+                                        <p className="text-gray-600">@{fullUser?.username || user.username}</p>
                                         <div className="flex items-center gap-2 mt-2">
-                                            <Badge className={getUserTypeColor(userType)}>
-                                                {getUserTypeLabel(userType)}
+                                            <Badge className={getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : '')}>
+                                                {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : 'Usuario')}
                                             </Badge>
                                         </div>
                                         <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
@@ -305,7 +303,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                     </Card>
                 </div>
                 {/* Bloques exclusivos para Padres/Docentes */}
-                {userType === 'padre-docente' && (
+                {(fullUser?.user_type === 'padre-docente' || fullUser?.userType === 'padre-docente') && (
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
                         <Card>
                             <CardHeader>
