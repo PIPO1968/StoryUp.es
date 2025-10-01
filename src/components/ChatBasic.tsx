@@ -12,6 +12,7 @@ function ChatBasic({ currentUser }) {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     // Cargar usuarios para seleccionar destinatario
     useEffect(() => {
@@ -32,17 +33,10 @@ function ChatBasic({ currentUser }) {
             const { data, error } = await supabase
                 .from('chat_messages')
                 .select('*')
-                .or(`from.eq.${currentUser.id},to.eq.${currentUser.id}`)
-                .or(`from.eq.${selectedUser.id},to.eq.${selectedUser.id}`)
+                .or(`(from.eq.${currentUser.id},to.eq.${selectedUser.id}),(from.eq.${selectedUser.id},to.eq.${currentUser.id})`)
                 .order('timestamp', { ascending: true });
             if (data) {
-                // Filtrar solo los mensajes entre ambos
-                const filtered = data.filter(
-                    m =>
-                        (m.from === currentUser.id && m.to === selectedUser.id) ||
-                        (m.from === selectedUser.id && m.to === currentUser.id)
-                );
-                setMessages(filtered);
+                setMessages(data);
             }
             setLoading(false);
         }
@@ -51,35 +45,28 @@ function ChatBasic({ currentUser }) {
 
     // Enviar mensaje
     async function sendMessage() {
+        setErrorMsg('');
         if (!newMessage.trim() || !selectedUser) return;
-        const { error } = await supabase.from('chat_messages').insert({
+        const messageObj = {
             from: currentUser.id,
             to: selectedUser.id,
             text: newMessage.trim(),
             timestamp: new Date().toISOString(),
-        });
+        };
+        const { error } = await supabase.from('chat_messages').insert(messageObj);
         if (!error) {
+            setMessages(prev => [...prev, messageObj]);
             setNewMessage('');
-            // Recargar mensajes
-            const { data } = await supabase
-                .from('chat_messages')
-                .select('*')
-                .or(`from.eq.${currentUser.id},to.eq.${currentUser.id}`)
-                .or(`from.eq.${selectedUser.id},to.eq.${selectedUser.id}`)
-                .order('timestamp', { ascending: true });
-            if (data) {
-                const filtered = data.filter(
-                    m =>
-                        (m.from === currentUser.id && m.to === selectedUser.id) ||
-                        (m.from === selectedUser.id && m.to === currentUser.id)
-                );
-                setMessages(filtered);
-            }
+        } else {
+            setErrorMsg('Error enviando mensaje: ' + error.message);
         }
     }
 
     return (
         <div style={{ maxWidth: 400, margin: '2rem auto', padding: 20, background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #0001' }}>
+            {errorMsg && (
+                <div style={{ color: 'red', marginBottom: 10 }}>{errorMsg}</div>
+            )}
             <h2 style={{ marginBottom: 16 }}>Chat básico</h2>
             <div style={{ marginBottom: 16 }}>
                 <label>Selecciona usuario para chatear:</label>

@@ -29,6 +29,14 @@ export default defineConfig({
         chunkSizeWarningLimit: 1000,  // Aumentar límite de warning para archivos grandes
         commonjsOptions: {
             transformMixedEsModules: true  // Manejar módulos mixtos ES/CommonJS
-        }
-    }
+        },
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    vendor: ['react', 'react-dom'],  // Dividir dependencias grandes
+                    radix: ['@radix-ui/react-*'],  // Dividir Radix UI en un chunk separado
+                },
+            },
+        },
+    },
 })
