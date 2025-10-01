@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import ChatBasic from '../components/ChatBasic';
 
 interface User {
     id: string
@@ -21,6 +22,7 @@ interface User {
     name: string
     username: string
     userType: 'usuario' | 'padre-docente'
+    user_type?: 'usuario' | 'padre-docente' // Para datos directos de Supabase
     avatar?: string
     bio?: string
 }
@@ -38,7 +40,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         bio: user?.bio || '',
         username: user?.username || ''
     });
-    const [userType, setUserType] = useState(user?.userType || 'usuario');
+    // Prioriza userType, pero si no existe, usa user_type
+    const [userType, setUserType] = useState((user?.userType ?? user?.user_type) || 'usuario');
     const [fullUser, setFullUser] = useState<User | null>(user);
     const [avatarUrl, setAvatarUrl] = useState<string>(user?.avatar || '');
     const [uploading, setUploading] = useState<boolean>(false);
@@ -296,11 +299,8 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {/* Aquí irá el componente de chat real */}
-                            <div className="text-center py-8 text-gray-500">
-                                <BookOpen className="mx-auto h-12 w-12 mb-4 text-gray-300" />
-                                <p>El chat estará disponible aquí próximamente.</p>
-                            </div>
+                            {/* Chat funcional */}
+                            {user && <ChatBasic currentUser={user} />}
                         </CardContent>
                     </Card>
                 </div>

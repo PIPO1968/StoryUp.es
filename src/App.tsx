@@ -840,11 +840,23 @@ function HomePage() {
                     .select('*');
                 console.log('Respuesta completa de Supabase:', { data, error });
                 if (!error && Array.isArray(data)) {
-                    data.forEach((u, i) => {
-                        console.log(`Usuario[${i}]:`, u);
+                    // Eliminar duplicados por email
+                    const uniqueUsers: any[] = [];
+                    const emails = new Set();
+                    data.forEach((u) => {
+                        if (!emails.has(u.email)) {
+                            emails.add(u.email);
+                            uniqueUsers.push(u);
+                        }
                     });
-                    setAllUsers(data);
-                    console.log('Conteo de usuarios:', data.length);
+                    // Corregir tipo de usuario de PIPO68 si es necesario
+                    uniqueUsers.forEach((u) => {
+                        if (u.username === 'PIPO68' && u.user_type !== 'usuario') {
+                            u.user_type = 'usuario';
+                        }
+                    });
+                    setAllUsers(uniqueUsers);
+                    console.log('Conteo de usuarios (únicos):', uniqueUsers.length);
                     if (typeof window !== 'undefined') {
                         window.supabaseUsersError = '';
                     }
