@@ -65,35 +65,34 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                         return
                     }
 
-                    if (!userList || userList.length === 0) {
-                        console.log('Usuario no encontrado en tabla users, creando...')
+                    // Buscar usuario por id de sesión
+                    const foundUser = userList.find(u => u.id === session.user.id);
+                    if (!foundUser) {
+                        console.log('Usuario no encontrado en tabla users, creando...');
                         // Crear usuario en tabla si no existe
+                        const nickname = session.user.user_metadata?.username || session.user.email!.split('@')[0];
                         const newUser = {
                             id: session.user.id,
                             email: session.user.email!,
-                            name: session.user.email!.split('@')[0],
-                            username: session.user.email!.split('@')[0],
-                            user_type: 'usuario' as 'usuario' | 'padre-docente'
-                        }
-
+                            name: nickname,
+                            username: nickname,
+                            user_type: session.user.user_metadata?.user_type || 'usuario'
+                        };
                         const { data: createdUser, error: createError } = await supabase
                             .from('users')
                             .insert([newUser])
                             .select()
-                            .single()
-
+                            .single();
                         if (createError) {
-                            console.error('Error creando usuario:', createError)
-                            console.log('❌ Error creando usuario - estableciendo loading: false')
+                            console.error('Error creando usuario:', createError);
+                            console.log('❌ Error creando usuario - estableciendo loading: false');
                         } else {
-                            console.log('✅ Usuario creado exitosamente:', createdUser.username)
-                            setUser(createdUser)
+                            console.log('✅ Usuario creado exitosamente:', createdUser.username);
+                            setUser(createdUser);
                         }
                     } else {
-                        // Si hay más de un usuario, buscar el que coincida con el id de sesión
-                        const foundUser = userList.find(u => u.id === session.user.id) || userList[0];
-                        console.log('✅ Usuario encontrado en BD:', foundUser.username)
-                        setUser(foundUser)
+                        console.log('✅ Usuario encontrado en BD:', foundUser.username);
+                        setUser(foundUser);
                     }
                 } else {
                     console.log('ℹ️ No hay sesión activa')
