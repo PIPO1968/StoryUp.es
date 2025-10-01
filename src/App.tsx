@@ -69,7 +69,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     if (!userById) {
                         console.log('Usuario no encontrado en tabla users, creando...');
                         // Crear usuario en tabla si no existe
-                        const nickname = session.user.user_metadata?.username || session.user.email!.split('@')[0];
+                        const nickname = session.user.user_metadata?.username || '';
                         const newUser = {
                             id: session.user.id,
                             email: session.user.email!,
@@ -138,17 +138,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                         if (userError || !userData) {
                             console.log('❌ Usuario no encontrado, usando datos de sesión...')
                             // Crear usuario con datos de la sesión de Supabase Auth
-                            const sessionUser = {
+                            const nickname = session.user.user_metadata?.username || '';
+                            const userType: 'usuario' | 'padre-docente' = session.user.user_metadata?.user_type === 'padre-docente' ? 'padre-docente' : 'usuario';
+                            const sessionUser: User = {
                                 id: session.user.id,
                                 email: session.user.email!,
-                                name: session.user.email!.split('@')[0],
-                                username: session.user.email!.split('@')[0],
-                                userType: 'usuario' as const,
+                                name: nickname,
+                                username: nickname,
+                                userType,
                                 avatar: undefined,
                                 bio: 'Usuario de StoryUp'
-                            }
-                            console.log('✅ Usuario creado desde sesión:', sessionUser.username)
-                            setUser(sessionUser)
+                            };
+                            console.log('✅ Usuario creado desde sesión:', sessionUser.username);
+                            setUser(sessionUser);
                         } else {
                             console.log('✅ Usuario encontrado en BD:', userData.username)
                             // Mapear campos de BD a interfaz TypeScript
@@ -166,31 +168,35 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     } catch (timeoutError) {
                         console.warn('⚠️ Timeout en consulta BD, usando datos de sesión:', timeoutError.message)
                         // Fallback: usar datos de la sesión si hay timeout
-                        const sessionUser = {
+                        const nickname = session.user.user_metadata?.username || '';
+                        const userType: 'usuario' | 'padre-docente' = session.user.user_metadata?.user_type === 'padre-docente' ? 'padre-docente' : 'usuario';
+                        const sessionUser: User = {
                             id: session.user.id,
                             email: session.user.email!,
-                            name: session.user.email!.split('@')[0],
-                            username: session.user.email!.split('@')[0],
-                            userType: 'usuario' as const,
+                            name: nickname,
+                            username: nickname,
+                            userType,
                             avatar: undefined,
                             bio: 'Usuario de StoryUp'
-                        }
-                        console.log('✅ Usuario fallback creado:', sessionUser.username)
-                        setUser(sessionUser)
+                        };
+                        console.log('✅ Usuario fallback creado:', sessionUser.username);
+                        setUser(sessionUser);
                     }
                 } catch (error) {
                     console.error('❌ Error en proceso de autenticación:', error)
                     // Fallback temporal en caso de error grave
-                    const tempUser = {
+                    const nickname = session.user.user_metadata?.username || '';
+                    const userType: 'usuario' | 'padre-docente' = session.user.user_metadata?.user_type === 'padre-docente' ? 'padre-docente' : 'usuario';
+                    const tempUser: User = {
                         id: session.user.id,
                         email: session.user.email!,
-                        name: session.user.email!.split('@')[0],
-                        username: session.user.email!.split('@')[0],
-                        userType: 'usuario' as const,
+                        name: nickname,
+                        username: nickname,
+                        userType,
                         avatar: undefined,
                         bio: undefined
-                    }
-                    setUser(tempUser)
+                    };
+                    setUser(tempUser);
                 }
             } if (event === 'SIGNED_OUT') {
                 console.log('👋 Usuario deslogueado')
