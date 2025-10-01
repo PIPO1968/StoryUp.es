@@ -52,22 +52,21 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 if (session?.user) {
                     console.log('✅ Sesión encontrada en Supabase:', session.user.email)
 
-                    // Buscar todos los usuarios con ese email
-                    const { data: userList, error: userError } = await supabase
+                    // Buscar usuario por id de sesión en la tabla users
+                    const { data: userById, error: userIdError } = await supabase
                         .from('users')
                         .select('*')
-                        .eq('email', session.user.email)
+                        .eq('id', session.user.id)
+                        .single();
 
-                    if (userError) {
-                        console.error('Error consultando usuarios:', userError)
-                        setUser(null)
-                        setLoading(false)
-                        return
+                    if (userIdError && userIdError.code !== 'PGRST116') {
+                        console.error('Error consultando usuario por id:', userIdError);
+                        setUser(null);
+                        setLoading(false);
+                        return;
                     }
 
-                    // Buscar usuario por id de sesión
-                    const foundUser = userList.find(u => u.id === session.user.id);
-                    if (!foundUser) {
+                    if (!userById) {
                         console.log('Usuario no encontrado en tabla users, creando...');
                         // Crear usuario en tabla si no existe
                         const nickname = session.user.user_metadata?.username || session.user.email!.split('@')[0];
@@ -91,8 +90,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             setUser(createdUser);
                         }
                     } else {
-                        console.log('✅ Usuario encontrado en BD:', foundUser.username);
-                        setUser(foundUser);
+                        console.log('✅ Usuario encontrado en BD:', userById.username);
+                        setUser(userById);
                     }
                 } else {
                     console.log('ℹ️ No hay sesión activa')
@@ -241,6 +240,16 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     emailRedirectTo: undefined // Deshabilitar confirmación de email para desarrollo
                 }
             })
+
+            // Forzar el guardado correcto de nickname y tipo en los metadatos de Supabase Auth
+            if (data.user) {
+                await supabase.auth.updateUser({
+                    data: {
+                        username: username,
+                        user_type: userType
+                    }
+                });
+            }
 
             if (error) {
                 console.error('Error en registro:', error.message)
