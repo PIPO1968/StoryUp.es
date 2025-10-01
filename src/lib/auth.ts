@@ -19,3 +19,14 @@ export const updateUser = async (updates: Partial<any>) => {
     }
     return data;
 };
+
+// Refrescar el token de autenticación
+export const refreshAuthToken = async () => {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error) {
+        console.error('Error refrescando el token de autenticación:', error);
+        throw error;
+    }
+    console.log('Token de autenticación refrescado:', data);
+    return data;
+};
