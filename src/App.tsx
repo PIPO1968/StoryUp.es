@@ -77,7 +77,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                             const { data, error } = await supabase
                                 .from('users')
                                 .insert([newUser])
-                                .select()
+                                .select('*')
                                 .single();
                             console.log(`Intento ${i + 1} de inserción en users:`, { data, error });
                             if (data) {
@@ -340,7 +340,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 .from('users')
                 .update(updates)
                 .eq('id', user.id)
-                .select()
+                .select('*')
                 .single()
 
             if (error) {
@@ -840,22 +840,17 @@ function HomePage() {
             try {
                 const { data, error } = await supabase
                     .from('users')
-                    .select('*')
+                    .select('*');
                 console.log('Respuesta completa de Supabase:', { data, error });
-                if (!error) {
-                    if (Array.isArray(data)) {
-                        data.forEach((u, i) => {
-                            console.log(`Usuario[${i}]:`, u);
-                        });
-                        setAllUsers(data);
-                        console.log('Conteo de usuarios:', data.length);
-                    } else {
-                        setAllUsers([]);
-                        console.log('No se obtuvo un array de usuarios.');
-                    }
+                if (!error && Array.isArray(data)) {
+                    data.forEach((u, i) => {
+                        console.log(`Usuario[${i}]:`, u);
+                    });
+                    setAllUsers(data);
+                    console.log('Conteo de usuarios:', data.length);
                 } else {
-                    console.error('Error obteniendo usuarios:', error);
                     setAllUsers([]);
+                    console.log('No se obtuvo un array de usuarios o hubo error.');
                 }
             } catch (error) {
                 console.error('Error en loadUsers:', error);
