@@ -268,6 +268,39 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Bloques exclusivos para Padres/Docentes */}
+                {user.userType === 'padre-docente' && (
+                    <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Crear noticias</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600">Publica novedades para la comunidad.</p>
+                                <Button className="mt-4">Crear noticia</Button>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Crear concursos</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600">Organiza concursos y actividades.</p>
+                                <Button className="mt-4">Crear concurso</Button>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Panel de administración</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600">Gestiona usuarios y configuraciones avanzadas.</p>
+                                <Button className="mt-4">Ir al panel</Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
             </div>
         </div>
     );
