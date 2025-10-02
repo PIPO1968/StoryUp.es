@@ -15,7 +15,6 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import ChatBasic from '../components/ChatBasic';
 
 interface ProfilePageProps {
     user: DatabaseUser | null
@@ -299,7 +298,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </CardHeader>
                         <CardContent>
                             {/* Chat funcional */}
-                            {user && <ChatBasic currentUser={user} />}
                         </CardContent>
                     </Card>
                 </div>
