@@ -47,9 +47,11 @@ export default function EducatorProfile() {
                 id: user.id,
                 username: user.username || '',
                 name: user.name || '',
+                email: user.email || '',
                 avatar: user.avatar || '',
                 bio: user.bio || '',
                 userType: user.userType || 'user',
+                joinedAt: user.joinedAt || new Date(),
             });
         });
     }, []);
@@ -253,14 +255,10 @@ export default function EducatorProfile() {
                             </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-3 gap-4">
-                                    {user.trophies.map((trophyId, index) => (
+                                    {user.trophies?.map((trophy, index) => (
                                         <div key={index} className="text-center">
-                                            <img
-                                                src={`/assets/trofeo${trophyId}.png`}
-                                                alt={`Trofeo ${trophyId}`}
-                                                className="w-16 h-16 mx-auto mb-2"
-                                            />
-                                            <p className="text-xs text-gray-600">Trofeo {trophyId}</p>
+                                            <div className="text-4xl mb-2">{trophy.icon}</div>
+                                            <p className="text-xs text-gray-600">{trophy.name}</p>
                                         </div>
                                     ))}
                                 </div>
