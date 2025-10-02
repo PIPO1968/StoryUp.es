@@ -24,16 +24,19 @@ export default function WelcomePage() {
 
     useEffect(() => {
         async function fetchAnnouncements() {
+            console.log('🔍 Iniciando consulta de anuncios en Supabase...'); // Depuración
             const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
             if (data) {
-                console.log('Datos obtenidos de Supabase:', data); // Depuración
+                console.log('✅ Datos obtenidos de Supabase:', data); // Depuración
                 setAnnouncements(data);
             } else {
-                console.error('Error fetching announcements:', error); // Depuración
+                console.error('❌ Error al obtener anuncios de Supabase:', error); // Depuración
             }
         }
         fetchAnnouncements();
     }, []);
+
+    console.log('📢 Renderizando bloque de anuncios:', announcements); // Depuración adicional
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-6 text-center">
@@ -61,20 +64,20 @@ export default function WelcomePage() {
                 </div>
             </div>
 
-            {/* Panel de anuncios públicos */}
-            <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">📢 Panel de Anuncios</h2>
-                <div className="bg-white shadow-md rounded-lg p-4">
+            {/* Asegurar visibilidad del tablón de anuncios */}
+            <div className="mt-8 border-4 border-blue-700 bg-yellow-200 shadow-lg rounded-lg p-6">
+                <h2 className="text-3xl font-extrabold mb-6 text-blue-800">📢 Tablón de Anuncios</h2>
+                <div>
                     {announcements.length > 0 ? (
                         announcements.map((announcement) => (
-                            <div key={announcement.id} className="mb-4">
-                                <h3 className="font-bold text-lg">{announcement.title}</h3>
-                                <p className="text-gray-600">{announcement.content}</p>
-                                <p className="text-sm text-gray-400">{new Date(announcement.created_at).toLocaleString()}</p>
+                            <div key={announcement.id} className="mb-6">
+                                <h3 className="font-bold text-xl text-blue-900">{announcement.title}</h3>
+                                <p className="text-gray-700 text-base">{announcement.content}</p>
+                                <p className="text-sm text-gray-500 italic">{new Date(announcement.created_at).toLocaleString()}</p>
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-600">No hay anuncios disponibles.</p>
+                        <p className="text-gray-700 text-lg">No hay anuncios disponibles.</p>
                     )}
                 </div>
             </div>
