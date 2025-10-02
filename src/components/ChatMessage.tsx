@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ChatMessage as ChatMessageType } from '@/lib/types';
+import { ChatMessage as ChatMessageType, User } from '@/lib/types';
 import { getCurrentUser } from '@/lib/auth';
+import { useEffect, useState } from 'react';
 
 interface ChatMessageProps {
     message: ChatMessageType;
@@ -9,7 +10,12 @@ interface ChatMessageProps {
 }
 
 export function ChatMessage({ message, senderName, senderAvatar }: ChatMessageProps) {
-    const currentUser = getCurrentUser();
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    
+    useEffect(() => {
+        getCurrentUser().then(setCurrentUser);
+    }, []);
+    
     const isOwnMessage = message.senderId === currentUser?.id;
 
     const formatTime = (date: Date) => {

@@ -4,6 +4,11 @@ export interface Story {
     user: {
         id: string;
         username: string;
+        name?: string;
+        avatar?: string;
+        grade?: string;
+        school?: string;
+        trophies?: Trophy[];
     };
     content: string;
     image?: string;
@@ -21,6 +26,8 @@ export interface Comment {
     user: {
         id: string;
         username: string;
+        name?: string;
+        avatar?: string;
     };
     content: string;
     timestamp: Date;
@@ -114,4 +121,17 @@ export interface CreateStoryData {
 export interface LoginCredentials {
     email: string;
     password: string;
+}
+
+export interface User {
+    id: string;
+    username: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    bio?: string;
+    grade?: string;
+    school?: string;
+    trophies?: Trophy[];
+    joinedAt: Date;
 }

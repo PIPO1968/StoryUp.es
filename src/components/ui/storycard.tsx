@@ -39,21 +39,23 @@ export function StoryCard({ story, onLike, onComment }: StoryCardProps) {
             <CardHeader className="pb-3">
                 <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
-                        <AvatarImage src={story.user.avatar} alt={story.user.name} />
-                        <AvatarFallback>{story.user.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={story.user.avatar} alt={story.user.name || story.user.username} />
+                        <AvatarFallback>{(story.user.name || story.user.username).charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                         <div className="flex items-center space-x-2">
-                            <h3 className="font-semibold text-sm">{story.user.name}</h3>
-                            <Badge variant="secondary" className="text-xs">
-                                {story.user.grade}
-                            </Badge>
-                            {story.user.trophies.length > 0 && (
+                            <h3 className="font-semibold text-sm">{story.user.name || story.user.username}</h3>
+                            {story.user.grade && (
+                                <Badge variant="secondary" className="text-xs">
+                                    {story.user.grade}
+                                </Badge>
+                            )}
+                            {story.user.trophies && story.user.trophies.length > 0 && (
                                 <Trophy className="h-4 w-4 text-yellow-500" />
                             )}
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            {story.user.school} • {formatTime(story.timestamp)}
+                            {story.user.school && `${story.user.school} • `}{formatTime(story.timestamp)}
                         </p>
                     </div>
                 </div>
