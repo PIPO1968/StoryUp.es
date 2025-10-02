@@ -29,6 +29,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<DatabaseUser[]>([]);
+    const [announcement, setAnnouncement] = useState('');
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
     const joinDate = new Date();
@@ -122,6 +123,31 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
             setIsEditDialogOpen(false);
         } catch (error) {
             console.error('Error actualizando perfil:', error);
+        }
+    };
+
+    const handlePublishAnnouncement = async () => {
+        if (!announcement.trim()) {
+            alert('El anuncio no puede estar vacío.');
+            return;
+        }
+
+        try {
+            const { error } = await supabase.from('announcements').insert({
+                content: announcement,
+                created_at: new Date().toISOString()
+            });
+
+            if (error) {
+                console.error('Error publicando anuncio:', error);
+                alert('Hubo un error al publicar el anuncio.');
+            } else {
+                alert('Anuncio publicado con éxito.');
+                setAnnouncement('');
+            }
+        } catch (err) {
+            console.error('Error inesperado:', err);
+            alert('Hubo un error inesperado.');
         }
     };
 
@@ -292,8 +318,10 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                             <Textarea
                                 placeholder="Escribe un anuncio público..."
                                 className="mb-4"
+                                value={announcement}
+                                onChange={(e) => setAnnouncement(e.target.value)}
                             />
-                            <Button className="w-full">Publicar anuncio</Button>
+                            <Button className="w-full" onClick={handlePublishAnnouncement}>Publicar anuncio</Button>
                         </CardContent>
                     </Card>
                 </div>
