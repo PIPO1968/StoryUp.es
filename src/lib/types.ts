@@ -1,9 +1,10 @@
-export type { DatabaseUser } from './supabase';
-
 export interface Story {
     id: string;
     userId: string;
-    user: DatabaseUser;
+    user: {
+        id: string;
+        username: string;
+    };
     content: string;
     image?: string;
     likes: number;
@@ -17,7 +18,10 @@ export interface Story {
 export interface Comment {
     id: string;
     userId: string;
-    user: DatabaseUser;
+    user: {
+        id: string;
+        username: string;
+    };
     content: string;
     timestamp: Date;
 }
@@ -35,7 +39,10 @@ export interface Trophy {
 export interface Contest {
     id: string;
     creatorId: string;
-    creator: DatabaseUser;
+    creator: {
+        id: string;
+        username: string;
+    };
     title: string;
     description: string;
     startDate: Date;
@@ -48,7 +55,10 @@ export interface Contest {
 export interface News {
     id: string;
     creatorId: string;
-    creator: DatabaseUser;
+    creator: {
+        id: string;
+        username: string;
+    };
     title: string;
     content: string;
     timestamp: Date;
@@ -71,7 +81,10 @@ export interface ChatMessage {
 
 export interface Chat {
     id: string;
-    participants: DatabaseUser[];
+    participants: {
+        id: string;
+        username: string;
+    }[];
     messages: ChatMessage[];
     lastMessage: ChatMessage;
     createdAt: Date;

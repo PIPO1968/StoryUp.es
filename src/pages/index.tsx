@@ -1,15 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createClient } from '@supabase/supabase-js';
 import { getCurrentUser } from '../lib/auth';
 
-const supabase = createClient(
-    'https://kvvsbomvoxvvunxkkjyf.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2dnNib212b3h2dnVueGtranlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkwNzI4NjIsImV4cCI6MjA3NDY0ODg2Mn0.DSriZyytXiCDbutr6XJyV-0DAQh87G5EEVUOR2IvZ8k'
-);
-
 export default function WelcomePage() {
-    const [announcements, setAnnouncements] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,22 +14,6 @@ export default function WelcomePage() {
             navigate('/login');
         }
     }, [navigate]);
-
-    useEffect(() => {
-        async function fetchAnnouncements() {
-            console.log('🔍 Iniciando consulta de anuncios en Supabase...'); // Depuración
-            const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
-            if (data) {
-                console.log('✅ Datos obtenidos de Supabase:', data); // Depuración
-                setAnnouncements(data);
-            } else {
-                console.error('❌ Error al obtener anuncios de Supabase:', error); // Depuración
-            }
-        }
-        fetchAnnouncements();
-    }, []);
-
-    console.log('📢 Renderizando bloque de anuncios:', announcements); // Depuración adicional
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-6 text-center">
@@ -55,30 +32,22 @@ export default function WelcomePage() {
                 <p className="text-lg text-muted-foreground animate-in fade-in delay-300 duration-700">
                     Conectando comunidades educativas a través de historias
                 </p>
-
-                <div className="animate-in fade-in delay-500 duration-700">
-                    <div className="inline-flex items-center justify-center w-8 h-8 border-2 border-blue-600 rounded-full animate-spin">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                    </div>
-                    <p className="mt-2 text-sm text-gray-500">Cargando...</p>
-                </div>
             </div>
 
-            {/* Asegurar visibilidad del tablón de anuncios */}
-            <div className="mt-8 border-4 border-blue-700 bg-yellow-200 shadow-lg rounded-lg p-6">
-                <h2 className="text-3xl font-extrabold mb-6 text-blue-800">📢 Tablón de Anuncios</h2>
-                <div>
-                    {announcements.length > 0 ? (
-                        announcements.map((announcement) => (
-                            <div key={announcement.id} className="mb-6">
-                                <h3 className="font-bold text-xl text-blue-900">{announcement.title}</h3>
-                                <p className="text-gray-700 text-base">{announcement.content}</p>
-                                <p className="text-sm text-gray-500 italic">{new Date(announcement.created_at).toLocaleString()}</p>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-700 text-lg">No hay anuncios disponibles.</p>
-                    )}
+            <div className="flex items-center justify-between space-x-6">
+                <img
+                    src="/assets/logo-grande.png.png"
+                    alt="StoryUp Logo"
+                    className="h-16 w-16 object-contain"
+                />
+                {/* Bloque de tablón de anuncios */}
+                <div className="border-2 border-gray-300 bg-white shadow-md rounded-lg p-6 w-1/2">
+                    <h2 className="text-2xl font-bold mb-4 text-gray-800">📢 Tablón de Anuncios</h2>
+                    <ul className="list-disc pl-5 space-y-2">
+                        <li className="text-gray-700">Anuncio 1: Bienvenidos a StoryUp.</li>
+                        <li className="text-gray-700">Anuncio 2: Próxima reunión el viernes.</li>
+                        <li className="text-gray-700">Anuncio 3: Actualización de la plataforma completada.</li>
+                    </ul>
                 </div>
             </div>
         </div>

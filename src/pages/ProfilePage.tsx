@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useRef } from 'react';
-import { supabase } from '../lib/supabase';
-import { DatabaseUser } from '../lib/supabase';
-
 import { ArrowLeft, Edit, Calendar, Trophy, Users, BookOpen, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,9 +10,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface ProfilePageProps {
-    user: DatabaseUser | null
-    onBack: () => void
-    updateProfile: (updates: Partial<DatabaseUser>) => Promise<void>
+    user: any | null; // Ajustar el tipo según sea necesario
+    onBack: () => void;
+    updateProfile: (updates: Partial<any>) => Promise<void>;
 }
 
 export default function ProfilePage({ user, onBack, updateProfile }: ProfilePageProps) {
@@ -25,10 +22,10 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         bio: user?.bio || '',
         username: user?.username || ''
     });
-    const [fullUser, setFullUser] = useState<DatabaseUser | null>(null);
+    const [fullUser, setFullUser] = useState<any | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false);
-    const [usersList, setUsersList] = useState<DatabaseUser[]>([]);
+    const [usersList, setUsersList] = useState<any[]>([]);
     const [announcement, setAnnouncement] = useState('');
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,34 +36,18 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         async function fetchUserData() {
             if (user) {
                 try {
-                    // Consulta usuario actual desde Supabase
-                    const { data, error } = await supabase
-                        .from('users')
-                        .select('*')
-                        .eq('id', user.id)
-                        .single();
-                    if (error) throw error; // Lanzar error si ocurre
-                    if (data) {
-                        console.log('Datos del usuario obtenidos de Supabase:', data); // Depuración
-                        setFullUser(data);
-                        setAvatarUrl(data.avatar || '');
+                    // Aquí iría la lógica para obtener los datos del usuario, por ahora se simula con un setTimeout
+                    setTimeout(() => {
+                        setFullUser(user);
+                        setAvatarUrl(user.avatar || '');
                         setEditForm({
-                            name: data.name || '',
-                            bio: data.bio || '',
-                            username: data.username || ''
+                            name: user.name || '',
+                            bio: user.bio || '',
+                            username: user.username || ''
                         });
-                        // Almacenar en caché local
-                        localStorage.setItem('fullUser', JSON.stringify(data));
-                    }
-                    // Consulta todos los usuarios
-                    const { data: allUsers, error: errorAll } = await supabase
-                        .from('users')
-                        .select('*');
-                    if (errorAll) throw errorAll; // Lanzar error si ocurre
-                    if (allUsers) {
-                        console.log('Lista de usuarios obtenida:', allUsers); // Depuración
-                        setUsersList(allUsers);
-                    }
+                        // Simular lista de usuarios
+                        setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
+                    }, 1000);
                 } catch (err) {
                     console.error('Error recargando datos de usuario:', err);
                 }
@@ -132,24 +113,9 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
             return;
         }
 
-        try {
-            const { data, error } = await supabase.from('announcements').insert({
-                content: announcement,
-                created_at: new Date().toISOString()
-            });
-
-            if (error) {
-                console.error('Error publicando anuncio:', error);
-                alert(`Hubo un error al publicar el anuncio: ${error.message}`);
-            } else {
-                console.log('Anuncio publicado con éxito:', data);
-                alert('Anuncio publicado con éxito.');
-                setAnnouncement('');
-            }
-        } catch (err) {
-            console.error('Error inesperado:', err);
-            alert('Hubo un error inesperado.');
-        }
+        // Aquí iría la lógica para publicar el anuncio, por ahora solo se simula con un alert
+        alert('Anuncio publicado con éxito: ' + announcement);
+        setAnnouncement('');
     };
 
     const getUserTypeColor = (userType: 'usuario' | 'padre-docente' | undefined) => {
@@ -163,8 +129,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         if (userType === 'usuario') return 'Usuario';
         return 'Desconocido'; // Valor predeterminado
     };
-
-    // Ajusté las comparaciones para usar los valores correctos de `user_type` en `DatabaseUser` y eliminé referencias incorrectas.
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -194,29 +158,11 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                                                 const file = e.target.files?.[0];
                                                 if (!file) return;
                                                 setUploading(true);
-                                                // Subir imagen a Supabase Storage
-                                                const fileExt = file.name.split('.').pop();
-                                                const fileName = `${user.id}_${Date.now()}.${fileExt}`;
-                                                const { data, error } = await supabase.storage
-                                                    .from('avatars')
-                                                    .upload(fileName, file, {
-                                                        cacheControl: '3600',
-                                                        upsert: true
-                                                    });
-                                                if (error) {
-                                                    alert('Error subiendo imagen: ' + error.message);
+                                                // Simular subida de imagen
+                                                setTimeout(() => {
+                                                    setAvatarUrl(URL.createObjectURL(file));
                                                     setUploading(false);
-                                                    return;
-                                                }
-                                                // Obtener URL pública
-                                                const { data: urlData } = supabase.storage
-                                                    .from('avatars')
-                                                    .getPublicUrl(fileName);
-                                                if (urlData?.publicUrl) {
-                                                    setAvatarUrl(urlData.publicUrl);
-                                                    await updateProfile({ avatar: urlData.publicUrl });
-                                                }
-                                                setUploading(false);
+                                                }, 1000);
                                             }}
                                         />
                                         <Button
