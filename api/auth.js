@@ -3,8 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 function getClient() {
+    const connectionString = process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/storyup';
+    console.log('DATABASE_URL existe:', !!process.env.DATABASE_URL);
     return new Client({
-        connectionString: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/storyup'
+        connectionString: connectionString
     });
 }
 
@@ -30,10 +32,22 @@ async function ensureUsersTable(client) {
 }
 
 module.exports = async function handler(req, res) {
-    const client = getClient();
-    await client.connect();
+    // Agregar headers CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
 
+    const client = getClient();
+    
     try {
+        console.log('Conectando a la base de datos...');
+        await client.connect();
+        console.log('Conexión exitosa');
+        
         await ensureUsersTable(client);
 
         if (req.method === 'POST') {
@@ -176,8 +190,15 @@ module.exports = async function handler(req, res) {
         }
     } catch (error) {
         console.error('Error en auth API:', error);
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ 
+            error: 'Error interno del servidor',
+            details: error.message || 'Error desconocido'
+        });
     } finally {
-        await client.end();
+        try {
+            await client.end();
+        } catch (clientError) {
+            console.error('Error cerrando conexión:', clientError);
+        }
     }
 }
