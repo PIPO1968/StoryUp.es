@@ -54,28 +54,7 @@ CREATE TABLE story_likes (
     UNIQUE(story_id, user_id)
 );
 
--- 5. Tabla de mensajes de chat
-CREATE TABLE chat_messages (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    content TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT false,
-    formatting JSONB DEFAULT '{}',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- 6. Tabla de chats (conversaciones)
-CREATE TABLE chats (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    participants UUID[] NOT NULL,
-    last_message_id UUID REFERENCES chat_messages(id),
-    is_private BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- 7. Tabla de trofeos
+-- 5. Tabla de trofeos
 CREATE TABLE trophies (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
@@ -86,7 +65,7 @@ CREATE TABLE trophies (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 8. Tabla de trofeos ganados por usuarios
+-- 6. Tabla de trofeos ganados por usuarios
 CREATE TABLE user_trophies (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -95,7 +74,7 @@ CREATE TABLE user_trophies (
     UNIQUE(user_id, trophy_id)
 );
 
--- 9. Tabla de noticias
+-- 7. Tabla de noticias
 CREATE TABLE news (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     creator_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -108,8 +87,6 @@ CREATE TABLE news (
 CREATE INDEX idx_stories_user_id ON stories(user_id);
 CREATE INDEX idx_stories_created_at ON stories(created_at DESC);
 CREATE INDEX idx_comments_story_id ON comments(story_id);
-CREATE INDEX idx_chat_messages_sender_receiver ON chat_messages(sender_id, receiver_id);
-CREATE INDEX idx_chat_messages_created_at ON chat_messages(created_at DESC);
 
 -- Función para actualizar updated_at automáticamente
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -123,4 +100,3 @@ $$ language 'plpgsql';
 -- Triggers para actualizar updated_at
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_stories_updated_at BEFORE UPDATE ON stories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_chats_updated_at BEFORE UPDATE ON chats FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
