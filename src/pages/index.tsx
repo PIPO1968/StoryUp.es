@@ -26,9 +26,10 @@ export default function WelcomePage() {
         async function fetchAnnouncements() {
             const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending: false });
             if (data) {
+                console.log('Datos obtenidos de Supabase:', data); // Depuración
                 setAnnouncements(data);
             } else {
-                console.error('Error fetching announcements:', error);
+                console.error('Error fetching announcements:', error); // Depuración
             }
         }
         fetchAnnouncements();
