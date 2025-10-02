@@ -1334,11 +1334,6 @@ function HomePage() {
         setTotalUsers(allUsers.length)
     }, [allUsers])
 
-    // Cargar mensajes desde Supabase al iniciar
-    useEffect(() => {
-        loadMessages()
-    }, [])
-
     // Actualizar chat cuando se selecciona un usuario diferente
     useEffect(() => {
         if (selectedUser && user) {
