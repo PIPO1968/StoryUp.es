@@ -6,15 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { TrophyCard } from '@/components/TrophyCard';
-import { getCurrentUser } from '../lib/auth';
-import { mockTrophies } from '@/lib/data';
-import { DatabaseUser } from '@/lib/supabase';
 import { Trophy as TrophyType } from '@/lib/types';
 
 export default function Trophies() {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<DatabaseUser | null>(null);
-    const [earnedTrophies] = useState<TrophyType[]>(mockTrophies);
+    const [currentUser, setCurrentUser] = useState<any | null>(null); // Eliminado: DatabaseUser
+    const [earnedTrophies] = useState<TrophyType[]>([]); // Eliminado: mockTrophies
 
     // Trofeos disponibles pero no ganados
     const availableTrophies: TrophyType[] = [
@@ -39,23 +36,15 @@ export default function Trophies() {
             name: 'Colaborador',
             description: 'Comenta en 20 historias diferentes',
             icon: '🤝',
-            color: 'bg-indigo-500',
+            color: 'bg-green-500',
             earnedAt: new Date()
         }
     ];
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const user = await getCurrentUser();
-            if (user) {
-                setCurrentUser(user as unknown as DatabaseUser);
-            } else {
-                navigate('/');
-            }
-        };
-
-        fetchUser();
-    }, [navigate]);
+        // Simular usuario actual
+        setCurrentUser({ id: '1', name: 'Usuario Demo' });
+    }, []);
 
     if (!currentUser) return null;
 

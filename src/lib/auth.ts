@@ -1,32 +1,125 @@
-import { supabase } from './supabase';
+// Sistema de autenticación integrado con APIs
 
-// Obtener el usuario actual
+const API_BASE = '/api';
+
+// Obtener el usuario actual desde el token almacenado
 export const getCurrentUser = async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error) {
-        console.error('Error obteniendo el usuario actual:', error);
+    try {
+        const token = localStorage.getItem('auth_token');
+        if (!token) return null;
+
+        const response = await fetch(`${API_BASE}/auth`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            localStorage.removeItem('auth_token');
+            return null;
+        }
+
+        const data = await response.json();
+        return data.user;
+    } catch (error) {
+        console.error('Error obteniendo usuario actual:', error);
+        localStorage.removeItem('auth_token');
         return null;
     }
-    return user;
+};
+
+// Login de usuario
+export const loginUser = async (credentials: { email: string; password: string }) => {
+    try {
+        const response = await fetch(`${API_BASE}/auth`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error en el login');
+        }
+
+        localStorage.setItem('auth_token', data.token);
+        return data.user;
+    } catch (error) {
+        console.error('Error en login:', error);
+        throw error;
+    }
+};
+
+// Registro de usuario
+export const registerUser = async (userData: {
+    email: string;
+    password: string;
+    username: string;
+    name?: string;
+}) => {
+    try {
+        const response = await fetch(`${API_BASE}/auth`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error en el registro');
+        }
+
+        localStorage.setItem('auth_token', data.token);
+        return data.user;
+    } catch (error) {
+        console.error('Error en registro:', error);
+        throw error;
+    }
+};
+
+// Logout
+export const logoutUser = () => {
+    localStorage.removeItem('auth_token');
+    window.location.href = '/';
 };
 
 // Actualizar datos del usuario
 export const updateUser = async (updates: Partial<any>) => {
-    const { data, error } = await supabase.from('users').update(updates).eq('id', updates.id);
-    if (error) {
-        console.error('Error actualizando el usuario:', error);
+    try {
+        const token = localStorage.getItem('auth_token');
+        if (!token) throw new Error('No autorizado');
+
+        const response = await fetch(`${API_BASE}/users/profile`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updates)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error actualizando usuario');
+        }
+
+        return data.user;
+    } catch (error) {
+        console.error('Error actualizando usuario:', error);
         throw error;
     }
-    return data;
 };
 
-// Refrescar el token de autenticación
-export const refreshAuthToken = async () => {
-    const { data, error } = await supabase.auth.refreshSession();
-    if (error) {
-        console.error('Error refrescando el token de autenticación:', error);
-        throw error;
-    }
-    console.log('Token de autenticación refrescado:', data);
-    return data;
+// Obtener token para requests autenticados
+export const getAuthToken = () => {
+    return localStorage.getItem('auth_token');
 };
