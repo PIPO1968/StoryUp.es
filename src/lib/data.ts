@@ -1,4 +1,16 @@
-import { Story, User, ChatMessage, News } from './types';
+import { Story, User, ChatMessage, News, Trophy } from './types';
+
+// Trophies de ejemplo
+export const sampleTrophies: Trophy[] = [
+    { id: '1', name: 'Primera Historia', description: 'Publicaste tu primera historia', icon: '📝', color: 'gold', earnedAt: new Date(), category: 'participation' },
+    { id: '2', name: 'Científico', description: 'Historia sobre ciencias', icon: '🔬', color: 'blue', earnedAt: new Date(), category: 'academic' },
+    { id: '3', name: 'Artista', description: 'Historia creativa', icon: '🎨', color: 'purple', earnedAt: new Date(), category: 'academic' },
+    { id: '4', name: 'Matemático', description: 'Historia sobre matemáticas', icon: '🔢', color: 'green', earnedAt: new Date(), category: 'academic' },
+    { id: '5', name: 'Educador Estrella', description: 'Profesor destacado', icon: '⭐', color: 'gold', earnedAt: new Date(), category: 'behavior' },
+    { id: '6', name: 'Mentor', description: 'Guía de estudiantes', icon: '🎓', color: 'blue', earnedAt: new Date(), category: 'social' },
+    { id: '7', name: 'Innovador', description: 'Métodos de enseñanza creativos', icon: '💡', color: 'yellow', earnedAt: new Date(), category: 'participation' },
+    { id: '8', name: 'Colaborador', description: 'Trabajo en equipo', icon: '🤝', color: 'orange', earnedAt: new Date(), category: 'social' }
+];
 
 // Usuarios de ejemplo
 export const sampleUsers: User[] = [
@@ -14,7 +26,8 @@ export const sampleUsers: User[] = [
         grade: '6º Primaria',
         followers: 15,
         following: 8,
-        trophies: ['1', '2', '3']
+        trophies: [sampleTrophies[0], sampleTrophies[1], sampleTrophies[2]],
+        joinedAt: new Date('2024-01-15')
     },
     {
         id: '2',
@@ -28,7 +41,8 @@ export const sampleUsers: User[] = [
         grade: '5º Primaria',
         followers: 12,
         following: 10,
-        trophies: ['1', '4']
+        trophies: [sampleTrophies[0], sampleTrophies[3]],
+        joinedAt: new Date('2024-02-01')
     },
     {
         id: '3',
@@ -41,7 +55,8 @@ export const sampleUsers: User[] = [
         school: 'Colegio San José',
         followers: 45,
         following: 20,
-        trophies: ['5', '6', '7', '8']
+        trophies: [sampleTrophies[4], sampleTrophies[5], sampleTrophies[6], sampleTrophies[7]],
+        joinedAt: new Date('2023-09-01')
     }
 ];
 
