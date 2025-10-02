@@ -22,8 +22,8 @@ export default defineConfig({
         }
     },
     optimizeDeps: {
-        include: ['@supabase/supabase-js'],  // Incluir en lugar de excluir para pre-bundling correcto
-        force: true  // Forzar re-optimización
+        include: [],  // Eliminado '@supabase/supabase-js'
+        force: true  // Mantener re-optimización
     },
     build: {
         chunkSizeWarningLimit: 1000,  // Aumentar límite de warning para archivos grandes
