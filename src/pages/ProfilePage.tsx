@@ -287,17 +287,18 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </Card>
                     </div>
                 </div>
-                {/* Chat debajo ocupando todo el ancho */}
+                {/* Panel de anuncios */}
                 <div className="w-full mt-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <BookOpen className="h-5 w-5" />
-                                Chat
-                            </CardTitle>
+                            <CardTitle>Panel de anuncios</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            {/* Chat funcional */}
+                            <Textarea
+                                placeholder="Escribe un anuncio público..."
+                                className="mb-4"
+                            />
+                            <Button className="w-full">Publicar anuncio</Button>
                         </CardContent>
                     </Card>
                 </div>
