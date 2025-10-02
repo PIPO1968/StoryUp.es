@@ -47,3 +47,5 @@ export interface DatabaseChatMessage {
     is_read: boolean
     created_at: string
 }
+
+export type { DatabaseUser };

@@ -1,4 +1,4 @@
-import { DatabaseUser } from './supabase';
+export type { DatabaseUser } from './supabase';
 
 export interface Story {
     id: string;

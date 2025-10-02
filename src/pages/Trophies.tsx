@@ -8,11 +8,12 @@ import { Progress } from '@/components/ui/progress';
 import { TrophyCard } from '@/components/TrophyCard';
 import { getCurrentUser } from '../lib/auth';
 import { mockTrophies } from '@/lib/data';
-import { User, Trophy as TrophyType } from '@/lib/types';
+import { DatabaseUser } from '@/lib/supabase';
+import { Trophy as TrophyType } from '@/lib/types';
 
 export default function Trophies() {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [currentUser, setCurrentUser] = useState<DatabaseUser | null>(null);
     const [earnedTrophies] = useState<TrophyType[]>(mockTrophies);
 
     // Trofeos disponibles pero no ganados
@@ -44,12 +45,16 @@ export default function Trophies() {
     ];
 
     useEffect(() => {
-        const user = getCurrentUser();
-        if (!user) {
-            navigate('/');
-            return;
-        }
-        setCurrentUser(user);
+        const fetchUser = async () => {
+            const user = await getCurrentUser();
+            if (user) {
+                setCurrentUser(user as unknown as DatabaseUser);
+            } else {
+                navigate('/');
+            }
+        };
+
+        fetchUser();
     }, [navigate]);
 
     if (!currentUser) return null;
