@@ -36,26 +36,32 @@ module.exports = async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
+
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
     const client = getClient();
-    
+
     try {
         console.log('Conectando a la base de datos...');
         await client.connect();
         console.log('Conexión exitosa');
-        
+
         await ensureUsersTable(client);
 
         if (req.method === 'POST') {
+            console.log('POST request recibido');
+            console.log('Body:', JSON.stringify(req.body));
+            
             const { email, password, username, name } = req.body;
 
             if (!email || !password) {
+                console.log('Error: Email o contraseña faltantes');
                 return res.status(400).json({ error: 'Email y contraseña requeridos' });
             }
+            
+            console.log('Datos válidos recibidos:', { email, username, name });
 
             // Verificar si el usuario ya existe
             const existingUser = await client.query(
@@ -101,12 +107,17 @@ module.exports = async function handler(req, res) {
                 });
             } else {
                 // Registro
+                console.log('Iniciando proceso de registro para:', email);
                 if (!username) {
+                    console.log('Error: Username faltante');
                     return res.status(400).json({ error: 'Nombre de usuario requerido para registro' });
                 }
 
+                console.log('Hasheando contraseña...');
                 const hashedPassword = await bcrypt.hash(password, 10);
+                console.log('Contraseña hasheada exitosamente');
 
+                console.log('Insertando usuario en la base de datos...');
                 const result = await client.query(
                     `INSERT INTO users (email, username, password, name) 
                      VALUES ($1, $2, $3, $4) 
@@ -114,6 +125,7 @@ module.exports = async function handler(req, res) {
                     [email, username, hashedPassword, name || username]
                 );
 
+                console.log('Usuario insertado exitosamente');
                 const newUser = result.rows[0];
 
                 const token = jwt.sign(
@@ -190,7 +202,7 @@ module.exports = async function handler(req, res) {
         }
     } catch (error) {
         console.error('Error en auth API:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             error: 'Error interno del servidor',
             details: error.message || 'Error desconocido'
         });
