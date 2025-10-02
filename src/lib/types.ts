@@ -134,4 +134,9 @@ export interface User {
     school?: string;
     trophies?: Trophy[];
     joinedAt: Date;
+    userType?: 'user' | 'educator';
+    followers?: number;
+    following?: number;
+    favorites?: string[];
+    bannedWords?: string[];
 }
