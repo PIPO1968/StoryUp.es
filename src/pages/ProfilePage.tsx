@@ -133,15 +133,16 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
         }
 
         try {
-            const { error } = await supabase.from('announcements').insert({
+            const { data, error } = await supabase.from('announcements').insert({
                 content: announcement,
                 created_at: new Date().toISOString()
             });
 
             if (error) {
                 console.error('Error publicando anuncio:', error);
-                alert('Hubo un error al publicar el anuncio.');
+                alert(`Hubo un error al publicar el anuncio: ${error.message}`);
             } else {
+                console.log('Anuncio publicado con éxito:', data);
                 alert('Anuncio publicado con éxito.');
                 setAnnouncement('');
             }

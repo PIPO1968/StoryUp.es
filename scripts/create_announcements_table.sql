@@ -2,6 +2,7 @@
 CREATE TABLE announcements (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     content TEXT NOT NULL,
+    title TEXT NOT NULL DEFAULT 'Sin título',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
