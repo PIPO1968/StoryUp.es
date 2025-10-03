@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { BookOpen, User } from 'lucide-react';
-
-
-interface Story {
-    id: number;
-    title: string;
-    author: string;
-    createdAt: string;
-}
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../App';
+import { useLanguage } from '../lib/LanguageContext';
+import { getStoriesPreview, getStoriesStats } from '../lib/storiesManager';
+import type { StoryPreview } from '../lib/storiesManager';
 
 export default function StoriesPage() {
     // Inicialmente sin historias - lista vacía con numeración

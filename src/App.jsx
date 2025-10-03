@@ -6,7 +6,8 @@ import LoginPage from './pages/LoginPage.tsx';
 import { LanguageProvider } from './lib/LanguageContext.tsx';
 
 import Dashboard from './pages/Dashboard.tsx';
-import StoriesPage from './pages/StoriesPage.tsx';
+import StoriesPageNew from './pages/StoriesPageNew.tsx';
+import StoryDetailPage from './pages/StoryDetailPage.tsx';
 import CreateStoryPage from './pages/CreateStoryPage.tsx';
 import NewsPage from './pages/NewsPage.tsx';
 import StatisticsPage from './pages/StatisticsPage.tsx';
@@ -56,7 +57,8 @@ function App() {
                             <Routes>
                                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/stories" element={<StoriesPage />} />
+                                <Route path="/stories" element={<StoriesPageNew />} />
+                                <Route path="/story/:storyId" element={<StoryDetailPage />} />
                                 <Route path="/create" element={<CreateStoryPage />} />
                                 <Route path="/news" element={<NewsPage />} />
                                 <Route path="/contests" element={<ContestsPage />} />
