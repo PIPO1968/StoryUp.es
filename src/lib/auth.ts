@@ -20,7 +20,7 @@ export const getCurrentUser = async () => {
             email: 'usuario@storyup.es',
             avatar: '/assets/logo-grande.png.png'
         };
-        
+
         localStorage.setItem('user_data', JSON.stringify(defaultUser));
         return defaultUser;
     } catch (error) {
@@ -55,7 +55,7 @@ export const loginUser = async (credentials: { email: string; password: string }
         const token = 'simulated_token_' + Date.now();
         localStorage.setItem('auth_token', token);
         localStorage.setItem('user_data', JSON.stringify(user));
-        
+
         return user;
     } catch (error) {
         console.error('Error en login:', error);
@@ -92,7 +92,7 @@ export const registerUser = async (userData: {
         const token = 'simulated_token_' + Date.now();
         localStorage.setItem('auth_token', token);
         localStorage.setItem('user_data', JSON.stringify(user));
-        
+
         return user;
     } catch (error) {
         console.error('Error en registro:', error);
