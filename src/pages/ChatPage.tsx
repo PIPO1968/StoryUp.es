@@ -24,7 +24,7 @@ const ChatPage: React.FC = () => {
         <Layout>
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8">Chat</h1>
-                
+
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
@@ -37,10 +37,10 @@ const ChatPage: React.FC = () => {
                             <MessageCircle className="w-16 h-16 mx-auto text-gray-400 mb-4" />
                             <h3 className="text-lg font-medium text-gray-900 mb-2">Chat Principal</h3>
                             <p className="text-gray-500 mb-4">
-                                El sistema de chat principal está disponible. 
+                                El sistema de chat principal está disponible.
                                 Para una experiencia de chat más completa, visita tu perfil.
                             </p>
-                            <Button 
+                            <Button
                                 onClick={() => navigate('/profile')}
                                 className="bg-blue-500 hover:bg-blue-600"
                             >
