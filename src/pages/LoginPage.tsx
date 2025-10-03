@@ -1,194 +1,143 @@
-import React, { useState } from 'react'; import React, { useState } from 'react';
+import React, { useState } from 'react';
+import { loginUser } from '../lib/auth';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; import { useNavigate } from 'react-router-dom';
+interface LoginPageProps {
+    onLogin: (user: any) => void;
+}
 
-import { Button } from '@/components/ui/button'; import { Button } from '@/components/ui/button';
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+    const [formData, setFormData] = useState({
+        username: '',
+        password: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-import { Input } from '@/components/ui/input'; import { Input } from '@/components/ui/input';
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+        if (error) setError('');
+    };
 
-import { loginUser } from '../lib/auth'; import { Alert, AlertDescription } from '@/components/ui/alert';
-
-import { LogIn } from 'lucide-react'; import { loginUser } from '@/lib/auth';
-
-import { useAuth } from '@/App';
-
-export default function LoginPage({ onLogin }) {
-
-    const [email, setEmail] = useState(''); const LoginPage: React.FC = () => {
-
-        const [password, setPassword] = useState(''); const navigate = useNavigate();
-
-        const [loading, setLoading] = useState(false); const { setUser } = useAuth();
-
-        const [error, setError] = useState(''); const [formData, setFormData] = useState({
-
-            email: '',
-
-            const handleSubmit = async (e) => {
-                password: '',
-
-                    e.preventDefault();
-            });
-
-        setLoading(true); const [loading, setLoading] = useState(false);
-
-        setError(''); const [error, setError] = useState('');
-
-
-
-        try {
-            const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
-                const user = await loginUser({ email, password }); const { name, value } = e.target;
-
-                onLogin(user); setFormData({ ...formData, [name]: value });
-
-            } catch (err) {
-                if (error) setError(''); // Limpiar error al escribir
-
-                setError(err.message);
-            };
-
-        } finally {
-
-            setLoading(false); const handleSubmit = async (e: React.FormEvent) => {
-
-            }        e.preventDefault();
-
-        }; setLoading(true);
-
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
         setError('');
 
-        return (
+        try {
+            const user = await loginUser({
+                email: formData.username,
+                password: formData.password
+            });
+            onLogin(user);
+        } catch (err: any) {
+            setError(err.message || 'Error al iniciar sesión');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">        try {
+    const handleQuickLogin = async (username: string, password: string) => {
+        setLoading(true);
+        setError('');
+        
+        try {
+            const user = await loginUser({
+                email: username === 'PIPO68' ? 'pipocanarias@hotmail.com' : 'piporgz68@gmail.com',
+                password: password
+            });
+            onLogin(user);
+        } catch (err: any) {
+            setError(err.message || 'Error al iniciar sesión');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                <Card className="w-full max-w-md">            const user = await loginUser(formData);
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+                <div className="text-center mb-8">
+                    <img src="/favicon.ico" alt="StoryUp.es" className="w-16 h-16 mx-auto mb-4" />
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">StoryUp.es</h1>
+                    <p className="text-gray-600">Red Social Educativa</p>
+                </div>
 
-                    <CardHeader className="text-center">            setUser(user);
+                {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded mb-4">
+                        {error}
+                    </div>
+                )}
 
-                        <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">            navigate('/dashboard'); // Redirigir al dashboard tras login exitoso
+                <form onSubmit={handleSubmit} className="space-y-4 mb-6">
+                    <div>
+                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                            Usuario o Email
+                        </label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="PIPO68 o piporgz68"
+                            required
+                        />
+                    </div>
 
-                            <LogIn className="w-8 h-8 text-white" />        } catch (err: any) {
+                    <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                            Contraseña
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Ingresa tu contraseña"
+                            required
+                        />
+                    </div>
 
-                    </div>            setError(err.message || 'Error al iniciar sesión');
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                    >
+                        {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                    </button>
+                </form>
 
-                        <CardTitle className="text-2xl font-bold text-blue-600">        } finally {
+                <div className="border-t pt-6">
+                    <p className="text-sm text-gray-600 text-center mb-4">Acceso rápido:</p>
+                    <div className="space-y-2">
+                        <button
+                            onClick={() => handleQuickLogin('PIPO68', 'pipo123')}
+                            disabled={loading}
+                            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 text-sm"
+                        >
+                            👨‍💼 PIPO68 (Admin)
+                        </button>
+                        <button
+                            onClick={() => handleQuickLogin('piporgz68', 'teacher123')}
+                            disabled={loading}
+                            className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 text-sm"
+                        >
+                            👨‍🏫 piporgz68 (Docente/Padre)
+                        </button>
+                    </div>
+                </div>
 
-                            Iniciar Sesión en StoryUp            setLoading(false);
-
-                        </CardTitle>        }
-
-                    </CardHeader>    };
-
-                    <CardContent>
-
-                        <form onSubmit={handleSubmit} className="space-y-4">    return (
-
-                            <div>        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-
-                                <Input            <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-
-                                    type="email"                <div className="text-center mb-6">
-
-                                        value={email}                    <h1 className="text-3xl font-bold text-blue-600">StoryUp</h1>
-
-                                        onChange={(e) => setEmail(e.target.value)}                    <p className="text-gray-600 mt-2">Iniciar Sesión</p>
-
-                                        placeholder="Email"                </div>
-
-                                    required
-
-                            />                {error && (
-
-                        </div>                    <Alert variant="destructive" className="mb-4">
-
-                                    <AlertDescription>{error}</AlertDescription>
-
-                                    <div>                    </Alert>
-
-                                <Input                )}
-
-                                type="password"
-
-                                value={password}                <form onSubmit={handleSubmit} className="space-y-4">
-
-                                    onChange={(e) => setPassword(e.target.value)}                    <div>
-
-                                        placeholder="Contraseña"                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-
-                                            required                            Email
-
-                            />                        </label>
-
-                                    </div>                        <Input
-
-                                        id="email"
-
-                                        {error && (name = "email"
-
-                                            < div className="text-red-600 text-sm text-center">                            type="email"
-
-                                        {error}                            value={formData.email}
-
-                                    </div>                            onChange={handleChange}
-
-                        )}                            required
-
-                                    disabled={loading}
-
-                                    <Button placeholder="tu@email.com"
-
-                                        type="submit" />
-
-                                    className="w-full bg-blue-600 hover:bg-blue-700"                    </div>
-
-                            disabled={loading}                    <div>
-
-                        >                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-
-                                    {loading ? 'Iniciando...' : 'Iniciar Sesión'}                            Contraseña
-
-                                </Button>                        </label>
-
-                        </form>                        <Input
-
-                </CardContent>                            id="password"
-
-                </Card>                            name="password"
-
-            </div>                            type = "password"
-
-    ); value = { formData.password }
-
-} onChange = { handleChange }
-required
-disabled = { loading }
-placeholder = "Tu contraseña"
-    />
-                    </div >
-    <Button
-        type="submit"
-        className="w-full"
-        disabled={loading}
-    >
-        {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-    </Button>
-                </form >
-
-    <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-            ¿No tienes cuenta?{' '}
-            <button
-                onClick={() => navigate('/register')}
-                className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-                Regístrate aquí
-            </button>
-        </p>
-    </div>
-            </div >
-        </div >
+                <div className="mt-8 text-center">
+                    <p className="text-xs text-gray-500">
+                        © 2025 StoryUp.es - Red Social Educativa
+                    </p>
+                </div>
+            </div>
+        </div>
     );
 };
 
