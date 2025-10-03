@@ -10,6 +10,8 @@ import StoriesPageNew from './pages/StoriesPageNew.tsx';
 import StoryDetailPage from './pages/StoryDetailPage.tsx';
 import CreateStoryPage from './pages/CreateStoryPage.tsx';
 import NewsPage from './pages/NewsPage.tsx';
+import NewsDetailPage from './pages/NewsDetailPage.tsx';
+import CreateNewsPage from './pages/CreateNewsPage.tsx';
 import StatisticsPage from './pages/StatisticsPage.tsx';
 import ContestsPage from './pages/ContestsPage.tsx';
 import ProfilePageNew from './pages/ProfilePageNew.tsx';
@@ -61,6 +63,8 @@ function App() {
                                 <Route path="/story/:storyId" element={<StoryDetailPage />} />
                                 <Route path="/create" element={<CreateStoryPage />} />
                                 <Route path="/news" element={<NewsPage />} />
+                                <Route path="/news/:newsId" element={<NewsDetailPage />} />
+                                <Route path="/create-news" element={<CreateNewsPage />} />
                                 <Route path="/contests" element={<ContestsPage />} />
                                 <Route path="/statistics" element={<StatisticsPage />} />
                                 <Route path="/profile" element={<ProfilePageNew />} />
