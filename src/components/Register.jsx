@@ -54,7 +54,7 @@ function Register({ onRegister }) {
                 onChange={e => setPassword(e.target.value)}
                 required
             />
-            
+
             <div className="user-type-selector">
                 <label>
                     <input

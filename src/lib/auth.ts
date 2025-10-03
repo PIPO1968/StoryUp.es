@@ -1,4 +1,34 @@
-// Sistema de autenticación simulado (sin APIs externas)
+// Sistema de autenticación StoryUp - Usuarios exactos especificados
+
+// Base de datos de usuarios StoryUp
+const storyupUsers = [
+    {
+        id: '1',
+        username: 'PIPO68',
+        email: 'pipocanarias@hotmail.com',
+        name: 'PIPO68',
+        role: 'admin', // Usuario y Admin
+        password: 'pipo123',
+        avatar: '/assets/logo-grande.png.png',
+        likes: 0,
+        trophies: [],
+        friends: [],
+        isOnline: true
+    },
+    {
+        id: '2',
+        username: 'piporgz68',
+        email: 'piporgz68@gmail.com',
+        name: 'piporgz68',
+        role: 'teacher', // Padre/Docente
+        password: 'teacher123',
+        avatar: '/assets/logo-grande.png.png',
+        likes: 0,
+        trophies: [],
+        friends: [],
+        isOnline: false
+    }
+];
 
 // Obtener el usuario actual desde el token almacenado
 export const getCurrentUser = async () => {
@@ -6,23 +36,12 @@ export const getCurrentUser = async () => {
         const token = localStorage.getItem('auth_token');
         if (!token) return null;
 
-        // Simular usuario basado en token
         const userData = localStorage.getItem('user_data');
         if (userData) {
             return JSON.parse(userData);
         }
 
-        // Usuario por defecto si hay token pero no datos
-        const defaultUser = {
-            id: '1',
-            name: 'Usuario StoryUp',
-            username: 'storyup_user',
-            email: 'usuario@storyup.es',
-            avatar: '/assets/logo-grande.png.png'
-        };
-
-        localStorage.setItem('user_data', JSON.stringify(defaultUser));
-        return defaultUser;
+        return null;
     } catch (error) {
         console.error('Error obteniendo usuario actual:', error);
         localStorage.removeItem('auth_token');
@@ -31,28 +50,28 @@ export const getCurrentUser = async () => {
     }
 };
 
-// Login de usuario (simulado)
+// Login de usuario StoryUp
 export const loginUser = async (credentials: { email: string; password: string }) => {
     try {
-        // Simular autenticación
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay de red
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Validaciones básicas
         if (!credentials.email || !credentials.password) {
             throw new Error('Email y contraseña son requeridos');
         }
 
-        // Crear usuario simulado
-        const user = {
-            id: '1',
-            name: 'Usuario StoryUp',
-            username: credentials.email.split('@')[0],
-            email: credentials.email,
-            avatar: '/assets/logo-grande.png.png'
-        };
+        // Buscar usuario en la base de datos StoryUp
+        const user = storyupUsers.find(u =>
+            u.email === credentials.email && u.password === credentials.password
+        );
 
-        // Guardar token y datos de usuario
-        const token = 'simulated_token_' + Date.now();
+        if (!user) {
+            throw new Error('Credenciales incorrectas');
+        }
+
+        // Marcar usuario como online
+        user.isOnline = true;
+
+        const token = 'storyup_token_' + user.id + '_' + Date.now();
         localStorage.setItem('auth_token', token);
         localStorage.setItem('user_data', JSON.stringify(user));
 
@@ -63,33 +82,30 @@ export const loginUser = async (credentials: { email: string; password: string }
     }
 };
 
-// Registro de usuario (simulado)
-export const registerUser = async (userData: {
-    email: string;
-    password: string;
-    username: string;
-    name?: string;
-}) => {
+// Registro de usuario StoryUp (solo los 2 usuarios permitidos)
+export const registerUser = async (credentials: { email: string; password: string }) => {
     try {
-        // Simular proceso de registro
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay de red
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Validaciones básicas
-        if (!userData.email || !userData.password || !userData.username) {
-            throw new Error('Todos los campos son requeridos');
+        if (!credentials.email || !credentials.password) {
+            throw new Error('Email y contraseña son requeridos');
         }
 
-        // Crear usuario simulado
-        const user = {
-            id: Date.now().toString(),
-            name: userData.name || userData.username,
-            username: userData.username,
-            email: userData.email,
-            avatar: '/assets/logo-grande.png.png'
-        };
+        // Buscar usuario en la base de datos StoryUp
+        const user = storyupUsers.find(u => u.email === credentials.email);
 
-        // Guardar token y datos de usuario
-        const token = 'simulated_token_' + Date.now();
+        if (!user) {
+            throw new Error('Usuario no registrado en StoryUp');
+        }
+
+        if (user.password !== credentials.password) {
+            throw new Error('Contraseña incorrecta');
+        }
+
+        // Marcar usuario como online
+        user.isOnline = true;
+
+        const token = 'storyup_token_' + user.id + '_' + Date.now();
         localStorage.setItem('auth_token', token);
         localStorage.setItem('user_data', JSON.stringify(user));
 
@@ -136,4 +152,21 @@ export const updateUser = async (updates: Partial<any>) => {
 // Obtener token para requests autenticados
 export const getAuthToken = () => {
     return localStorage.getItem('auth_token');
+};
+
+// Obtener estadísticas de usuarios StoryUp
+export const getUserStats = () => {
+    const totalUsers = storyupUsers.length; // 2 usuarios inscritos
+    const onlineUsers = storyupUsers.filter(u => u.isOnline).length; // Solo 1 en línea
+
+    return {
+        totalUsers,
+        onlineUsers,
+        users: storyupUsers
+    };
+};
+
+// Obtener todos los usuarios (para administración)
+export const getAllUsers = () => {
+    return storyupUsers;
 };
