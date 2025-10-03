@@ -1,34 +1,38 @@
-// Sistema de autenticación StoryUp - Usuarios exactos especificados
+// Sistema de autenticación StoryUp - Registro público abierto
 
-// Base de datos de usuarios StoryUp
-const storyupUsers = [
-    {
-        id: '1',
-        username: 'PIPO68',
-        email: 'pipocanarias@hotmail.com',
-        name: 'PIPO68',
-        role: 'admin', // Usuario y Admin
-        password: 'pipo123',
-        avatar: '/assets/logo-grande.png.png',
-        likes: 0,
-        trophies: [],
-        friends: [],
-        isOnline: true
-    },
-    {
-        id: '2',
-        username: 'piporgz68',
-        email: 'piporgz68@gmail.com',
-        name: 'piporgz68',
-        role: 'teacher', // Padre/Docente
-        password: 'teacher123',
-        avatar: '/assets/logo-grande.png.png',
-        likes: 0,
-        trophies: [],
-        friends: [],
-        isOnline: false
+// Base de datos de usuarios StoryUp (almacenada en localStorage)
+const getStoredUsers = () => {
+    const users = localStorage.getItem('storyup_users');
+    if (users) {
+        return JSON.parse(users);
     }
-];
+
+    // Si no hay usuarios, crear el administrador por defecto
+    const defaultUsers = [
+        {
+            id: '1',
+            username: 'admin',
+            email: 'admin@storyup.es',
+            name: 'Administrador',
+            role: 'admin',
+            password: 'admin123',
+            avatar: '/favicon.ico',
+            likes: 0,
+            trophies: [],
+            friends: [],
+            isOnline: false,
+            createdAt: new Date().toISOString()
+        }
+    ];
+
+    // Guardar el usuario por defecto
+    saveUsers(defaultUsers);
+    return defaultUsers;
+};
+
+const saveUsers = (users: any[]) => {
+    localStorage.setItem('storyup_users', JSON.stringify(users));
+};
 
 // Obtener el usuario actual desde el token almacenado
 export const getCurrentUser = async () => {
@@ -59,9 +63,12 @@ export const loginUser = async (credentials: { email: string; password: string }
             throw new Error('Email y contraseña son requeridos');
         }
 
-        // Buscar usuario en la base de datos StoryUp
-        const user = storyupUsers.find(u =>
-            u.email === credentials.email && u.password === credentials.password
+        const users = getStoredUsers();
+
+        // Buscar usuario por email o username
+        const user = users.find(u =>
+            (u.email === credentials.email || u.username === credentials.email) &&
+            u.password === credentials.password
         );
 
         if (!user) {
@@ -70,6 +77,7 @@ export const loginUser = async (credentials: { email: string; password: string }
 
         // Marcar usuario como online
         user.isOnline = true;
+        saveUsers(users);
 
         const token = 'storyup_token_' + user.id + '_' + Date.now();
         localStorage.setItem('auth_token', token);
@@ -82,34 +90,63 @@ export const loginUser = async (credentials: { email: string; password: string }
     }
 };
 
-// Registro de usuario StoryUp (solo los 2 usuarios permitidos)
-export const registerUser = async (credentials: { email: string; password: string }) => {
+// Registro de usuario StoryUp (público y abierto)
+export const registerUser = async (userData: {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+    role?: string;
+}) => {
     try {
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        if (!credentials.email || !credentials.password) {
-            throw new Error('Email y contraseña son requeridos');
+        if (!userData.username || !userData.email || !userData.password || !userData.name) {
+            throw new Error('Todos los campos son requeridos');
         }
 
-        // Buscar usuario en la base de datos StoryUp
-        const user = storyupUsers.find(u => u.email === credentials.email);
+        const users = getStoredUsers();
 
-        if (!user) {
-            throw new Error('Usuario no registrado en StoryUp');
+        // Verificar si ya existe el usuario
+        const existingUserByEmail = users.find(u => u.email === userData.email);
+        const existingUserByUsername = users.find(u => u.username === userData.username);
+
+        if (existingUserByEmail) {
+            console.log('Email ya registrado:', userData.email);
+            throw new Error(`El email ${userData.email} ya está registrado`);
         }
 
-        if (user.password !== credentials.password) {
-            throw new Error('Contraseña incorrecta');
+        if (existingUserByUsername) {
+            console.log('Username ya registrado:', userData.username);
+            throw new Error(`El usuario ${userData.username} ya está registrado`);
         }
 
-        // Marcar usuario como online
-        user.isOnline = true;
+        // Crear nuevo usuario
+        const newUser = {
+            id: (users.length + 1).toString(),
+            username: userData.username,
+            email: userData.email,
+            name: userData.name,
+            password: userData.password,
+            role: userData.role || 'user', // Usar el rol seleccionado o 'user' por defecto
+            avatar: '/favicon.ico',
+            likes: 0,
+            trophies: [],
+            friends: [],
+            isOnline: true,
+            createdAt: new Date().toISOString()
+        };
 
-        const token = 'storyup_token_' + user.id + '_' + Date.now();
+        // Agregar usuario a la lista
+        users.push(newUser);
+        saveUsers(users);
+
+        // Marcar como logueado
+        const token = 'storyup_token_' + newUser.id + '_' + Date.now();
         localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_data', JSON.stringify(user));
+        localStorage.setItem('user_data', JSON.stringify(newUser));
 
-        return user;
+        return newUser;
     } catch (error) {
         console.error('Error en registro:', error);
         throw error;
@@ -156,17 +193,18 @@ export const getAuthToken = () => {
 
 // Obtener estadísticas de usuarios StoryUp
 export const getUserStats = () => {
-    const totalUsers = storyupUsers.length; // 2 usuarios inscritos
-    const onlineUsers = storyupUsers.filter(u => u.isOnline).length; // Solo 1 en línea
+    const users = getStoredUsers();
+    const totalUsers = users.length;
+    const onlineUsers = users.filter(u => u.isOnline).length;
 
     return {
         totalUsers,
         onlineUsers,
-        users: storyupUsers
+        users
     };
 };
 
 // Obtener todos los usuarios (para administración)
 export const getAllUsers = () => {
-    return storyupUsers;
+    return getStoredUsers();
 };

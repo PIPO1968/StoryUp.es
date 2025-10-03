@@ -1,33 +1,47 @@
 import React, { useState } from 'react';
-import { loginUser } from '../lib/auth';
+import { loginUser, registerUser } from '../lib/auth';
 
 interface LoginPageProps {
     onLogin: (user: any) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-    const [formData, setFormData] = useState({
-        username: '',
+    const [isLogin, setIsLogin] = useState(true);
+    const [loginData, setLoginData] = useState({
+        email: '',
         password: ''
+    });
+    const [registerData, setRegisterData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        name: '',
+        role: 'user'
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setLoginData({ ...loginData, [name]: value });
         if (error) setError('');
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setRegisterData({ ...registerData, [name]: value });
+        if (error) setError('');
+    };
+
+    const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
         try {
             const user = await loginUser({
-                email: formData.username,
-                password: formData.password
+                email: loginData.email,
+                password: loginData.password
             });
             onLogin(user);
         } catch (err: any) {
@@ -37,18 +51,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         }
     };
 
-    const handleQuickLogin = async (username: string, password: string) => {
+    const handleRegisterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         setLoading(true);
         setError('');
-        
+
         try {
-            const user = await loginUser({
-                email: username === 'PIPO68' ? 'pipocanarias@hotmail.com' : 'piporgz68@gmail.com',
-                password: password
-            });
+            const user = await registerUser(registerData);
             onLogin(user);
         } catch (err: any) {
-            setError(err.message || 'Error al iniciar sesión');
+            setError(err.message || 'Error al registrarse');
         } finally {
             setLoading(false);
         }
@@ -69,72 +81,179 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-                    <div>
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                            Usuario o Email
-                        </label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="PIPO68 o piporgz68"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                            Contraseña
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Ingresa tu contraseña"
-                            required
-                        />
-                    </div>
-
+                <div className="flex mb-6">
                     <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                        onClick={() => setIsLogin(true)}
+                        className={`flex-1 py-2 px-4 rounded-l-md ${isLogin
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
                     >
-                        {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                        Iniciar Sesión
                     </button>
-                </form>
-
-                <div className="border-t pt-6">
-                    <p className="text-sm text-gray-600 text-center mb-4">Acceso rápido:</p>
-                    <div className="space-y-2">
-                        <button
-                            onClick={() => handleQuickLogin('PIPO68', 'pipo123')}
-                            disabled={loading}
-                            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 text-sm"
-                        >
-                            👨‍💼 PIPO68 (Admin)
-                        </button>
-                        <button
-                            onClick={() => handleQuickLogin('piporgz68', 'teacher123')}
-                            disabled={loading}
-                            className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 text-sm"
-                        >
-                            👨‍🏫 piporgz68 (Docente/Padre)
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setIsLogin(false)}
+                        className={`flex-1 py-2 px-4 rounded-r-md ${!isLogin
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                    >
+                        Registrarse
+                    </button>
                 </div>
 
+                {isLogin ? (
+                    <form onSubmit={handleLoginSubmit} className="space-y-4">
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                Email o Usuario
+                            </label>
+                            <input
+                                type="text"
+                                id="email"
+                                name="email"
+                                value={loginData.email}
+                                onChange={handleLoginChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="tu@email.com o tu_usuario"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                Contraseña
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={loginData.password}
+                                onChange={handleLoginChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Tu contraseña"
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                        >
+                            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                        </button>
+                    </form>
+                ) : (
+                    <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                                Nombre Completo
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={registerData.name}
+                                onChange={handleRegisterChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Tu nombre completo"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                                Nombre de Usuario
+                            </label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                value={registerData.username}
+                                onChange={handleRegisterChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="tu_usuario_único"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-2">
+                                Email
+                            </label>
+                            <input
+                                type="email"
+                                id="register-email"
+                                name="email"
+                                value={registerData.email}
+                                onChange={handleRegisterChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="tu@email.com"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-2">
+                                Contraseña
+                            </label>
+                            <input
+                                type="password"
+                                id="register-password"
+                                name="password"
+                                value={registerData.password}
+                                onChange={handleRegisterChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Crea una contraseña segura"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                                Tipo de Usuario
+                            </label>
+                            <select
+                                id="role"
+                                name="role"
+                                value={registerData.role}
+                                onChange={handleRegisterChange}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="user">👨‍🎓 Estudiante/Usuario</option>
+                                <option value="teacher">👨‍🏫 Padre/Docente</option>
+                            </select>
+                            <p className="text-xs text-gray-500 mt-1">
+                                Los Padres/Docentes tienen funciones adicionales de supervisión y creación de contenido educativo.
+                            </p>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+                        >
+                            {loading ? 'Registrando...' : 'Crear Cuenta'}
+                        </button>
+                    </form>
+                )}
+
                 <div className="mt-8 text-center">
-                    <p className="text-xs text-gray-500">
-                        © 2025 StoryUp.es - Red Social Educativa
+                    <p className="text-xs text-gray-500 mb-2">
+                        © 2025 StoryUp.es - Red Social Educativa Abierta
                     </p>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            localStorage.clear();
+                            window.location.reload();
+                        }}
+                        className="text-xs text-gray-400 hover:text-gray-600 underline"
+                        title="Limpiar datos y reiniciar"
+                    >
+                        ¿Problemas? Reiniciar aplicación
+                    </button>
                 </div>
             </div>
         </div>
