@@ -1,19 +1,24 @@
-﻿import React from 'react';
-import { useAuth } from '../App';
+import React, { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../App';
 
-const Dashboard: React.FC = () => {
-    const { user } = useAuth();
+interface LayoutProps {
+    children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
     const navigate = useNavigate();
+    const { user, setUser } = useAuth();
 
     const handleLogout = () => {
         localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_data');
-        window.location.reload();
+        setUser(null);
+        navigate('/');
     };
 
     return (
         <div className="min-h-screen bg-gray-50">
+            {/* Header */}
             <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
@@ -37,41 +42,57 @@ const Dashboard: React.FC = () => {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex">
-                    <aside className="w-64 py-6 pr-8">
+                    {/* Sidebar */}
+                    <aside className="w-64 py-6 pr-8 hidden lg:block">
                         <nav className="space-y-2">
                             <button
                                 onClick={() => navigate('/dashboard')}
-                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100 bg-blue-50"
+                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
                             >
-                                <span></span>
+                                <span>🏠</span>
                                 <span>Inicio</span>
                             </button>
                             <button
                                 onClick={() => navigate('/stories')}
                                 className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
                             >
-                                <span></span>
+                                <span>📚</span>
                                 <span>Historias</span>
                             </button>
                             <button
                                 onClick={() => navigate('/create')}
                                 className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
                             >
-                                <span></span>
+                                <span>✍️</span>
                                 <span>Crear Historia</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/news')}
+                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
+                            >
+                                <span>📰</span>
+                                <span>Noticias</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/contests')}
+                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
+                            >
+                                <span>🏆</span>
+                                <span>Concursos</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/profile')}
+                                className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
+                            >
+                                <span>👤</span>
+                                <span>Perfil</span>
                             </button>
                         </nav>
                     </aside>
 
+                    {/* Main Content */}
                     <main className="flex-1 py-6">
-                        <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-                            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                                ¡Bienvenido a StoryUp.es, {user?.name || user?.username}!
-                            </h1>
-                            <p className="text-xl text-gray-600">
-                                Tu red social educativa está funcionando correctamente.
-                            </p>
-                        </div>
+                        {children}
                     </main>
                 </div>
             </div>
@@ -79,4 +100,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default Layout;
