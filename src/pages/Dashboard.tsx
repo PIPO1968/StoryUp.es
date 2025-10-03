@@ -7,7 +7,7 @@ import { BookOpen, Search, Filter, Heart, MessageCircle, Share } from 'lucide-re
 
 import Layout from '../components/Layout';
 
-export default function Stories() {
+export default function Dashboard() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
 

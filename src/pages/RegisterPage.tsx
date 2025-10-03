@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { registerUser } from '@/lib/auth';
+import { useAuth } from '@/App';
 
 const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
+    const { setUser } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         name: '',
@@ -49,8 +51,11 @@ const RegisterPage: React.FC = () => {
                 password: formData.password
             };
 
-            await registerUser(userData);
-            navigate('/feed'); // Redirigir al feed tras registro exitoso
+            const user = await registerUser(userData);
+
+            // Actualizar el contexto de autenticación inmediatamente
+            setUser(user);
+            navigate('/dashboard'); // Redirigir al dashboard tras registro exitoso
         } catch (err: any) {
             setError(err.message || 'Error al crear la cuenta');
         } finally {

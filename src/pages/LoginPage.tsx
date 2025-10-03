@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { loginUser } from '@/lib/auth';
+import { useAuth } from '@/App';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
+    const { setUser } = useAuth();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -26,8 +28,9 @@ const LoginPage: React.FC = () => {
         setError('');
 
         try {
-            await loginUser(formData);
-            navigate('/feed'); // Redirigir al feed tras login exitoso
+            const user = await loginUser(formData);
+            setUser(user);
+            navigate('/dashboard'); // Redirigir al dashboard tras login exitoso
         } catch (err: any) {
             setError(err.message || 'Error al iniciar sesión');
         } finally {

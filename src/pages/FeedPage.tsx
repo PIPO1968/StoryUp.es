@@ -4,6 +4,7 @@ import { useAuth } from '../App';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Heart, MessageCircle, Share, Plus } from 'lucide-react';
+import Layout from '../components/Layout';
 
 interface Story {
     id: string;
@@ -94,10 +95,7 @@ const FeedPage: React.FC = () => {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('auth_token');
-        setUser(null);
-    };
+
 
     const formatTime = (dateString: string) => {
         const date = new Date(dateString);
@@ -127,51 +125,8 @@ const FeedPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <div className="bg-white shadow-sm border-b sticky top-0 z-10">
-                <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-blue-600">StoryUp</h1>
-                    <div className="flex items-center space-x-4">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => navigate('/create')}
-                            className="flex items-center space-x-2"
-                        >
-                            <Plus className="w-4 h-4" />
-                            <span>Nueva Historia</span>
-                        </Button>
-
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => navigate('/chat')}
-                            className="flex items-center space-x-2"
-                        >
-                            <MessageCircle className="w-4 h-4" />
-                            <span>Chat</span>
-                        </Button>
-
-                        <div className="flex items-center space-x-2">
-                            <span className="text-gray-700 text-sm">
-                                {user?.name || user?.username}
-                            </span>
-                            <Button
-                                onClick={handleLogout}
-                                variant="ghost"
-                                size="sm"
-                                className="text-red-600 hover:bg-red-50"
-                            >
-                                Salir
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="max-w-2xl mx-auto px-4 py-6">
+        <Layout>
+            <div className="max-w-2xl mx-auto">
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                         <p className="text-red-800">{error}</p>
@@ -235,8 +190,8 @@ const FeedPage: React.FC = () => {
                                             <button
                                                 onClick={() => handleLike(story.id, story.liked_by_user)}
                                                 className={`flex items-center space-x-2 transition-colors ${story.liked_by_user
-                                                        ? 'text-red-500'
-                                                        : 'text-gray-500 hover:text-red-500'
+                                                    ? 'text-red-500'
+                                                    : 'text-gray-500 hover:text-red-500'
                                                     }`}
                                             >
                                                 <Heart
@@ -262,7 +217,7 @@ const FeedPage: React.FC = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </Layout>
     );
 };
 
