@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRef } from 'react';
-import { ArrowLeft, Edit, Calendar, Trophy, Users, BookOpen, Upload } from 'lucide-react';
+import { ArrowLeft, Edit, Calendar, Trophy, Users, BookOpen, Upload, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -8,20 +8,26 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import Layout from '../components/Layout';
+import { WhatsAppChat } from '../components/WhatsAppChat';
+import { useAuth } from '../App';
+import { useNavigate } from 'react-router-dom';
 
-interface ProfilePageProps {
-    user: any | null; // Ajustar el tipo según sea necesario
-    onBack: () => void;
-    updateProfile: (updates: Partial<any>) => Promise<void>;
-}
-
-export default function ProfilePage({ user, onBack, updateProfile }: ProfilePageProps) {
+export default function ProfilePage() {
+    const { user } = useAuth();
+    const navigate = useNavigate();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editForm, setEditForm] = useState({
         name: user?.name || '',
-        bio: user?.bio || '',
+        bio: (user as any)?.bio || '',
         username: user?.username || ''
     });
+
+    const onBack = () => navigate(-1);
+    const updateProfile = async (updates: Partial<any>) => {
+        // Función simulada para actualizar perfil
+        console.log('Actualizando perfil:', updates);
+    };
     const [fullUser, setFullUser] = useState<any | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string>('');
     const [uploading, setUploading] = useState<boolean>(false);
@@ -42,7 +48,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         setAvatarUrl(user.avatar || '');
                         setEditForm({
                             name: user.name || '',
-                            bio: user.bio || '',
+                            bio: (user as any).bio || '',
                             username: user.username || ''
                         });
                         // Simular lista de usuarios
@@ -72,7 +78,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+            <Layout>
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center py-8">
                         <p className="text-gray-600">Debes iniciar sesión para ver el perfil</p>
@@ -82,7 +88,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </Button>
                     </div>
                 </div>
-            </div>
+            </Layout>
         );
     }
 
@@ -131,7 +137,7 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <Layout>
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
                 {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
@@ -272,6 +278,29 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                         </CardContent>
                     </Card>
                 </div>
+
+                {/* Sección de Chat WhatsApp-style */}
+                <div className="w-full mt-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center space-x-2">
+                                <MessageCircle className="w-5 h-5" />
+                                <span>Chat Personal</span>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0">
+                            <div className="h-96 border rounded-lg overflow-hidden">
+                                <WhatsAppChat currentUser={{
+                                    id: user.id,
+                                    nick: user.username,
+                                    name: user.name || user.username,
+                                    avatar: user.avatar
+                                }} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+
                 {/* Bloques exclusivos para Padres/Docentes */}
                 {(fullUser?.user_type === 'padre-docente' || fullUser?.user_type === 'usuario') && (
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
@@ -305,6 +334,6 @@ export default function ProfilePage({ user, onBack, updateProfile }: ProfilePage
                     </div>
                 )}
             </div>
-        </div>
+        </Layout>
     );
 }

@@ -11,11 +11,11 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, senderName, senderAvatar }: ChatMessageProps) {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
-    
+
     useEffect(() => {
         getCurrentUser().then(setCurrentUser);
     }, []);
-    
+
     const isOwnMessage = message.senderId === currentUser?.id;
 
     const formatTime = (date: Date) => {

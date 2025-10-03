@@ -6,13 +6,13 @@ function getClient() {
     console.log('=== DEBUG VARIABLES DE ENTORNO ===');
     console.log('DATABASE_URL existe:', !!process.env.DATABASE_URL);
     console.log('POSTGRES_URL existe:', !!process.env.POSTGRES_URL);
-    
+
     // Hardcode temporal de la URL de Neon para testing
     const neonUrl = 'postgresql://neondb_owner:npg_HnBMTqDUc1W8@ep-still-bread-agolimhp-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-    
+
     const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || neonUrl;
     console.log('Usando conexión a:', connectionString.includes('neon') ? 'NEON DATABASE' : 'LOCAL/OTHER');
-    
+
     return new Client({
         connectionString: connectionString
     });
@@ -61,14 +61,14 @@ module.exports = async function handler(req, res) {
         if (req.method === 'POST') {
             console.log('POST request recibido');
             console.log('Body:', JSON.stringify(req.body));
-            
+
             const { email, password, username, name } = req.body;
 
             if (!email || !password) {
                 console.log('Error: Email o contraseña faltantes');
                 return res.status(400).json({ error: 'Email y contraseña requeridos' });
             }
-            
+
             console.log('Datos válidos recibidos:', { email, username, name });
 
             // Verificar si el usuario ya existe
