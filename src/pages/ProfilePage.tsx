@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import Layout from '../components/Layout';
-import { WhatsAppChat } from '../components/WhatsAppChat';
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
 
@@ -288,14 +287,39 @@ export default function ProfilePage() {
                                 <span>Chat Personal</span>
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-0">
-                            <div className="h-96 border rounded-lg overflow-hidden">
-                                <WhatsAppChat currentUser={{
-                                    id: user.id,
-                                    nick: user.username,
-                                    name: user.name || user.username,
-                                    avatar: user.avatar
-                                }} />
+                        <CardContent>
+                            <div className="h-96 bg-gray-50 rounded-lg p-4 flex flex-col">
+                                <div className="flex-1 overflow-y-auto mb-4">
+                                    <div className="space-y-4">
+                                        <div className="flex justify-start">
+                                            <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
+                                                <p className="text-sm">¡Hola! ¿Cómo va el proyecto StoryUp?</p>
+                                                <p className="text-xs text-gray-500 mt-1">10:30</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-end">
+                                            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg max-w-xs">
+                                                <p className="text-sm">¡Muy bien! Ya tenemos el dashboard funcionando perfectamente.</p>
+                                                <p className="text-xs text-blue-100 mt-1">10:32</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-start">
+                                            <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
+                                                <p className="text-sm">¡Genial! Me encanta cómo quedó el chat integrado.</p>
+                                                <p className="text-xs text-gray-500 mt-1">10:35</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Input
+                                        placeholder="Escribe un mensaje..."
+                                        className="flex-1"
+                                    />
+                                    <Button size="icon" className="bg-blue-500 hover:bg-blue-600">
+                                        <MessageCircle className="w-4 h-4" />
+                                    </Button>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
