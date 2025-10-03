@@ -383,35 +383,20 @@ export const getEducationalCenterStats = (): EducationalCenterStats => {
     try {
         const users = getStoredUsers();
 
-        // Por ahora, simular datos de centros educativos
-        // En una implementación real, esto vendría de una base de datos de centros
-        const teacherCount = users.filter(u => u.role === 'teacher').length;
+        // Contar usuarios por rol real
+        const teacherCount = users.filter(u => u.role === 'admin' || u.role === 'teacher').length;
         const userCount = users.filter(u => u.role === 'user').length;
 
-        const totalCenters = Math.max(1, Math.floor((teacherCount + userCount) / 10));
-
+        // No tenemos sistema de centros implementado, devolver datos reales disponibles
         return {
-            totalCenters,
+            totalCenters: 0, // No hay sistema de centros implementado
             centersByType: {
-                primary: Math.floor(totalCenters * 0.4),
-                secondary: Math.floor(totalCenters * 0.35),
-                university: Math.floor(totalCenters * 0.15),
-                other: Math.floor(totalCenters * 0.1)
+                primary: 0,
+                secondary: 0,
+                university: 0,
+                other: 0
             },
-            mostActiveCenters: [
-                {
-                    name: 'IES Cervantes',
-                    userCount: teacherCount + userCount > 0 ? Math.floor((teacherCount + userCount) * 0.3) : 0,
-                    storiesCount: Math.floor(getAllStories().length * 0.25),
-                    newsCount: Math.floor(getAllNews().length * 0.2)
-                },
-                {
-                    name: 'CEIP García Lorca',
-                    userCount: teacherCount + userCount > 0 ? Math.floor((teacherCount + userCount) * 0.2) : 0,
-                    storiesCount: Math.floor(getAllStories().length * 0.15),
-                    newsCount: Math.floor(getAllNews().length * 0.1)
-                }
-            ],
+            mostActiveCenters: [], // No hay centros registrados
             teacherCount,
             studentCount: userCount
         };
