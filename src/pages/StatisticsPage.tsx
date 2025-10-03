@@ -218,7 +218,7 @@ const StatisticsPage: React.FC = () => {
                                                 <div key={contributor.id} className="flex justify-between items-center p-2 bg-yellow-50 rounded">
                                                     <div className="flex items-center space-x-2">
                                                         <span className="text-sm font-medium">#{index + 1}</span>
-                                                        <span className="text-sm">{contributor.name}</span>
+                                                        <span className="text-sm">{contributor.username}</span>
                                                     </div>
                                                     <div className="text-xs text-gray-600">
                                                         <span>{contributor.contributions} contribuciones</span>
@@ -429,57 +429,43 @@ const StatisticsPage: React.FC = () => {
                         </h2>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Métricas Generales */}
+                            {/* Información sobre usuarios por rol */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Métricas Generales</h3>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Usuarios por Rol Educativo</h3>
                                 <div className="space-y-3">
-                                    <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                        <span className="text-sm font-medium">🏫 Total Centros</span>
-                                        <span className="font-bold text-lg text-blue-600">{centerStats.totalCenters}</span>
+                                    <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                        <span className="text-sm font-medium">👨‍🏫 Padres/Docentes</span>
+                                        <span className="font-bold text-lg text-blue-600">{centerStats.teacherCount}</span>
                                     </div>
-                                </div>
-
-                                <h4 className="text-md font-semibold text-gray-800 mt-6 mb-3">Por Tipo</h4>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between items-center p-2 bg-green-50 rounded">
-                                        <span className="text-sm">🏫 Primaria</span>
-                                        <span className="font-bold text-green-700">{centerStats.centersByType.primary}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                                        <span className="text-sm">🏭 Secundaria</span>
-                                        <span className="font-bold text-blue-700">{centerStats.centersByType.secondary}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center p-2 bg-purple-50 rounded">
-                                        <span className="text-sm">🎓 Universidad</span>
-                                        <span className="font-bold text-purple-700">{centerStats.centersByType.university}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                        <span className="text-sm">📚 Otros</span>
-                                        <span className="font-bold text-gray-700">{centerStats.centersByType.other}</span>
+                                    <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                        <span className="text-sm font-medium">👤 Usuarios</span>
+                                        <span className="font-bold text-lg text-green-600">{centerStats.studentCount}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Centros Más Activos */}
+                            {/* Estado de funcionalidad */}
                             <div>
-                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Centros Más Activos</h3>
-                                {centerStats.mostActiveCenters.length > 0 ? (
-                                    <div className="space-y-2">
-                                        {centerStats.mostActiveCenters.slice(0, 5).map((center, index) => (
-                                            <div key={center.name} className="flex justify-between items-center p-2 bg-yellow-50 rounded">
-                                                <div className="flex items-center space-x-2">
-                                                    <span className="text-sm font-medium">#{index + 1}</span>
-                                                    <span className="text-sm">{center.name}</span>
-                                                </div>
-                                                <div className="text-xs text-gray-600">
-                                                    <span>{center.userCount} usuarios</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="text-gray-500 text-sm">No hay centros registrados aún</p>
-                                )}
+                                <h3 className="text-lg font-semibold text-gray-800 mb-4">Sistema de Centros</h3>
+                                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <p className="text-sm text-yellow-800 mb-2">
+                                        <span className="font-medium">🚧 Funcionalidad en Desarrollo</span>
+                                    </p>
+                                    <p className="text-xs text-yellow-700">
+                                        El sistema de gestión de centros educativos está planificado para futuras versiones.
+                                        Actualmente se muestran solo las estadísticas de usuarios por rol educativo.
+                                    </p>
+                                </div>
+
+                                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                                    <h4 className="text-sm font-medium text-gray-700 mb-2">Próximas Funcionalidades:</h4>
+                                    <ul className="text-xs text-gray-600 space-y-1">
+                                        <li>• Registro de centros educativos</li>
+                                        <li>• Asociación de usuarios a centros</li>
+                                        <li>• Estadísticas por centro</li>
+                                        <li>• Rankings de actividad</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
