@@ -125,11 +125,23 @@ const NewsPage: React.FC = () => {
             {/* Header con estadísticas */}
             <div className="mb-8">
                 <div className="mb-6">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">📰 Noticias</h1>
-                        <p className="text-gray-600">
-                            Últimas noticias de actualidad creadas por nuestros docentes y administradores
-                        </p>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">📰 Noticias</h1>
+                            <p className="text-gray-600">
+                                Últimas noticias de actualidad creadas por nuestros docentes y administradores
+                            </p>
+                        </div>
+                        {/* Botón para crear noticias - solo para admin y teacher */}
+                        {(user.role === 'admin' || user.role === 'teacher') && (
+                            <button
+                                onClick={() => navigate('/create-news')}
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 shadow-lg hover:shadow-xl"
+                            >
+                                <span className="text-lg">✍️</span>
+                                <span>Crear Noticia</span>
+                            </button>
+                        )}
                     </div>
                 </div>
 
