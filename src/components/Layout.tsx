@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import { Button } from '@/components/ui/button';
 import LanguageSelector from './LanguageSelector';
+import { getUserStats } from '../lib/auth';
 import {
     Home,
     MessageCircle,
@@ -28,7 +29,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { user, setUser } = useAuth();
     const [lang, setLang] = React.useState('es');
     const [currentTime, setCurrentTime] = React.useState(new Date());
-    const [usersOnline] = React.useState(247); // Simulated users online
+    const [userStats, setUserStats] = React.useState(getUserStats());
 
     // Update time every second
     React.useEffect(() => {
@@ -57,12 +58,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
 
     const sidebarItems = [
-        { icon: Home, label: 'Inicio', path: '/dashboard', active: true },
+        { icon: Home, label: 'Inicio', path: '/dashboard' },
         { icon: BookOpen, label: 'Historias', path: '/stories' },
-        { icon: PlusCircle, label: 'Crear historia', path: '/create' },
-        { icon: BarChart3, label: 'Estadísticas', path: '/statistics' },
+        { icon: PlusCircle, label: 'Crear Historia', path: '/create' },
         { icon: Newspaper, label: 'Noticias', path: '/news' },
-        { icon: MessageCircle, label: 'Chat', path: '/chat' },
+        { icon: Settings, label: 'Concurso y trofeos', path: '/contests' },
+        { icon: BarChart3, label: 'Estadísticas', path: '/statistics' },
         { icon: User, label: 'Perfil', path: '/profile' },
     ];
 
@@ -77,41 +78,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             <h1 className="text-2xl font-bold text-blue-600">StoryUp</h1>
                         </div>
 
-                        {/* Search Bar */}
-                        <div className="flex-1 max-w-lg mx-8">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                <input
-                                    type="text"
-                                    placeholder="Buscar en StoryUp..."
-                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
+                        {/* Header Info as specified: Logo, Users, Online, Date/Time, Language */}
+                        <div className="hidden md:flex items-center space-x-6 text-sm text-gray-600">
+                            <div className="flex items-center space-x-2">
+                                <span>👥 Usuarios: {userStats.totalUsers}</span>
                             </div>
-                        </div>
-
-                        {/* Time and Users Info */}
-                        <div className="hidden md:flex items-center space-x-4 text-sm text-gray-600">
+                            <div className="flex items-center space-x-2">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span>🟢 Online: {userStats.onlineUsers}</span>
+                            </div>
                             <div className="flex items-center space-x-2">
                                 <span>🌍 Madrid:</span>
                                 <span className="font-mono">{formatMadridTime(currentTime)}</span>
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                <span>{usersOnline} usuarios en línea</span>
-                            </div>
                         </div>
 
-                        {/* User Menu */}
+                        {/* User Menu and Language Selector */}
                         <div className="flex items-center space-x-4">
-                            <LanguageSelector lang={lang} setLang={setLang} />
-                            <Button
-                                onClick={() => navigate('/create')}
-                                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
-                            >
-                                <Plus className="w-4 h-4" />
-                                <span className="hidden sm:inline">Crear</span>
-                            </Button>
-
                             <div className="flex items-center space-x-3">
                                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                                     {(user?.name || user?.username || 'U').charAt(0).toUpperCase()}
@@ -123,6 +106,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                     <p className="text-xs text-gray-500">@{user?.username}</p>
                                 </div>
                             </div>
+                            <LanguageSelector lang={lang} setLang={setLang} />
                         </div>
                     </div>
                 </div>
@@ -139,10 +123,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                     <button
                                         key={item.path}
                                         onClick={() => navigate(item.path)}
-                                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors ${item.active
-                                            ? 'bg-blue-50 text-blue-700 font-medium'
-                                            : 'text-gray-700 hover:bg-gray-100'
-                                            }`}
+                                        className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
                                     >
                                         <Icon className="w-5 h-5" />
                                         <span>{item.label}</span>
@@ -215,8 +196,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             <button
                                 key={item.path}
                                 onClick={() => navigate(item.path)}
-                                className={`flex flex-col items-center py-2 px-3 ${item.active ? 'text-blue-600' : 'text-gray-600'
-                                    }`}
+                                className="flex flex-col items-center py-2 px-3 text-gray-600"
                             >
                                 <Icon className="w-5 h-5" />
                                 <span className="text-xs mt-1">{item.label}</span>

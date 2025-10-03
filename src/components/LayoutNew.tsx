@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../App';
 import { Button } from '@/components/ui/button';
+import { getTotalUsers, getOnlineUsers } from '../lib/auth';
 import {
     Home,
     MessageCircle,
@@ -56,8 +57,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         <div className="flex items-center space-x-4">
                             {/* Stats del usuario */}
                             <div className="hidden md:flex items-center space-x-4 text-sm text-gray-600">
-                                <span>👥 Usuarios: 1,247</span>
-                                <span>🟢 Online: 89</span>
+                                <span>👥 Usuarios: {getTotalUsers()}</span>
+                                <span>🟢 Online: {getOnlineUsers()}</span>
                             </div>
 
                             {/* Avatar y nombre */}
