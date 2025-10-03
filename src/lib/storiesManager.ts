@@ -4,6 +4,8 @@ export interface Story {
     id: string;
     title: string;
     content: string;
+    type: 'Real' | 'Ficticia'; // Tipo de historia
+    theme: 'Aventura' | 'Fantasía' | 'Corazón' | 'Terror' | 'Educativa' | 'CONCURSO'; // Tema de la historia
     author: {
         id: string;
         username: string;
@@ -18,6 +20,8 @@ export interface Story {
 export interface StoryPreview {
     id: string;
     title: string;
+    type: 'Real' | 'Ficticia';
+    theme: 'Aventura' | 'Fantasía' | 'Corazón' | 'Terror' | 'Educativa' | 'CONCURSO';
     author: {
         id: string;
         username: string;
@@ -27,12 +31,67 @@ export interface StoryPreview {
     createdAt: string;
 }
 
-// Limpiar datos de prueba/ficticios
+// Migrar historias existentes para añadir campos nuevos
+export const migrateStoriesWithNewFields = (): void => {
+    try {
+        const stories = localStorage.getItem('storyup_stories');
+        if (stories) {
+            const parsedStories = JSON.parse(stories);
+            let hasChanges = false;
+
+            const migratedStories = parsedStories.map((story: any) => {
+                // Si la historia no tiene los campos nuevos, añadirlos
+                if (!story.type || !story.theme) {
+                    hasChanges = true;
+                    return {
+                        ...story,
+                        type: story.type || 'Ficticia',
+                        theme: story.theme || 'Aventura'
+                    };
+                }
+                return story;
+            });
+
+            if (hasChanges) {
+                localStorage.setItem('storyup_stories', JSON.stringify(migratedStories));
+                console.log('✅ Historias migradas con nuevos campos (type y theme)');
+            }
+        }
+    } catch (error) {
+        console.error('Error migrando historias:', error);
+    }
+};
+
+// Limpiar datos de prueba/ficticios (solo datos inválidos, no todas las historias)
 export const clearTestData = (): void => {
     try {
-        // Limpiar historias de prueba
-        localStorage.removeItem('storyup_stories');
-        console.log('Datos de prueba de historias eliminados');
+        const stories = localStorage.getItem('storyup_stories');
+        if (stories) {
+            const parsedStories = JSON.parse(stories);
+            // Solo mantener historias válidas (no eliminar todas)
+            const validStories = parsedStories.filter((story: any) =>
+                story &&
+                story.id &&
+                story.title &&
+                story.content &&
+                story.author &&
+                story.author.id &&
+                story.author.username &&
+                typeof story.likes === 'number' &&
+                Array.isArray(story.likedBy) &&
+                story.createdAt
+            ).map((story: any) => ({
+                ...story,
+                // Asignar valores por defecto para campos nuevos si no existen
+                type: story.type || 'Ficticia',
+                theme: story.theme || 'Aventura'
+            }));
+
+            if (validStories.length !== parsedStories.length) {
+                localStorage.setItem('storyup_stories', JSON.stringify(validStories));
+                console.log('Historias inválidas eliminadas, historias válidas preservadas');
+            }
+        }
     } catch (error) {
         console.error('Error limpiando datos de prueba:', error);
     }
@@ -45,19 +104,19 @@ export const getAllStories = (): Story[] => {
         if (stories) {
             const parsedStories: Story[] = JSON.parse(stories);
             // Verificar que las historias tengan la estructura correcta
-            const validStories = parsedStories.filter(story => 
-                story && 
-                story.id && 
-                story.title && 
-                story.content && 
-                story.author && 
-                story.author.id && 
+            const validStories = parsedStories.filter(story =>
+                story &&
+                story.id &&
+                story.title &&
+                story.content &&
+                story.author &&
+                story.author.id &&
                 story.author.username &&
                 typeof story.likes === 'number' &&
                 Array.isArray(story.likedBy) &&
                 story.createdAt
             );
-            
+
             // Ordenar por fecha de creación (más recientes primero)
             return validStories.sort((a, b) =>
                 new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -76,6 +135,8 @@ export const getStoriesPreview = (): StoryPreview[] => {
     return stories.map(story => ({
         id: story.id,
         title: story.title,
+        type: story.type,
+        theme: story.theme,
         author: story.author,
         likes: story.likes,
         createdAt: story.createdAt

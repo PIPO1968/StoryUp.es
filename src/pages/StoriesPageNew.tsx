@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import { useLanguage } from '../lib/LanguageContext';
-import { getStoriesPreview, getStoriesStats, clearTestData } from '../lib/storiesManager';
+import { getStoriesPreview, getStoriesStats, clearTestData, migrateStoriesWithNewFields } from '../lib/storiesManager';
 import type { StoryPreview } from '../lib/storiesManager';
 
 const StoriesPage: React.FC = () => {
@@ -14,10 +14,22 @@ const StoriesPage: React.FC = () => {
     const [stats, setStats] = useState({ totalStories: 0, totalLikes: 0, mostLikedStory: null });
 
     useEffect(() => {
-        // Limpiar datos de prueba al cargar la página (solo en desarrollo)
+        // Primero migrar historias existentes con los nuevos campos
+        migrateStoriesWithNewFields();
+        // Luego limpiar solo datos inválidos
         clearTestData();
-        // Cargar historias y estadísticas reales
+        // Finalmente cargar historias y estadísticas reales
         loadStories();
+    }, []);
+
+    // Recargar datos when the component becomes visible again
+    useEffect(() => {
+        const handleFocus = () => {
+            loadStories();
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
     }, []);
 
     const loadStories = () => {
@@ -26,6 +38,8 @@ const StoriesPage: React.FC = () => {
         setStories(storiesData);
         setStats(statsData);
     };
+
+
 
     const handleStoryClick = (storyId: string) => {
         navigate(`/story/${storyId}`);
@@ -124,7 +138,7 @@ const StoriesPage: React.FC = () => {
                             <p className="text-sm text-blue-600">💡 Usa "✍️ Crear Historia" en el menú lateral para comenzar</p>
                         </div>
                     )}
-                    
+
                     <div className="space-y-3 max-h-96 overflow-y-auto">
                         {stories.map((story, index) => (
                             <div key={story.id} className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors group">
@@ -137,6 +151,29 @@ const StoriesPage: React.FC = () => {
                                         <h3 className="font-semibold text-lg text-gray-900 group-hover:text-blue-700 transition-colors mb-1">
                                             {story.title}
                                         </h3>
+                                        {/* Badges de tipo y tema */}
+                                        <div className="flex flex-wrap gap-2 mb-2">
+                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${story.type === 'Real'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-purple-100 text-purple-800'
+                                                }`}>
+                                                {story.type === 'Real' ? '✨' : '📚'} {story.type}
+                                            </span>
+                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${story.theme === 'Aventura' ? 'bg-orange-100 text-orange-800' :
+                                                story.theme === 'Fantasía' ? 'bg-violet-100 text-violet-800' :
+                                                    story.theme === 'Corazón' ? 'bg-pink-100 text-pink-800' :
+                                                        story.theme === 'Terror' ? 'bg-gray-100 text-gray-800' :
+                                                            story.theme === 'Educativa' ? 'bg-blue-100 text-blue-800' :
+                                                                'bg-yellow-100 text-yellow-800'
+                                                }`}>
+                                                {story.theme === 'Aventura' ? '🗺️' :
+                                                    story.theme === 'Fantasía' ? '🧙‍♂️' :
+                                                        story.theme === 'Corazón' ? '💖' :
+                                                            story.theme === 'Terror' ? '👻' :
+                                                                story.theme === 'Educativa' ? '📖' :
+                                                                    '🏆'} {story.theme}
+                                            </span>
+                                        </div>
                                         <div className="flex items-center justify-between text-sm text-gray-600">
                                             <div className="flex items-center space-x-4">
                                                 <span className="flex items-center">

@@ -80,6 +80,17 @@ const StoryDetailPage: React.FC = () => {
         });
     };
 
+    // Función para procesar contenido con formato y imágenes
+    const processContent = (content: string) => {
+        // Procesar markdown básico
+        let processedContent = content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // **negrita**
+            .replace(/\*(.*?)\*/g, '<em>$1</em>') // *cursiva*
+            .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="max-w-full h-auto rounded-lg shadow-md my-4" />'); // ![alt](src)
+
+        return processedContent;
+    };
+
     return (
         <div className="max-w-4xl mx-auto p-6">
             {/* Header con navegación */}
@@ -98,6 +109,30 @@ const StoryDetailPage: React.FC = () => {
                 {/* Encabezado de la historia */}
                 <header className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 border-b">
                     <h1 className="text-3xl font-bold text-gray-900 mb-4">{story.title}</h1>
+
+                    {/* Badges de tipo y tema */}
+                    <div className="flex flex-wrap gap-3 mb-6">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${story.type === 'Real'
+                            ? 'bg-green-100 text-green-800 border border-green-200'
+                            : 'bg-purple-100 text-purple-800 border border-purple-200'
+                            }`}>
+                            {story.type === 'Real' ? '✨' : '📚'} {story.type}
+                        </span>
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${story.theme === 'Aventura' ? 'bg-orange-100 text-orange-800 border border-orange-200' :
+                            story.theme === 'Fantasía' ? 'bg-violet-100 text-violet-800 border border-violet-200' :
+                                story.theme === 'Corazón' ? 'bg-pink-100 text-pink-800 border border-pink-200' :
+                                    story.theme === 'Terror' ? 'bg-gray-100 text-gray-800 border border-gray-200' :
+                                        story.theme === 'Educativa' ? 'bg-blue-100 text-blue-800 border border-blue-200' :
+                                            'bg-yellow-100 text-yellow-800 border border-yellow-200'
+                            }`}>
+                            {story.theme === 'Aventura' ? '🗺️' :
+                                story.theme === 'Fantasía' ? '🧙‍♂️' :
+                                    story.theme === 'Corazón' ? '💖' :
+                                        story.theme === 'Terror' ? '👻' :
+                                            story.theme === 'Educativa' ? '📖' :
+                                                '🏆'} {story.theme}
+                        </span>
+                    </div>
 
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center space-x-4">
@@ -130,11 +165,16 @@ const StoryDetailPage: React.FC = () => {
                 {/* Cuerpo de la historia */}
                 <div className="p-8">
                     <div className="prose prose-lg max-w-none">
-                        {story.content.split('\n').map((paragraph, index) => (
-                            <p key={index} className="mb-4 text-gray-800 leading-relaxed">
-                                {paragraph}
-                            </p>
-                        ))}
+                        {story.content.split('\n').map((paragraph, index) => {
+                            const processedParagraph = processContent(paragraph);
+                            return (
+                                <div
+                                    key={index}
+                                    className="mb-4 text-gray-800 leading-relaxed"
+                                    dangerouslySetInnerHTML={{ __html: processedParagraph }}
+                                />
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -145,8 +185,8 @@ const StoryDetailPage: React.FC = () => {
                             <button
                                 onClick={handleLike}
                                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${isLiked
-                                        ? 'bg-red-100 text-red-700 border border-red-200'
-                                        : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
+                                    ? 'bg-red-100 text-red-700 border border-red-200'
+                                    : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
                                     }`}
                             >
                                 <span className={`text-xl ${isLiked ? '❤️' : '🤍'}`}>
