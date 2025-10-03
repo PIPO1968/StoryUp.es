@@ -43,14 +43,7 @@ export default function Chat() {
 
             {/* WhatsApp Chat Component */}
             <div className="max-w-7xl mx-auto px-4 py-6">
-                <WhatsAppChat
-                    currentUser={{
-                        id: currentUser.id || '1',
-                        nick: currentUser.username || currentUser.name || 'usuario',
-                        name: currentUser.name || currentUser.username || 'Usuario',
-                        avatar: currentUser.avatar
-                    }}
-                />
+                <WhatsAppChat />
             </div>
         </div>
     );

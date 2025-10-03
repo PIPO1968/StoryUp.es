@@ -1,371 +1,211 @@
-import React, { useState } from 'react'; import React, { useState } from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '../App';
+import { useNavigate } from 'react-router-dom';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'; import { useNavigate } from 'react-router-dom';
-
-import { Button } from '@/components/ui/button'; import { useAuth } from '../App';
-
-import { Input } from '@/components/ui/input'; import { Button } from '@/components/ui/button';
-
-import { Textarea } from '@/components/ui/textarea'; import { Input } from '@/components/ui/input';
-
-import { PenTool, Send } from 'lucide-react'; import { Textarea } from '@/components/ui/textarea';
-
-import { useAuth } from '../App'; import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-import Layout from '../components/Layout'; import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-import { Alert, AlertDescription } from '@/components/ui/alert';
-
-export default function CreateStoryPage() {
-    import { ArrowLeft, ImageIcon, Type, Eye, Users, Lock } from 'lucide-react';
-
+const CreateStoryPage: React.FC = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({
+        title: '',
+        content: '',
+        anonymous: false
+    });
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
-    const [title, setTitle] = useState(''); const CreateStoryPage: React.FC = () => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value, type } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+        }));
+    };
 
-        const [content, setContent] = useState(''); const navigate = useNavigate();
-
-        const [isAnonymous, setIsAnonymous] = useState(false); const { user } = useAuth();
-
-        const [loading, setLoading] = useState(false);
-
-        const handleSubmit = () => {
-            const [error, setError] = useState('');
-
-            if (!title.trim() || !content.trim()) {
-                const [success, setSuccess] = useState(false);
-
-                alert('Por favor completa el título y el contenido de la historia');
-
-                return; const [formData, setFormData] = useState({
-
-                }        title: '',
-
-                    content: '',
-
-                    alert('¡Historia enviada exitosamente! Aparecerá como #1 en la lista de historias.'); imageUrl: '',
-
-                        setTitle(''); visibility: 'public' as 'public' | 'friends' | 'private'
-
-                setContent('');
-            });
-
-            setIsAnonymous(false);
-
-        }; const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-
-            const { name, value } = e.target;
-
-            return (setFormData(prev => ({ ...prev, [name]: value }));
-
-        <Layout>        if (error) setError('');
-
-            <div className="max-w-4xl mx-auto space-y-6">    };
-
-                <div className="text-center">
-
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-center">    const handleVisibilityChange = (value: string) => {
-
-                        <PenTool className="mr-3 text-blue-600" />        setFormData(prev => ({ ...prev, visibility: value as 'public' | 'friends' | 'private' }));
-
-                        Crear Nueva Historia    };
-
-                    </h1>
-
-                </div>    const handleSubmit = async (e: React.FormEvent) => {
-
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (!formData.title.trim() || !formData.content.trim()) {
+            alert('Por favor, completa todos los campos obligatorios.');
+            return;
+        }
 
-                <Card className="shadow-lg">        setLoading(true);
+        setLoading(true);
+        
+        try {
+            // Simular creación de historia
+            const newStory = {
+                id: Date.now().toString(),
+                title: formData.title,
+                content: formData.content,
+                author: formData.anonymous ? 'Anónimo' : user?.username || user?.name,
+                authorId: formData.anonymous ? null : user?.id,
+                createdAt: new Date().toISOString(),
+                likes: 0,
+                comments: []
+            };
 
-                    <CardHeader className="bg-blue-50">        setError('');
+            // Guardar en localStorage como ejemplo
+            const existingStories = JSON.parse(localStorage.getItem('storyup_stories') || '[]');
+            existingStories.unshift(newStory);
+            localStorage.setItem('storyup_stories', JSON.stringify(existingStories));
 
-                        <CardTitle className="text-xl text-blue-700">
+            setSuccess(true);
+            setTimeout(() => {
+                navigate('/stories');
+            }, 2000);
 
-                            ✍️ Editor de Historia        // Validaciones
-
-                        </CardTitle>        if (!formData.content.trim()) {
-
-                    </CardHeader>            setError('El contenido de la historia es obligatorio');
-
-                    <CardContent className="p-6 space-y-6">            setLoading(false);
-
-                        <div>            return;
-
-                            <label className="block text-sm font-medium text-gray-700 mb-2">        }
-
-                                Título de la Historia *
-
-                            </label>        try {
-
-                            <Input            const token = localStorage.getItem('auth_token');
-
-                                value={title}            const response = await fetch('/api/stories', {
-
-                                onChange={(e) => setTitle(e.target.value)}                method: 'POST',
-
-                                placeholder="Escribe un título atractivo..."                headers: {
-
-                            />                    'Authorization': `Bearer ${token}`,
-
-                        </div>                    'Content-Type': 'application/json'
-
-                },
-
-                        <div>                body: JSON.stringify({
-
-                            <label className="block text-sm font-medium text-gray-700 mb-2">                    title: formData.title.trim() || null,
-
-                                Contenido de la Historia *                    content: formData.content.trim(),
-
-                            </label>                    image_url: formData.imageUrl.trim() || null,
-
-                            <Textarea                    visibility: formData.visibility
-
-                                value={content}                })
-
-                                onChange={(e) => setContent(e.target.value)}            });
-
-                                placeholder="Escribe tu historia aquí..."
-
-                                className="min-h-[300px]"            const data = await response.json();
-
-                            />
-
-                        </div>            if (!response.ok) {
-
-                throw new Error(data.error || 'Error al crear la historia');
-
-                        <div className="flex items-center space-x-2">            }
-
-                            <input
-
-                                type="checkbox"            setSuccess(true);
-
-                                id="anonymous"            // Redirigir al feed después de 2 segundos
-
-                                checked={isAnonymous}            setTimeout(() => {
-
-                                onChange={(e) => setIsAnonymous(e.target.checked)}                navigate('/feed');
-
-                            />            }, 2000);
-
-                            <label htmlFor="anonymous" className="text-sm">
-
-                                Publicar como anónimo        } catch (err: any) {
-
-                            </label>            setError(err.message || 'Error al crear la historia');
-
-                        </div>        } finally {
-
+        } catch (error) {
+            console.error('Error al crear la historia:', error);
+            alert('Error al crear la historia. Inténtalo de nuevo.');
+        } finally {
             setLoading(false);
+        }
+    };
 
-                        <div className="text-center">        }
-
-                            <Button    };
-
-                                onClick={handleSubmit}
-
-                                className="bg-blue-600 hover:bg-blue-700"    if (success) {
-
-                            >        return (
-
-                                <Send className="mr-2 w-4 h-4" />            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-
-                                Enviar Historia                <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-
-                            </Button>                    <div className="text-green-600 mb-4">
-
-                        </div>                        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-
-                    </CardContent>                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-
-                </Card>                        </svg>
-
-            </div>                    </div>
-
-        </Layout>                    <h2 className="text-xl font-semibold text-gray-800 mb-2">¡Historia Creada!</h2>
-
-    ); <p className="text-gray-600">Tu historia se ha publicado exitosamente. Redirigiendo al feed...</p>
-
-}                </div >
-            </div >
+    if (success) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+                <div className="bg-white rounded-lg shadow-xl p-8 text-center">
+                    <div className="text-6xl mb-4">✅</div>
+                    <h2 className="text-2xl font-bold text-green-800 mb-2">¡Historia creada exitosamente!</h2>
+                    <p className="text-green-600 mb-4">Redirigiendo a la sección de historias...</p>
+                </div>
+            </div>
         );
     }
 
-return (
-    <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <div className="bg-white shadow-sm border-b">
-            <div className="max-w-4xl mx-auto px-4 py-4 flex items-center space-x-4">
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate('/feed')}
-                    className="flex items-center space-x-2"
-                >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Volver</span>
-                </Button>
-                <h1 className="text-2xl font-bold text-blue-600">Nueva Historia</h1>
-            </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="max-w-2xl mx-auto px-4 py-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center space-x-2">
-                        <Type className="w-5 h-5" />
-                        <span>Crear Nueva Historia</span>
-                    </CardTitle>
-                    <p className="text-sm text-gray-600">
-                        Comparte tu historia con la comunidad de StoryUp
-                    </p>
-                </CardHeader>
-
-                <CardContent>
-                    {error && (
-                        <Alert variant="destructive" className="mb-6">
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Título */}
-                        <div>
-                            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                                Título (opcional)
-                            </label>
-                            <Input
-                                id="title"
-                                name="title"
-                                type="text"
-                                value={formData.title}
-                                onChange={handleChange}
-                                disabled={loading}
-                                placeholder="Un título llamativo para tu historia..."
-                                className="w-full"
-                            />
-                        </div>
-
-                        {/* Contenido */}
-                        <div>
-                            <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
-                                Contenido *
-                            </label>
-                            <Textarea
-                                id="content"
-                                name="content"
-                                value={formData.content}
-                                onChange={handleChange}
-                                disabled={loading}
-                                required
-                                placeholder="Escribe tu historia aquí... ¿Qué quieres compartir hoy?"
-                                className="w-full min-h-[150px] resize-y"
-                            />
-                            <p className="text-xs text-gray-500 mt-1">
-                                {formData.content.length} caracteres
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="container mx-auto px-4 py-8">
+                <div className="max-w-2xl mx-auto">
+                    <div className="bg-white rounded-lg shadow-xl p-8">
+                        <div className="text-center mb-8">
+                            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                                ✍️ Crear Nueva Historia
+                            </h1>
+                            <p className="text-gray-600">
+                                Comparte tu creatividad con la comunidad StoryUp.es
                             </p>
                         </div>
 
-                        {/* URL de imagen */}
-                        <div>
-                            <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-2">
-                                <ImageIcon className="w-4 h-4" />
-                                <span>Imagen (opcional)</span>
-                            </label>
-                            <Input
-                                id="imageUrl"
-                                name="imageUrl"
-                                type="url"
-                                value={formData.imageUrl}
-                                onChange={handleChange}
-                                disabled={loading}
-                                placeholder="https://ejemplo.com/mi-imagen.jpg"
-                                className="w-full"
-                            />
-                            <p className="text-xs text-gray-500 mt-1">
-                                Pega la URL de una imagen para acompañar tu historia
-                            </p>
-                        </div>
-
-                        {/* Visibilidad */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Visibilidad
-                            </label>
-                            <Select value={formData.visibility} onValueChange={handleVisibilityChange}>
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Selecciona la visibilidad" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="public">
-                                        <div className="flex items-center space-x-2">
-                                            <Eye className="w-4 h-4" />
-                                            <span>Público - Todos pueden ver</span>
-                                        </div>
-                                    </SelectItem>
-                                    <SelectItem value="friends">
-                                        <div className="flex items-center space-x-2">
-                                            <Users className="w-4 h-4" />
-                                            <span>Amigos - Solo mis contactos</span>
-                                        </div>
-                                    </SelectItem>
-                                    <SelectItem value="private">
-                                        <div className="flex items-center space-x-2">
-                                            <Lock className="w-4 h-4" />
-                                            <span>Privado - Solo yo</span>
-                                        </div>
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Vista previa si hay imagen */}
-                        {formData.imageUrl && (
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {/* Título */}
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Vista previa de imagen
+                                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Título de la Historia *
                                 </label>
-                                <div className="border rounded-lg p-4 bg-gray-50">
-                                    <img
-                                        src={formData.imageUrl}
-                                        alt="Vista previa"
-                                        className="w-full max-h-64 object-cover rounded-lg"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = 'none';
-                                        }}
-                                    />
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    value={formData.title}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Escribe un título atractivo para tu historia..."
+                                    maxLength={100}
+                                    required
+                                />
+                                <div className="text-right text-sm text-gray-500 mt-1">
+                                    {formData.title.length}/100 caracteres
                                 </div>
                             </div>
-                        )}
 
-                        {/* Botones */}
-                        <div className="flex items-center justify-between pt-6 border-t">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => navigate('/feed')}
-                                disabled={loading}
-                            >
-                                Cancelar
-                            </Button>
+                            {/* Contenido */}
+                            <div>
+                                <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Contenido de la Historia *
+                                </label>
+                                <textarea
+                                    id="content"
+                                    name="content"
+                                    rows={12}
+                                    value={formData.content}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-vertical"
+                                    placeholder="Escribe tu historia aquí... Sé creativo y educativo."
+                                    required
+                                />
+                                <div className="text-right text-sm text-gray-500 mt-1">
+                                    {formData.content.length} caracteres
+                                </div>
+                            </div>
 
-                            <Button
-                                type="submit"
-                                disabled={loading || !formData.content.trim()}
-                                className="px-8"
-                            >
-                                {loading ? 'Publicando...' : 'Publicar Historia'}
-                            </Button>
+                            {/* Opción anónima */}
+                            <div className="bg-gray-50 p-4 rounded-md">
+                                <div className="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        id="anonymous"
+                                        name="anonymous"
+                                        checked={formData.anonymous}
+                                        onChange={handleChange}
+                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    />
+                                    <label htmlFor="anonymous" className="ml-2 block text-sm text-gray-700">
+                                        Publicar de forma anónima
+                                    </label>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1 ml-6">
+                                    Tu historia aparecerá como "Anónimo" sin mostrar tu nombre de usuario.
+                                </p>
+                            </div>
+
+                            {/* Información del autor */}
+                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                                <div className="flex items-center">
+                                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                                        <span className="text-blue-600">👤</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-medium text-blue-800">
+                                            Autor: {formData.anonymous ? 'Anónimo' : user?.username || user?.name}
+                                        </p>
+                                        <p className="text-xs text-blue-600">
+                                            {formData.anonymous ? 
+                                                'Tu identidad no será revelada' : 
+                                                `Publicando como ${user?.role === 'admin' ? 'Administrador' : 'Docente/Padre'}`
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Botones */}
+                            <div className="flex gap-4 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/stories')}
+                                    className="flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+                                    disabled={loading}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading || !formData.title.trim() || !formData.content.trim()}
+                                    className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    {loading ? 'Publicando...' : 'Publicar Historia'}
+                                </button>
+                            </div>
+                        </form>
+
+                        {/* Consejos */}
+                        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                            <h3 className="text-sm font-medium text-yellow-800 mb-2">💡 Consejos para una buena historia:</h3>
+                            <ul className="text-xs text-yellow-700 space-y-1">
+                                <li>• Usa un título claro y atractivo</li>
+                                <li>• Incluye una moraleja o enseñanza educativa</li>
+                                <li>• Revisa la ortografía y gramática</li>
+                                <li>• Mantén un lenguaje apropiado y respetuoso</li>
+                                <li>• Sé original y creativo</li>
+                            </ul>
                         </div>
-                    </form>
-                </CardContent>
-            </Card>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-);
+    );
 };
 
 export default CreateStoryPage;
