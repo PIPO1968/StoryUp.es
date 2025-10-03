@@ -1,6 +1,4 @@
-// Sistema de autenticación integrado con APIs
-
-const API_BASE = '/api';
+// Sistema de autenticación simulado (sin APIs externas)
 
 // Obtener el usuario actual desde el token almacenado
 export const getCurrentUser = async () => {
@@ -8,54 +6,64 @@ export const getCurrentUser = async () => {
         const token = localStorage.getItem('auth_token');
         if (!token) return null;
 
-        const response = await fetch(`${API_BASE}/auth`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            localStorage.removeItem('auth_token');
-            return null;
+        // Simular usuario basado en token
+        const userData = localStorage.getItem('user_data');
+        if (userData) {
+            return JSON.parse(userData);
         }
 
-        const data = await response.json();
-        return data.user;
+        // Usuario por defecto si hay token pero no datos
+        const defaultUser = {
+            id: '1',
+            name: 'Usuario StoryUp',
+            username: 'storyup_user',
+            email: 'usuario@storyup.es',
+            avatar: '/assets/logo-grande.png.png'
+        };
+        
+        localStorage.setItem('user_data', JSON.stringify(defaultUser));
+        return defaultUser;
     } catch (error) {
         console.error('Error obteniendo usuario actual:', error);
         localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_data');
         return null;
     }
 };
 
-// Login de usuario
+// Login de usuario (simulado)
 export const loginUser = async (credentials: { email: string; password: string }) => {
     try {
-        const response = await fetch(`${API_BASE}/auth`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(credentials)
-        });
+        // Simular autenticación
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay de red
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Error en el login');
+        // Validaciones básicas
+        if (!credentials.email || !credentials.password) {
+            throw new Error('Email y contraseña son requeridos');
         }
 
-        localStorage.setItem('auth_token', data.token);
-        return data.user;
+        // Crear usuario simulado
+        const user = {
+            id: '1',
+            name: 'Usuario StoryUp',
+            username: credentials.email.split('@')[0],
+            email: credentials.email,
+            avatar: '/assets/logo-grande.png.png'
+        };
+
+        // Guardar token y datos de usuario
+        const token = 'simulated_token_' + Date.now();
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('user_data', JSON.stringify(user));
+        
+        return user;
     } catch (error) {
         console.error('Error en login:', error);
         throw error;
     }
 };
 
-// Registro de usuario
+// Registro de usuario (simulado)
 export const registerUser = async (userData: {
     email: string;
     password: string;
@@ -63,22 +71,29 @@ export const registerUser = async (userData: {
     name?: string;
 }) => {
     try {
-        const response = await fetch(`${API_BASE}/auth`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
-        });
+        // Simular proceso de registro
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular delay de red
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Error en el registro');
+        // Validaciones básicas
+        if (!userData.email || !userData.password || !userData.username) {
+            throw new Error('Todos los campos son requeridos');
         }
 
-        localStorage.setItem('auth_token', data.token);
-        return data.user;
+        // Crear usuario simulado
+        const user = {
+            id: Date.now().toString(),
+            name: userData.name || userData.username,
+            username: userData.username,
+            email: userData.email,
+            avatar: '/assets/logo-grande.png.png'
+        };
+
+        // Guardar token y datos de usuario
+        const token = 'simulated_token_' + Date.now();
+        localStorage.setItem('auth_token', token);
+        localStorage.setItem('user_data', JSON.stringify(user));
+        
+        return user;
     } catch (error) {
         console.error('Error en registro:', error);
         throw error;
@@ -88,31 +103,30 @@ export const registerUser = async (userData: {
 // Logout
 export const logoutUser = () => {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_data');
     window.location.href = '/';
 };
 
-// Actualizar datos del usuario
+// Actualizar datos del usuario (simulado)
 export const updateUser = async (updates: Partial<any>) => {
     try {
         const token = localStorage.getItem('auth_token');
         if (!token) throw new Error('No autorizado');
 
-        const response = await fetch(`${API_BASE}/users/profile`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(updates)
-        });
+        // Simular actualización
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        const data = await response.json();
+        // Obtener datos actuales del usuario
+        const currentUserData = localStorage.getItem('user_data');
+        if (!currentUserData) throw new Error('Usuario no encontrado');
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Error actualizando usuario');
-        }
+        const currentUser = JSON.parse(currentUserData);
+        const updatedUser = { ...currentUser, ...updates };
 
-        return data.user;
+        // Guardar datos actualizados
+        localStorage.setItem('user_data', JSON.stringify(updatedUser));
+
+        return updatedUser;
     } catch (error) {
         console.error('Error actualizando usuario:', error);
         throw error;
