@@ -1,8 +1,10 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getCurrentUser } from './lib/auth.ts';
-import LoginPage from './pages/LoginPage.tsx';
 import Layout from './components/LayoutSimple.tsx';
+import LoginPage from './pages/LoginPage.tsx';
+import { LanguageProvider } from './lib/LanguageContext.tsx';
+
 import Dashboard from './pages/Dashboard.tsx';
 import StoriesPage from './pages/StoriesPage.tsx';
 import CreateStoryPage from './pages/CreateStoryPage.tsx';
@@ -47,30 +49,34 @@ function App() {
 
     if (user) {
         return (
-            <AuthContext.Provider value={{ user, setUser }}>
-                <Router>
-                    <Layout>
-                        <Routes>
-                            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/stories" element={<StoriesPage />} />
-                            <Route path="/create" element={<CreateStoryPage />} />
-                            <Route path="/news" element={<NewsPage />} />
-                            <Route path="/contests" element={<ContestsPage />} />
-                            <Route path="/statistics" element={<StatisticsPage />} />
-                            <Route path="/profile" element={<ProfilePageNew />} />
-                            <Route path="/chat" element={<ChatPage />} />
-                        </Routes>
-                    </Layout>
-                </Router>
-            </AuthContext.Provider>
+            <LanguageProvider>
+                <AuthContext.Provider value={{ user, setUser }}>
+                    <Router>
+                        <Layout>
+                            <Routes>
+                                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/stories" element={<StoriesPage />} />
+                                <Route path="/create" element={<CreateStoryPage />} />
+                                <Route path="/news" element={<NewsPage />} />
+                                <Route path="/contests" element={<ContestsPage />} />
+                                <Route path="/statistics" element={<StatisticsPage />} />
+                                <Route path="/profile" element={<ProfilePageNew />} />
+                                <Route path="/chat" element={<ChatPage />} />
+                            </Routes>
+                        </Layout>
+                    </Router>
+                </AuthContext.Provider>
+            </LanguageProvider>
         );
     }
 
     return (
-        <AuthContext.Provider value={{ user, setUser }}>
-            <LoginPage onLogin={setUser} />
-        </AuthContext.Provider>
+        <LanguageProvider>
+            <AuthContext.Provider value={{ user, setUser }}>
+                <LoginPage onLogin={setUser} />
+            </AuthContext.Provider>
+        </LanguageProvider>
     );
 }
 

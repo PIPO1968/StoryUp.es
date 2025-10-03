@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Search, Filter, Heart, MessageCircle, Share } from 'lucide-react';
 
-import Layout from '../components/Layout';
+
 
 export default function Stories() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +60,7 @@ export default function Stories() {
     });
 
     return (
-        <Layout>
+        
             <div className="max-w-4xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-6">
@@ -169,6 +169,7 @@ export default function Stories() {
                     )}
                 </div>
             </div>
-        </Layout>
+        
     );
 }
+

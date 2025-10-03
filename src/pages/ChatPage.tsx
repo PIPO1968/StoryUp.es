@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
-import Layout from '../components/Layout';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageCircle } from 'lucide-react';
@@ -12,16 +12,16 @@ const ChatPage: React.FC = () => {
 
     if (!user) {
         return (
-            <Layout>
+            
                 <div className="flex items-center justify-center h-96">
                     <div>Cargando...</div>
                 </div>
-            </Layout>
+            
         );
     }
 
     return (
-        <Layout>
+        
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8">Chat</h1>
 
@@ -50,8 +50,9 @@ const ChatPage: React.FC = () => {
                     </CardContent>
                 </Card>
             </div>
-        </Layout>
+        
     );
 };
 
 export default ChatPage;
+

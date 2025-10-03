@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trophy, Calendar, Award, Star } from 'lucide-react';
-import Layout from '../components/Layout';
+
 
 export default function ContestsPage() {
     const activeContests = [];
@@ -17,7 +17,7 @@ export default function ContestsPage() {
     ];
 
     return (
-        <Layout>
+        
             <div className="space-y-6">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-center">
@@ -143,6 +143,7 @@ export default function ContestsPage() {
                     </Card>
                 </div>
             </div>
-        </Layout>
+        
     );
 }
+

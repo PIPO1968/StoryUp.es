@@ -4,7 +4,7 @@ import { useAuth } from '../App';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Heart, MessageCircle, Share, Plus } from 'lucide-react';
-import Layout from '../components/Layout';
+
 
 interface Story {
     id: string;
@@ -125,7 +125,7 @@ const FeedPage: React.FC = () => {
     }
 
     return (
-        <Layout>
+        
             <div className="max-w-2xl mx-auto">
                 {error && (
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -217,8 +217,9 @@ const FeedPage: React.FC = () => {
                     </div>
                 )}
             </div>
-        </Layout>
+        
     );
 };
 
 export default FeedPage;
+

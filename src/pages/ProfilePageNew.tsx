@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { User, Trophy, MessageCircle, Send, Users, Settings } from 'lucide-react';
 import { useAuth } from '../App';
-import Layout from '../components/Layout';
+
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -39,7 +39,7 @@ export default function ProfilePage() {
     const isTeacher = user?.role === 'teacher' || user?.role === 'admin';
 
     return (
-        <Layout>
+        
             <div className="space-y-6">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-center">
@@ -249,6 +249,7 @@ export default function ProfilePage() {
                     </div>
                 )}
             </div>
-        </Layout>
+        
     );
 }
+
