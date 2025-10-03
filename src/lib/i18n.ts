@@ -92,7 +92,7 @@ export const translations: Record<string, Translations> = {
         newsDesc: 'Mantente al día con las últimas noticias y actividades de tu centro educativo.',
 
         // Navegación sidebar
-        dashboard: 'Dashboard',
+        dashboard: 'Inicio',
         stories: 'Historias',
         createStory: 'Crear Historia',
         contests: 'Concursos',
