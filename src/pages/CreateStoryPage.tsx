@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../lib/LanguageContext';
+import { saveStory } from '../lib/storiesManager';
 
 const CreateStoryPage: React.FC = () => {
     const { user } = useAuth();
@@ -23,33 +25,31 @@ const CreateStoryPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!formData.title.trim() || !formData.content.trim()) {
             alert('Por favor, completa todos los campos obligatorios.');
             return;
         }
 
         setLoading(true);
-        
-        try {
-            // Simular creación de historia
-            const newStory = {
-                id: Date.now().toString(),
-                title: formData.title,
-                content: formData.content,
-                author: formData.anonymous ? 'Anónimo' : user?.username || user?.name,
-                authorId: formData.anonymous ? null : user?.id,
-                createdAt: new Date().toISOString(),
-                likes: 0,
-                comments: []
-            };
 
-            // Guardar en localStorage como ejemplo
-            const existingStories = JSON.parse(localStorage.getItem('storyup_stories') || '[]');
-            existingStories.unshift(newStory);
-            localStorage.setItem('storyup_stories', JSON.stringify(existingStories));
+        try {
+            // Crear historia usando el sistema de gestión
+            const newStory = await saveStory({
+                title: formData.title.trim(),
+                content: formData.content.trim(),
+                author: {
+                    id: user?.id || user?.username,
+                    username: user?.username,
+                    name: user?.name
+                },
+                likes: 0,
+                likedBy: []
+            });
 
             setSuccess(true);
+
+            // Redirigir a la lista de historias después de 2 segundos
             setTimeout(() => {
                 navigate('/stories');
             }, 2000);
@@ -161,8 +161,8 @@ const CreateStoryPage: React.FC = () => {
                                             Autor: {formData.anonymous ? 'Anónimo' : user?.username || user?.name}
                                         </p>
                                         <p className="text-xs text-blue-600">
-                                            {formData.anonymous ? 
-                                                'Tu identidad no será revelada' : 
+                                            {formData.anonymous ?
+                                                'Tu identidad no será revelada' :
                                                 `Publicando como ${user?.role === 'admin' ? 'Administrador' : 'Docente/Padre'}`
                                             }
                                         </p>
