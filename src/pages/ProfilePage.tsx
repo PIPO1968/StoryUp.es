@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import Layout from '../components/Layout';
+
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
 
@@ -77,7 +77,7 @@ export default function ProfilePage() {
 
     if (!user) {
         return (
-            <Layout>
+            
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center py-8">
                         <p className="text-gray-600">Debes iniciar sesión para ver el perfil</p>
@@ -87,7 +87,7 @@ export default function ProfilePage() {
                         </Button>
                     </div>
                 </div>
-            </Layout>
+            
         );
     }
 
@@ -136,7 +136,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <Layout>
+        
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
                 {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
@@ -358,6 +358,7 @@ export default function ProfilePage() {
                     </div>
                 )}
             </div>
-        </Layout>
+        
     );
 }
+

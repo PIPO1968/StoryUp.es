@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Newspaper, Calendar, User, ExternalLink } from 'lucide-react';
 
-import Layout from '../components/Layout';
+
 
 export default function News() {
     const news = [
@@ -186,3 +186,4 @@ export default function News() {
         </div>
     );
 }
+

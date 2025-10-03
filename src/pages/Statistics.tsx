@@ -14,7 +14,7 @@ import {
 import { getCurrentUser } from '../lib/auth';
 import { useEffect, useState } from 'react';
 
-import Layout from '../components/Layout';
+
 
 export default function Statistics() {
     const [user, setUser] = useState(null);
@@ -61,7 +61,7 @@ export default function Statistics() {
     ];
 
     return (
-        <Layout>
+        
             <div className="max-w-6xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-6">
@@ -238,6 +238,7 @@ export default function Statistics() {
                     </Card>
                 </div>
             </div>
-        </Layout>
+        
     );
 }
+

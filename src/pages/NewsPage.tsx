@@ -1,14 +1,14 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Newspaper, Calendar, User } from 'lucide-react';
-import Layout from '../components/Layout';
+
 
 export default function NewsPage() {
     // Lista vacía inicial - las noticias aparecerán cuando los Padre/Docente las creen
     const news = [];
 
     return (
-        <Layout>
+        
             <div className="space-y-6">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-center">
@@ -60,6 +60,7 @@ export default function NewsPage() {
                     </CardContent>
                 </Card>
             </div>
-        </Layout>
+        
     );
 }
+
