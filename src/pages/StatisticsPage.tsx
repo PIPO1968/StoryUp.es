@@ -1,21 +1,57 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, TrendingUp, Users, Heart, Trophy, BookOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../App';
+import { useLanguage } from '../lib/LanguageContext';
+import { getAllStories, getStoriesStats } from '../lib/storiesManager';
+import { getAllNews, getNewsStats } from '../lib/newsManager';
+import type { Story } from '../lib/storiesManager';
+import type { News } from '../lib/newsManager';
 
+const StatisticsPage: React.FC = () => {
+    const { user } = useAuth();
+    const { t } = useLanguage();
+    
+    const [stories, setStories] = useState<Story[]>([]);
+    const [news, setNews] = useState<News[]>([]);
+    const [storiesStats, setStoriesStats] = useState({ totalStories: 0, totalLikes: 0, mostLikedStory: null });
+    const [newsStats, setNewsStats] = useState({ totalNews: 0, totalLikes: 0, totalViews: 0, featuredNews: null, mostViewedNews: null });
+    const [loading, setLoading] = useState(true);
 
-export default function StatisticsPage() {
+    useEffect(() => {
+        loadAllStats();
+    }, []);
+
+    const loadAllStats = () => {
+        setLoading(true);
+        try {
+            // Cargar datos de historias
+            const storiesData = getAllStories();
+            const storiesStatsData = getStoriesStats();
+            setStories(storiesData);
+            setStoriesStats(storiesStatsData);
+
+            // Cargar datos de noticias
+            const newsData = getAllNews();
+            const newsStatsData = getNewsStats();
+            setNews(newsData);
+            setNewsStats(newsStatsData);
+        } catch (error) {
+            console.error('Error cargando estadísticas:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        
-            <div className="space-y-6">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+            {/* Header */}
+            <div className="mb-8">
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center justify-center">
-                        <BarChart3 className="mr-3 text-purple-600" />
-                        Estadísticas de StoryUp
-                    </h1>
-                    <p className="text-gray-600 mt-2">
-                        Descubre las tendencias y mejores contenidos de nuestra comunidad
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">📊 Estadísticas de StoryUp</h1>
+                    <p className="text-gray-600">
+                        Descubre las tendencias y mejores contenidos de nuestra comunidad educativa
                     </p>
                 </div>
+            </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Top 5 Historias por Likes */}
