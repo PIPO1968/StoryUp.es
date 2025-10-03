@@ -1,7 +1,7 @@
 // Sistema de autenticación StoryUp - Registro público abierto
 
 // Base de datos de usuarios StoryUp (almacenada en localStorage)
-const getStoredUsers = () => {
+export const getStoredUsers = () => {
     const users = localStorage.getItem('storyup_users');
     if (users) {
         return JSON.parse(users);
