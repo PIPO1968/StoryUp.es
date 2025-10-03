@@ -2,7 +2,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getCurrentUser } from './lib/auth.ts';
 import LoginPage from './pages/LoginPage.tsx';
-import Layout from './components/Layout.tsx';
+import Layout from './components/LayoutSimple.tsx';
 import Dashboard from './pages/Dashboard.tsx';
 import StoriesPage from './pages/StoriesPage.tsx';
 import CreateStoryPage from './pages/CreateStoryPage.tsx';

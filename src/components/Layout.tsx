@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
-import { Button } from '@/components/ui/button';
 import LanguageSelector from './LanguageSelector';
 import { getUserStats } from '../lib/auth';
 import {
@@ -161,7 +160,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                         <p className="text-sm font-medium">Usuario Sugerido</p>
                                         <p className="text-xs text-gray-500">@usuario123</p>
                                     </div>
-                                    <Button size="sm" variant="outline">Seguir</Button>
+                                    <button className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50">Seguir</button>
                                 </div>
                             </div>
                         </div>
