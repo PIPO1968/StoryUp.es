@@ -27,6 +27,7 @@ export default function ProfilePage() {
     const updateProfile = async (updates: Partial<any>) => {
         // Función simulada para actualizar perfil
         console.log('Actualizando perfil:', updates);
+        alert('Función de actualización de perfil (demo)');
     };
     const [fullUser, setFullUser] = useState<any | null>(null);
     const [avatarUrl, setAvatarUrl] = useState<string>('');
@@ -188,6 +189,7 @@ export default function ProfilePage() {
                                             setTimeout(() => {
                                                 setAvatarUrl(URL.createObjectURL(file));
                                                 setUploading(false);
+                                                alert('Avatar temporal (se pierde al recargar)');
                                             }, 1000);
                                         }}
                                     />

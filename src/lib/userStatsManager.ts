@@ -210,3 +210,78 @@ export const resetUserStats = (userId: string): void => {
     localStorage.removeItem(`${STATS_KEY}_${userId}`);
     updateGlobalRanking();
 };
+
+// ========== FUNCIONES AUTOMÁTICAS PARA ACCIONES REALES ==========
+
+// Ejecutar cuando el usuario crea una historia real
+export const onStoryCreated = (userId: string): void => {
+    addStory(userId);
+    const stats = getUserStats(userId);
+    console.log(`📚 Historia creada por ${userId}. Total historias: ${stats.stories}`);
+    
+    // Bonus: dar algunos likes automáticos por crear historia
+    addStoryLikes(userId, 1);
+    console.log(`✅ +1 like automático por crear historia`);
+};
+
+// Ejecutar cuando el usuario recibe un like real en una historia
+export const onStoryLiked = (userId: string, likesReceived: number = 1): void => {
+    addStoryLikes(userId, likesReceived);
+    const stats = getUserStats(userId);
+    console.log(`💖 ${userId} recibió ${likesReceived} like(s) en historia. Total likes de historias: ${stats.likes.fromStories}`);
+};
+
+// Ejecutar cuando el usuario gana un trofeo real
+export const onTrophyEarned = (userId: string, trophyName: string): void => {
+    addTrophy(userId);
+    const stats = getUserStats(userId);
+    console.log(`🏆 ${userId} ganó el trofeo "${trophyName}". Total trofeos: ${stats.trophies}`);
+    
+    // Bonus: dar likes por conseguir trofeo
+    addTrophyLikes(userId, 5);
+    console.log(`✅ +5 likes automáticos por ganar trofeo`);
+};
+
+// Ejecutar cuando el usuario participa en un concurso
+export const onContestParticipation = (userId: string): void => {
+    addContestLikes(userId, 2);
+    console.log(`🎯 ${userId} participó en concurso. +2 likes por participación`);
+};
+
+// Ejecutar cuando el usuario gana un concurso
+export const onContestWin = (userId: string): void => {
+    addContestLikes(userId, 10);
+    console.log(`🥇 ${userId} ganó un concurso! +10 likes por victoria`);
+};
+
+// Ejecutar cuando un padre/docente da premio admin
+export const onAdminAward = (userId: string, awardPoints: number = 5): void => {
+    addAdminLikes(userId, awardPoints);
+    const stats = getUserStats(userId);
+    console.log(`⭐ ${userId} recibió premio de admin. +${awardPoints} likes. Total admin: ${stats.likes.fromAdmin}`);
+};
+
+// Ejecutar cuando el usuario hace un nuevo amigo
+export const onFriendAdded = (userId: string, friendName: string): void => {
+    addFriend(userId);
+    const stats = getUserStats(userId);
+    console.log(`👥 ${userId} añadió a ${friendName} como amigo. Total amigos: ${stats.friends}`);
+};
+
+// Función para mostrar resumen de actividad del usuario
+export const getUserActivitySummary = (userId: string): string => {
+    const stats = getUserStats(userId);
+    return `
+🎯 RESUMEN DE ACTIVIDAD - ${userId}
+📚 Historias creadas: ${stats.stories}
+💖 Total likes: ${stats.likes.total}
+   • De historias: ${stats.likes.fromStories}
+   • De trofeos: ${stats.likes.fromTrophies}  
+   • De concursos: ${stats.likes.fromContests}
+   • Premios admin: ${stats.likes.fromAdmin}
+👥 Amigos: ${stats.friends}
+🏆 Trofeos: ${stats.trophies}
+🌟 Posición global: #${stats.globalPosition}
+⏰ Última actualización: ${new Date(stats.lastUpdated).toLocaleString()}
+    `.trim();
+};
