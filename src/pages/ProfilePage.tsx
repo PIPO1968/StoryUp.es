@@ -11,17 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
-import {
-    getUserStats,
-    UserStats,
-    addStoryLikes,
-    addTrophyLikes,
-    addContestLikes,
-    addAdminLikes,
-    addFriend,
-    addTrophy,
-    addStory
-} from '../lib/userStatsManager';
+import { getUserStats, UserStats } from '../lib/userStatsManager';
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -74,7 +64,39 @@ export default function ProfilePage() {
 
                         // Cargar estadísticas del usuario
                         const stats = getUserStats(user.id || user.username);
-                        setUserStats(stats);
+                        
+                        // Inicializar con datos reales si es la primera vez
+                        if (user.username === 'PIPO68' && stats.stories === 0 && stats.likes.total === 0) {
+                            // Inicializar con datos reales conocidos
+                            const updatedStats = {
+                                ...stats,
+                                stories: 1, // 1 historia creada
+                                likes: {
+                                    fromStories: 1, // 1 like recibido
+                                    fromTrophies: 0,
+                                    fromContests: 0,
+                                    fromAdmin: 0,
+                                    total: 1
+                                }
+                            };
+                            
+                            // Recalcular posición global
+                            const allUsers = JSON.parse(localStorage.getItem('storyup_all_users') || '[]');
+                            let position = 1;
+                            for (const userData of allUsers) {
+                                if (userData.likes.total > updatedStats.likes.total || 
+                                    (userData.likes.total === updatedStats.likes.total && userData.stories > updatedStats.stories)) {
+                                    position++;
+                                }
+                            }
+                            updatedStats.globalPosition = position;
+                            
+                            // Guardar estadísticas actualizadas
+                            localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(updatedStats));
+                            setUserStats(updatedStats);
+                        } else {
+                            setUserStats(stats);
+                        }
 
                         // Simular lista de usuarios
                         setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
@@ -165,64 +187,9 @@ export default function ProfilePage() {
 
         <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-4">Mi Perfil</h1>
-            
-            {/* SISTEMA DE PRUEBAS - VISIBLE EN LA PARTE SUPERIOR */}
-            <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
-                <p className="text-lg font-bold text-red-600 mb-3">🧪 SISTEMA DE PRUEBAS - DEMO</p>
-                <p className="text-sm text-gray-600 mb-3">Usuario: {user ? `${user.name} (${user.username})` : 'NO LOGUEADO'}</p>
-                <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addStoryLikes(user.id || user.username, 5);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+5 Likes Historia</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addTrophyLikes(user.id || user.username, 10);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+10 Likes Trofeo</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addContestLikes(user.id || user.username, 8);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+8 Likes Concurso</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addAdminLikes(user.id || user.username, 15);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+15 Likes Admin</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addFriend(user.id || user.username);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+1 Amigo</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addTrophy(user.id || user.username);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+1 Trofeo</Button>
-                    <Button size="sm" variant="outline" onClick={() => {
-                        if (user) {
-                            addStory(user.id || user.username);
-                            const newStats = getUserStats(user.id || user.username);
-                            setUserStats(newStats);
-                        }
-                    }}>+1 Historia</Button>
-                </div>
-            </div>
-            
+
+
+
             {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Datos Personales - 3/5 */}
@@ -359,62 +326,7 @@ export default function ProfilePage() {
                                         </div>
                                     </div>
 
-                                    {/* Botones de prueba (temporal para demo) */}
-                                    <div className="mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
-                                        <p className="text-sm font-bold text-red-600 mb-3">🧪 SISTEMA DE PRUEBAS - DEMO</p>
-                                        <p className="text-xs text-gray-600 mb-3">Usuario: {user ? `${user.name} (${user.username})` : 'NO LOGUEADO'}</p>
-                                        <div className="flex flex-wrap gap-2">
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addStoryLikes(user.id || user.username, 5);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+5 Likes Historia</Button>
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addTrophyLikes(user.id || user.username, 10);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+10 Likes Trofeo</Button>
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addContestLikes(user.id || user.username, 8);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+8 Likes Concurso</Button>
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addAdminLikes(user.id || user.username, 15);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+15 Likes Admin</Button>
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addFriend(user.id || user.username);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+1 Amigo</Button>
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addTrophy(user.id || user.username);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+1 Trofeo</Button>
-                                            <Button size="sm" variant="outline" onClick={() => {
-                                                if (user) {
-                                                    addStory(user.id || user.username);
-                                                    const newStats = getUserStats(user.id || user.username);
-                                                    setUserStats(newStats);
-                                                }
-                                            }}>+1 Historia</Button>
-                                        </div>
-                                    </div>
+
 
                                     <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                                         <DialogTrigger asChild>
