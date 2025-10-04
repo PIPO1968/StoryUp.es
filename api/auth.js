@@ -1,3 +1,4 @@
+// Otro cambio menor para forzar despliegue Vercel - 04/10/2025
 // Cambio menor para forzar despliegue Vercel - 04/10/2025
 const { Client } = require('pg');
 const bcrypt = require('bcrypt');
