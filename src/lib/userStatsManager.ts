@@ -218,7 +218,7 @@ export const onStoryCreated = (userId: string): void => {
     addStory(userId);
     const stats = getUserStats(userId);
     console.log(`📚 Historia creada por ${userId}. Total historias: ${stats.stories}`);
-    
+
     // Bonus: dar algunos likes automáticos por crear historia
     addStoryLikes(userId, 1);
     console.log(`✅ +1 like automático por crear historia`);
@@ -236,7 +236,7 @@ export const onTrophyEarned = (userId: string, trophyName: string): void => {
     addTrophy(userId);
     const stats = getUserStats(userId);
     console.log(`🏆 ${userId} ganó el trofeo "${trophyName}". Total trofeos: ${stats.trophies}`);
-    
+
     // Bonus: dar likes por conseguir trofeo
     addTrophyLikes(userId, 5);
     console.log(`✅ +5 likes automáticos por ganar trofeo`);
