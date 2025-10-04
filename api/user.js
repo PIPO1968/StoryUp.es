@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
     if (!id) return res.status(400).json({ error: 'Falta el id de usuario' });
 
     if (req.method === 'PUT') {
-        const { theme, language } = req.body;
+        const { theme, language, centro_escolar } = req.body;
         let updates = [];
         let values = [];
         let idx = 1;
@@ -34,6 +34,10 @@ module.exports = async function handler(req, res) {
             updates.push(`language = $${idx++}`);
             values.push(language);
         }
+        if (centro_escolar) {
+            updates.push(`centro_escolar = $${idx++}`);
+            values.push(centro_escolar);
+        }
         if (updates.length === 0) {
             await client.end();
             return res.status(400).json({ error: 'No hay datos para actualizar' });
@@ -41,6 +45,7 @@ module.exports = async function handler(req, res) {
         values.push(id);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS centro_escolar VARCHAR(128);`);
         await client.query(`UPDATE users SET ${updates.join(', ')} WHERE id = $${idx}`, values);
         await client.end();
         return res.status(200).json({ success: true });
@@ -49,7 +54,8 @@ module.exports = async function handler(req, res) {
     if (req.method === 'GET') {
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
-        const result = await client.query('SELECT theme, language FROM users WHERE id = $1', [id]);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS centro_escolar VARCHAR(128);`);
+        const result = await client.query('SELECT theme, language, centro_escolar FROM users WHERE id = $1', [id]);
         await client.end();
         if (result.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
         return res.status(200).json(result.rows[0]);

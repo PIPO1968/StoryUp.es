@@ -14,6 +14,31 @@ export default function ProfilePage() {
     const [schoolCenter, setSchoolCenter] = useState('');
     const [schoolCenterSaved, setSchoolCenterSaved] = useState(false);
 
+    // Leer centro escolar desde la API al cargar el perfil
+    React.useEffect(() => {
+        if (user?.id) {
+            fetch(`/api/user?id=${user.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.centro_escolar) {
+                        setSchoolCenter(data.centro_escolar);
+                        setSchoolCenterSaved(true);
+                    }
+                });
+        }
+    }, [user?.id]);
+
+    // Guardar centro escolar en la API (solo una vez)
+    const handleSaveSchoolCenter = async () => {
+        if (!schoolCenter.trim() || !user?.id) return;
+        await fetch(`/api/user?id=${user.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ centro_escolar: schoolCenter.trim() })
+        });
+        setSchoolCenterSaved(true);
+    };
+
     // Datos de perfil del usuario
     const profileData = {
         name: user?.name || 'Usuario',
@@ -83,7 +108,7 @@ export default function ProfilePage() {
                             <div className="md:col-span-2 col-span-1">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Centro Escolar</label>
                                 {schoolCenterSaved ? (
-                                    <div className="font-semibold text-blue-700">Centro Escolar: {schoolCenter}</div>
+                                    <Input value={schoolCenter} readOnly className="font-semibold text-blue-700" />
                                 ) : (
                                     <Input
                                         type="text"
@@ -92,13 +117,13 @@ export default function ProfilePage() {
                                         placeholder="Escribe tu centro escolar..."
                                         onKeyPress={e => {
                                             if (e.key === 'Enter' && schoolCenter.trim()) {
-                                                setSchoolCenterSaved(true);
+                                                handleSaveSchoolCenter();
                                             }
                                         }}
                                     />
                                 )}
                                 {!schoolCenterSaved && schoolCenter.trim() && (
-                                    <Button className="mt-2" onClick={() => setSchoolCenterSaved(true)}>
+                                    <Button className="mt-2" onClick={handleSaveSchoolCenter}>
                                         Guardar centro escolar
                                     </Button>
                                 )}
