@@ -10,8 +10,8 @@
         {
             "id": "2",
             "name": "Sociable",
-            "description": "Consigue 10 likes en tus historias",
-            "image": "Premio2.png.png",
+            "description": "Interactúa con 5 compañeros diferentes",
+            "image": "Premio2.png",
             "color": "bg-green-500"
         },
         {
@@ -163,8 +163,8 @@
         },
         {
             "id": "24",
-            "name": "Escritor Popular",
-            "description": "Consigue 10 'me gusta' en una historia",
+            "name": "Historia Viral",
+            "description": "Una de tus historias alcanza 25 'me gusta'",
             "image": "trofeo-default.png",
             "color": "bg-pink-500"
         },
