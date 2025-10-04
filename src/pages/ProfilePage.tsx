@@ -63,47 +63,8 @@ export default function ProfilePage() {
                         }
 
                         // Cargar estadísticas del usuario
-                        let stats = getUserStats(user.id || user.username);
-
-                        // Forzar inicialización con datos reales para PIPO68
-                        if (user.username === 'PIPO68') {
-                            // Crear estadísticas con datos reales conocidos
-                            const updatedStats: UserStats = {
-                                userId: user.id || user.username,
-                                friends: stats.friends || 0,
-                                trophies: stats.trophies || 0,
-                                stories: 1, // 1 historia creada (dato real)
-                                likes: {
-                                    fromStories: 1, // 1 like recibido (dato real)
-                                    fromTrophies: 0,
-                                    fromContests: 0,
-                                    fromAdmin: 0,
-                                    total: 1
-                                },
-                                globalPosition: 1, // Primera posición por tener datos
-                                lastUpdated: new Date().toISOString()
-                            };
-
-                            // Guardar estadísticas actualizadas
-                            localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(updatedStats));
-                            setUserStats(updatedStats);
-                            console.log('Estadísticas inicializadas para PIPO68:', updatedStats);
-                        } else {
-                            setUserStats(stats);
-                        }
-
-                        // Verificar y restaurar lista de usuarios si está vacía
-                        const existingUsers = localStorage.getItem('storyup_users');
-                        if (!existingUsers || JSON.parse(existingUsers).length === 0) {
-                            console.log('Restaurando lista de usuarios...');
-                            const defaultUsers = [
-                                { id: '1', username: 'ADMIN', name: 'Administrador', userType: 'padre-docente', email: 'admin@storyup.es' },
-                                { id: '2', username: 'PIPO68', name: 'Pipo Rodriguez Rodriguez', userType: 'usuario', email: 'pipocanarias@hotmail.com' },
-                                { id: '3', username: 'usuario.ejemplo', name: 'Usuario Ejemplo', userType: 'usuario', email: 'ejemplo@storyup.es' }
-                            ];
-                            localStorage.setItem('storyup_users', JSON.stringify(defaultUsers));
-                            console.log('Lista de usuarios restaurada:', defaultUsers.length, 'usuarios');
-                        }
+                        const stats = getUserStats(user.id || user.username);
+                        setUserStats(stats);
 
                         // Simular lista de usuarios
                         setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
