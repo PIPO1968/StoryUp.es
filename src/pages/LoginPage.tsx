@@ -1,8 +1,34 @@
 import React, { useState } from 'react';
-import { loginUser, registerUser } from '../lib/auth';
+
+interface UserDB {
+    id: string;
+    username: string;
+    password: string;
+    email: string;
+    role: 'admin' | 'teacher' | 'student';
+    name: string;
+    nickname?: string;
+    avatar?: string;
+    likes?: number;
+    trophies?: any[];
+    friends?: any[];
+}
+
+interface User {
+    id: string;
+    username: string;
+    email: string;
+    role: 'admin' | 'teacher' | 'student';
+    name: string;
+    nickname?: string;
+    avatar?: string;
+    likes?: number;
+    trophies?: any[];
+    friends?: any[];
+}
 
 interface LoginPageProps {
-    onLogin: (user: any) => void;
+    onLogin: (user: User) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
@@ -39,13 +65,41 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            const user = await loginUser({
-                email: loginData.email,
-                password: loginData.password
+            // Llamar a tu API real de Neon  
+            const response = await fetch('/api/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: loginData.email,
+                    password: loginData.password
+                }),
             });
-            onLogin(user);
+
+            const data = await response.json();
+
+            if (response.ok && data.token) {
+                // Login exitoso - usar datos de la base de datos
+                const user: User = {
+                    id: data.user.id.toString(),
+                    username: data.user.username,
+                    email: data.user.email,
+                    role: data.user.userType === 'teacher' ? 'teacher' : 'student',
+                    name: data.user.name || data.user.username,
+                    nickname: data.user.username,
+                    avatar: data.user.avatar || '',
+                    likes: 0,
+                    trophies: [],
+                    friends: []
+                };
+                onLogin(user);
+            } else {
+                setError(data.error || 'Credenciales incorrectas');
+            }
         } catch (err: any) {
-            setError(err.message || 'Error al iniciar sesión');
+            setError('Error de conexión con el servidor');
+            console.error('Login error:', err);
         } finally {
             setLoading(false);
         }
@@ -57,8 +111,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            const user = await registerUser(registerData);
-            onLogin(user);
+            // Por ahora, deshabilitar registro - solo usuarios existentes
+            setError('El registro está deshabilitado. Use usuarios existentes: admin/admin123 o profesor/prof123');
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');
         } finally {

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { getCurrentUser } from './lib/auth.ts';
 import Layout from './components/LayoutSimple.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import { LanguageProvider } from './lib/LanguageContext.tsx';
@@ -18,9 +17,28 @@ import ProfilePageNew from './pages/ProfilePageNew.tsx';
 import ChatPage from './pages/ChatPage.tsx';
 import './App.css';
 
-const AuthContext = createContext();
+// Tipos para el contexto de autenticación
+interface User {
+    id: string;
+    username: string;
+    email: string;
+    role: 'admin' | 'teacher' | 'student';
+    nickname?: string;
+    name?: string;
+    avatar?: string;
+    likes?: number;
+    trophies?: any[];
+    friends?: any[];
+}
 
-export const useAuth = () => {
+interface AuthContextType {
+    user: User | null;
+    setUser: (user: User | null) => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
@@ -28,25 +46,11 @@ export const useAuth = () => {
     return context;
 };
 
+// Sin usuarios en memoria - usamos la API real de Neon
+
 function App() {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const loadUser = async () => {
-            try {
-                const currentUser = await getCurrentUser();
-                setUser(currentUser);
-            } catch (error) {
-                console.error('Error loading user:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadUser();
-    }, []);
-
-
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(false);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
@@ -79,6 +83,7 @@ function App() {
         );
     }
 
+    // No hay usuario logueado - mostrar login
     return (
         <LanguageProvider>
             <AuthContext.Provider value={{ user, setUser }}>
