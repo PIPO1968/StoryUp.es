@@ -12,9 +12,25 @@ export interface Contest {
     createdAt: string;
 }
 
-// Eliminado: obtención de concursos desde localStorage. Usar API/DB.
+// Obtener todos los concursos del localStorage
+export const getAllContests = (): Contest[] => {
+    try {
+        const contests = localStorage.getItem('storyup_contests');
+        return contests ? JSON.parse(contests) : [];
+    } catch (error) {
+        console.error('Error loading contests:', error);
+        return [];
+    }
+};
 
-// Eliminado: guardado de concursos en localStorage. Usar API/DB.
+// Guardar concursos en localStorage
+export const saveContests = (contests: Contest[]): void => {
+    try {
+        localStorage.setItem('storyup_contests', JSON.stringify(contests));
+    } catch (error) {
+        console.error('Error saving contests:', error);
+    }
+};
 
 // Crear un nuevo concurso (solo para Padres/Docentes)
 export const createContest = (contestData: {
