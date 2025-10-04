@@ -92,6 +92,19 @@ export default function ProfilePage() {
                             setUserStats(stats);
                         }
 
+                        // Verificar y restaurar lista de usuarios si está vacía
+                        const existingUsers = localStorage.getItem('storyup_users');
+                        if (!existingUsers || JSON.parse(existingUsers).length === 0) {
+                            console.log('Restaurando lista de usuarios...');
+                            const defaultUsers = [
+                                { id: '1', username: 'ADMIN', name: 'Administrador', userType: 'padre-docente', email: 'admin@storyup.es' },
+                                { id: '2', username: 'PIPO68', name: 'Pipo Rodriguez Rodriguez', userType: 'usuario', email: 'pipocanarias@hotmail.com' },
+                                { id: '3', username: 'usuario.ejemplo', name: 'Usuario Ejemplo', userType: 'usuario', email: 'ejemplo@storyup.es' }
+                            ];
+                            localStorage.setItem('storyup_users', JSON.stringify(defaultUsers));
+                            console.log('Lista de usuarios restaurada:', defaultUsers.length, 'usuarios');
+                        }
+
                         // Simular lista de usuarios
                         setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
                     }, 1000);
@@ -231,38 +244,60 @@ export default function ProfilePage() {
             {/* Botón alternativo para cualquier usuario - temporal */}
             {user && (
                 <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800 mb-2">🔧 Botón temporal para cualquier usuario</p>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                            // Limpiar localStorage
-                            localStorage.removeItem(`storyup_user_stats_${user.id || user.username}`);
+                    <p className="text-sm text-blue-800 mb-2">🔧 Botones temporales para cualquier usuario</p>
+                    <div className="flex gap-2 flex-wrap">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                // Limpiar localStorage
+                                localStorage.removeItem(`storyup_user_stats_${user.id || user.username}`);
 
-                            // Forzar reinicialización con datos de ejemplo
-                            const newStats: UserStats = {
-                                userId: user.id || user.username,
-                                friends: 0,
-                                trophies: 0,
-                                stories: 1, // 1 historia creada
-                                likes: {
-                                    fromStories: 1, // 1 like recibido
-                                    fromTrophies: 0,
-                                    fromContests: 0,
-                                    fromAdmin: 0,
-                                    total: 1
-                                },
-                                globalPosition: 1,
-                                lastUpdated: new Date().toISOString()
-                            };
+                                // Forzar reinicialización con datos de ejemplo
+                                const newStats: UserStats = {
+                                    userId: user.id || user.username,
+                                    friends: 0,
+                                    trophies: 0,
+                                    stories: 1, // 1 historia creada
+                                    likes: {
+                                        fromStories: 1, // 1 like recibido
+                                        fromTrophies: 0,
+                                        fromContests: 0,
+                                        fromAdmin: 0,
+                                        total: 1
+                                    },
+                                    globalPosition: 1,
+                                    lastUpdated: new Date().toISOString()
+                                };
 
-                            localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(newStats));
-                            setUserStats(newStats);
-                            alert('Estadísticas reinicializadas correctamente para ' + (user.username || user.name));
-                        }}
-                    >
-                        🔄 Reinicializar estadísticas (cualquier usuario)
-                    </Button>
+                                localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(newStats));
+                                setUserStats(newStats);
+                                alert('Estadísticas reinicializadas correctamente para ' + (user.username || user.name));
+                            }}
+                        >
+                            🔄 Reinicializar estadísticas
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                                // Restaurar contador de usuarios
+                                const defaultUsers = [
+                                    { id: '1', username: 'ADMIN', name: 'Administrador', userType: 'padre-docente', email: 'admin@storyup.es' },
+                                    { id: '2', username: 'PIPO68', name: 'Pipo Rodriguez Rodriguez', userType: 'usuario', email: 'pipocanarias@hotmail.com' },
+                                    { id: '3', username: 'usuario.ejemplo', name: 'Usuario Ejemplo', userType: 'usuario', email: 'ejemplo@storyup.es' },
+                                    { id: '4', username: 'maria.lopez', name: 'María López', userType: 'usuario', email: 'maria@storyup.es' },
+                                    { id: '5', username: 'juan.garcia', name: 'Juan García', userType: 'padre-docente', email: 'juan@storyup.es' }
+                                ];
+                                localStorage.setItem('storyup_users', JSON.stringify(defaultUsers));
+                                alert('Contador de usuarios restaurado: ' + defaultUsers.length + ' usuarios registrados');
+                                // Recargar página para actualizar contador
+                                window.location.reload();
+                            }}
+                        >
+                            👥 Restaurar contador usuarios
+                        </Button>
+                    </div>
                 </div>
             )}
 
