@@ -58,11 +58,25 @@ module.exports = async function handler(req, res) {
 
         await ensureUsersTable(client);
 
-        if (req.method === 'POST') {
+        if (req.method === 'GET' && req.url?.includes('/check-users')) {
+            // Endpoint para verificar si hay usuarios en la base de datos
+            try {
+                const result = await client.query('SELECT COUNT(*) as count FROM users');
+                const userCount = parseInt(result.rows[0].count);
+
+                return res.json({
+                    hasUsers: userCount > 0,
+                    userCount: userCount
+                });
+            } catch (error) {
+                console.error('Error verificando usuarios:', error);
+                return res.status(500).json({ error: 'Error verificando usuarios' });
+            }
+        } else if (req.method === 'POST') {
             console.log('POST request recibido');
             console.log('Body:', JSON.stringify(req.body));
 
-            const { email, password, username, name } = req.body;
+            const { email, password, username, name, userType } = req.body;
 
             if (!email || !password) {
                 console.log('Error: Email o contraseña faltantes');
@@ -71,18 +85,28 @@ module.exports = async function handler(req, res) {
 
             console.log('Datos válidos recibidos:', { email, username, name });
 
-            // Verificar si el usuario ya existe
+            // Para login, el campo 'email' puede ser email o username
+            const loginField = email; // En login, este campo puede contener email o username
+            console.log('Intentando login con:', loginField);
+            
+            // Buscar usuario por email O username (el campo email puede contener cualquiera de los dos)
             const existingUser = await client.query(
-                'SELECT * FROM users WHERE email = $1 OR username = $2',
-                [email, username]
+                'SELECT * FROM users WHERE email = $1 OR username = $1',
+                [loginField]
             );
+
+            console.log('Usuarios encontrados:', existingUser.rows.length);
 
             if (existingUser.rows.length > 0) {
                 // Login
                 const user = existingUser.rows[0];
+                console.log('Usuario encontrado:', { id: user.id, email: user.email, username: user.username });
+                
                 const isValidPassword = await bcrypt.compare(password, user.password);
+                console.log('Contraseña válida:', isValidPassword);
 
                 if (!isValidPassword) {
+                    console.log('Contraseña incorrecta para usuario:', user.email);
                     return res.status(400).json({ error: 'Contraseña incorrecta' });
                 }
 
@@ -114,11 +138,32 @@ module.exports = async function handler(req, res) {
                     }
                 });
             } else {
-                // Registro
+                // Usuario no encontrado para login
+                console.log('❌ Usuario no encontrado para login con:', loginField);
+                console.log('Verificando si es intento de registro...');
+                
+                // Si no se proporcionó username, es un intento de login fallido
+                if (!username) {
+                    return res.status(400).json({ 
+                        error: `Usuario no encontrado. ¿Estás seguro que el email/usuario "${loginField}" está registrado?` 
+                    });
+                }
+                
+                // Si se proporcionó username, proceder con registro
                 console.log('Iniciando proceso de registro para:', email);
+
+                // Validar campos obligatorios para registro
                 if (!username) {
                     console.log('Error: Username faltante');
-                    return res.status(400).json({ error: 'Nombre de usuario requerido para registro' });
+                    return res.status(400).json({ error: 'Nombre de usuario (nick) es requerido' });
+                }
+                if (!name) {
+                    console.log('Error: Nombre real faltante');
+                    return res.status(400).json({ error: 'Nombre real es requerido' });
+                }
+                if (!userType || (userType !== 'Usuario' && userType !== 'Padre/Docente')) {
+                    console.log('Error: Tipo de usuario inválido');
+                    return res.status(400).json({ error: 'Debe seleccionar si es Usuario o Padre/Docente' });
                 }
 
                 console.log('Hasheando contraseña...');
@@ -127,10 +172,10 @@ module.exports = async function handler(req, res) {
 
                 console.log('Insertando usuario en la base de datos...');
                 const result = await client.query(
-                    `INSERT INTO users (email, username, password, name) 
-                     VALUES ($1, $2, $3, $4) 
+                    `INSERT INTO users (email, username, password, name, user_type) 
+                     VALUES ($1, $2, $3, $4, $5) 
                      RETURNING id, email, username, name, avatar, bio, user_type, school, grade, followers, following, is_verified`,
-                    [email, username, hashedPassword, name || username]
+                    [email, username, hashedPassword, name, userType]
                 );
 
                 console.log('Usuario insertado exitosamente');

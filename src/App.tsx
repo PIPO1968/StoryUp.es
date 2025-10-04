@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useContext, ReactNode } from
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/LayoutSimple.tsx';
 import LoginPage from './pages/LoginPage.tsx';
+import RegisterPage from './pages/RegisterPage.tsx';
 import { LanguageProvider } from './lib/LanguageContext.tsx';
 
 import Dashboard from './pages/Dashboard.tsx';
@@ -50,7 +51,31 @@ export const useAuth = (): AuthContextType => {
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [hasExistingUsers, setHasExistingUsers] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        const checkUserIPStatus = async () => {
+            try {
+                const response = await fetch('/api/check-ip');
+                const data = await response.json();
+
+                console.log('Estado de IP:', data);
+
+                // Si es IP conocida, mostrar login
+                // Si es IP nueva, mostrar registro
+                setHasExistingUsers(data.isKnownIP);
+            } catch (error) {
+                console.error('Error verificando estado de IP:', error);
+                // En caso de error, mostrar login por seguridad
+                setHasExistingUsers(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkUserIPStatus();
+    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
@@ -83,11 +108,26 @@ function App() {
         );
     }
 
-    // No hay usuario logueado - mostrar login
+    // No hay usuario logueado - mostrar registro o login según el caso
     return (
         <LanguageProvider>
             <AuthContext.Provider value={{ user, setUser }}>
-                <LoginPage onLogin={setUser} />
+                <Router>
+                    <Routes>
+                        <Route path="/login" element={<LoginPage onLogin={setUser} />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route
+                            path="*"
+                            element={
+                                hasExistingUsers ? (
+                                    <LoginPage onLogin={setUser} />
+                                ) : (
+                                    <RegisterPage />
+                                )
+                            }
+                        />
+                    </Routes>
+                </Router>
             </AuthContext.Provider>
         </LanguageProvider>
     );
