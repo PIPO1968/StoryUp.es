@@ -95,7 +95,7 @@ export const translations: Record<string, Translations> = {
         dashboard: 'Inicio',
         stories: 'Historias',
         createStory: 'Crear Historia',
-        contests: 'Concursos',
+        contests: 'Concursos y Trofeos',
         profile: 'Perfil',
         newsNav: 'Noticias',
         statisticsNav: 'Estadísticas',

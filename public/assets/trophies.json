@@ -153,6 +153,76 @@
             "description": "Gana el concurso mensual",
             "image": "Premio22.png",
             "color": "bg-gold-600"
+        },
+        {
+            "id": "23",
+            "name": "Primer Escrito",
+            "description": "Publica tu primera historia en la plataforma",
+            "image": "trofeo-default.png",
+            "color": "bg-blue-500"
+        },
+        {
+            "id": "24",
+            "name": "Escritor Popular",
+            "description": "Consigue 10 'me gusta' en una historia",
+            "image": "trofeo-default.png",
+            "color": "bg-pink-500"
+        },
+        {
+            "id": "25",
+            "name": "Narrador Estrella",
+            "description": "Alcanza 50 'me gusta' en total",
+            "image": "trofeo-default.png",
+            "color": "bg-yellow-500"
+        },
+        {
+            "id": "26",
+            "name": "Comunidad Activa",
+            "description": "Comenta en 5 historias diferentes",
+            "image": "trofeo-default.png",
+            "color": "bg-green-500"
+        },
+        {
+            "id": "27",
+            "name": "Autor Prolífico",
+            "description": "Publica 5 historias",
+            "image": "trofeo-default.png",
+            "color": "bg-purple-500"
+        },
+        {
+            "id": "28",
+            "name": "Lector Voraz",
+            "description": "Lee 20 historias completas",
+            "image": "trofeo-default.png",
+            "color": "bg-indigo-500"
+        },
+        {
+            "id": "29",
+            "name": "Crítico Constructivo",
+            "description": "Escribe 10 comentarios útiles",
+            "image": "trofeo-default.png",
+            "color": "bg-orange-500"
+        },
+        {
+            "id": "30",
+            "name": "Leyenda Literaria",
+            "description": "Consigue 100 'me gusta' en total",
+            "image": "trofeo-default.png",
+            "color": "bg-red-500"
+        },
+        {
+            "id": "31",
+            "name": "Maestro de Géneros",
+            "description": "Publica historias en 3 géneros diferentes",
+            "image": "trofeo-default.png",
+            "color": "bg-teal-500"
+        },
+        {
+            "id": "32",
+            "name": "Colaborador Ejemplar",
+            "description": "Participa en 3 concursos diferentes",
+            "image": "trofeo-default.png",
+            "color": "bg-cyan-500"
         }
     ]
 }
