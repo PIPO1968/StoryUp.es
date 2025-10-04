@@ -11,16 +11,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
-import { 
-    getUserStats, 
-    UserStats, 
-    addStoryLikes, 
-    addTrophyLikes, 
-    addContestLikes, 
-    addAdminLikes, 
-    addFriend, 
-    addTrophy, 
-    addStory 
+import {
+    getUserStats,
+    UserStats,
+    addStoryLikes,
+    addTrophyLikes,
+    addContestLikes,
+    addAdminLikes,
+    addFriend,
+    addTrophy,
+    addStory
 } from '../lib/userStatsManager';
 
 export default function ProfilePage() {
@@ -302,8 +302,9 @@ export default function ProfilePage() {
                                     </div>
 
                                     {/* Botones de prueba (temporal para demo) */}
-                                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                                        <p className="text-xs text-gray-600 mb-2">🧪 Demo - Probar estadísticas:</p>
+                                    <div className="mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                                        <p className="text-sm font-bold text-red-600 mb-3">🧪 SISTEMA DE PRUEBAS - DEMO</p>
+                                        <p className="text-xs text-gray-600 mb-3">Usuario: {user ? `${user.name} (${user.username})` : 'NO LOGUEADO'}</p>
                                         <div className="flex flex-wrap gap-2">
                                             <Button size="sm" variant="outline" onClick={() => {
                                                 if (user) {
