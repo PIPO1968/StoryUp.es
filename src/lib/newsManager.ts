@@ -1,3 +1,21 @@
+// Guardar noticia en la base de datos real (API REST)
+export const saveNews = async (newsData: Omit<News, 'id' | 'createdAt' | 'updatedAt'>): Promise<News> => {
+    try {
+        const response = await fetch('/api/news', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newsData)
+        });
+        if (!response.ok) throw new Error('Error al guardar la noticia');
+        const savedNews = await response.json();
+        return savedNews;
+    } catch (error) {
+        console.error('Error guardando noticia:', error);
+        throw error;
+    }
+};
 // Sistema de gestión de noticias para StoryUp.es
 
 export interface News {
