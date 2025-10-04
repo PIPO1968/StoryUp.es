@@ -29,7 +29,7 @@ export const getUserStats = (userId: string): UserStats => {
         if (stats) {
             return JSON.parse(stats);
         }
-        
+
         // Estadísticas por defecto para usuario nuevo
         const defaultStats: UserStats = {
             userId,
@@ -46,7 +46,7 @@ export const getUserStats = (userId: string): UserStats => {
             globalPosition: 0,
             lastUpdated: new Date().toISOString()
         };
-        
+
         saveUserStats(defaultStats);
         return defaultStats;
     } catch (error) {
@@ -67,12 +67,12 @@ export const getUserStats = (userId: string): UserStats => {
 export const saveUserStats = (stats: UserStats): void => {
     try {
         // Recalcular total de likes
-        stats.likes.total = stats.likes.fromStories + stats.likes.fromTrophies + 
-                           stats.likes.fromContests + stats.likes.fromAdmin;
-        
+        stats.likes.total = stats.likes.fromStories + stats.likes.fromTrophies +
+            stats.likes.fromContests + stats.likes.fromAdmin;
+
         stats.lastUpdated = new Date().toISOString();
         localStorage.setItem(`${STATS_KEY}_${stats.userId}`, JSON.stringify(stats));
-        
+
         // Actualizar ranking global después de guardar
         updateGlobalRanking();
     } catch (error) {
@@ -148,7 +148,7 @@ const updateGlobalRanking = (): void => {
     try {
         // Obtener todos los usuarios con estadísticas
         const allUsers: UserStats[] = [];
-        
+
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key && key.startsWith(STATS_KEY + '_')) {
@@ -158,19 +158,19 @@ const updateGlobalRanking = (): void => {
                 }
             }
         }
-        
+
         // Ordenar por total de likes (descendente)
         allUsers.sort((a, b) => b.likes.total - a.likes.total);
-        
+
         // Asignar posiciones y guardar
         allUsers.forEach((user, index) => {
             user.globalPosition = index + 1;
             saveUserStatsWithoutRankingUpdate(user);
         });
-        
+
         // Guardar ranking global
         localStorage.setItem(GLOBAL_RANKING_KEY, JSON.stringify(allUsers));
-        
+
     } catch (error) {
         console.error('Error updating global ranking:', error);
     }
@@ -179,8 +179,8 @@ const updateGlobalRanking = (): void => {
 // Guardar estadísticas sin actualizar ranking (para evitar bucle infinito)
 const saveUserStatsWithoutRankingUpdate = (stats: UserStats): void => {
     try {
-        stats.likes.total = stats.likes.fromStories + stats.likes.fromTrophies + 
-                           stats.likes.fromContests + stats.likes.fromAdmin;
+        stats.likes.total = stats.likes.fromStories + stats.likes.fromTrophies +
+            stats.likes.fromContests + stats.likes.fromAdmin;
         stats.lastUpdated = new Date().toISOString();
         localStorage.setItem(`${STATS_KEY}_${stats.userId}`, JSON.stringify(stats));
     } catch (error) {
