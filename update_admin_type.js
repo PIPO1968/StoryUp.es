@@ -1,4 +1,4 @@
-// Script para mostrar los usuarios actuales en la base de datos Neon/PostgreSQL
+// Script para actualizar el campo user_type del usuario Admin a 'Padre/Docente'
 const { Client } = require('pg');
 
 const neonUrl = 'postgresql://neondb_owner:npg_VXD4IfyZGQF5@ep-shy-grass-ad01598r-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
@@ -6,8 +6,9 @@ const client = new Client({ connectionString: neonUrl });
 
 (async () => {
     await client.connect();
-    const res = await client.query('SELECT * FROM playing_with_neon');
-    console.log('Datos en la tabla playing_with_neon:');
-    res.rows.forEach(u => console.log(u));
+    await client.query(
+        "UPDATE usuarios SET user_type = 'Padre/Docente' WHERE email = 'piporgz68@gmail.com'"
+    );
+    console.log('user_type de Admin actualizado a Padre/Docente');
     await client.end();
 })();
