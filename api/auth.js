@@ -110,7 +110,8 @@ module.exports = async function handler(req, res) {
                         grade: user.grade,
                         followers: user.followers,
                         following: user.following,
-                        isVerified: user.is_verified
+                        isVerified: user.is_verified,
+                        centro_escolar: user.centro_escolar
                     }
                 });
             } else {
@@ -160,7 +161,8 @@ module.exports = async function handler(req, res) {
                         grade: newUser.grade,
                         followers: newUser.followers,
                         following: newUser.following,
-                        isVerified: newUser.is_verified
+                        isVerified: newUser.is_verified,
+                        centro_escolar: newUser.centro_escolar
                     }
                 });
             }
@@ -177,7 +179,7 @@ module.exports = async function handler(req, res) {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET || 'storyup-secret-key');
 
                 const result = await client.query(
-                    'SELECT id, email, username, name, avatar, bio, user_type, school, grade, followers, following, is_verified FROM usuarios WHERE id = $1',
+                    'SELECT id, email, username, name, avatar, bio, user_type, school, grade, followers, following, is_verified, centro_escolar FROM usuarios WHERE id = $1',
                     [decoded.userId]
                 );
 
@@ -199,7 +201,8 @@ module.exports = async function handler(req, res) {
                         grade: user.grade,
                         followers: user.followers,
                         following: user.following,
-                        isVerified: user.is_verified
+                        isVerified: user.is_verified,
+                        centro_escolar: user.centro_escolar
                     }
                 });
             } catch (error) {
