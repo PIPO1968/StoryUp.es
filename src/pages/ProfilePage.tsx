@@ -56,10 +56,9 @@ export default function ProfilePage() {
                             username: user.username || ''
                         });
 
-                        // Cargar centro escolar desde localStorage
-                        const savedSchoolCenter = localStorage.getItem('storyup_school_center');
-                        if (savedSchoolCenter) {
-                            setSchoolCenter(savedSchoolCenter);
+                        // Sistema de centro escolar simulado (sin localStorage)
+                        if (user.role === 'padre-docente') {
+                            setSchoolCenter('Centro Educativo Demo');
                             setSchoolCenterSaved(true);
                         }
 
@@ -74,19 +73,7 @@ export default function ProfilePage() {
                     console.error('Error recargando datos de usuario:', err);
                 }
             } else {
-                // Cargar desde caché local si está disponible
-                const cachedUser = localStorage.getItem('fullUser');
-                if (cachedUser) {
-                    const parsedUser = JSON.parse(cachedUser);
-                    console.log('Usuario cargado desde caché local:', parsedUser); // Depuración
-                    setFullUser(parsedUser);
-                    setAvatarUrl(parsedUser.avatar || '');
-                    setEditForm({
-                        name: parsedUser.name || '',
-                        bio: parsedUser.bio || '',
-                        username: parsedUser.username || ''
-                    });
-                }
+                console.log('No hay usuario disponible');
             }
         }
         fetchUserData();
@@ -155,7 +142,23 @@ export default function ProfilePage() {
     return (
 
         <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-4">Mi Perfil</h1>
+            <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                    <Button
+                        variant="ghost"
+                        onClick={onBack}
+                        className="hover:bg-gray-100"
+                    >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Volver
+                    </Button>
+                    <div className="h-6 w-px bg-gray-300"></div>
+                    <h1 className="text-3xl font-bold text-gray-800">Mi Perfil 👤</h1>
+                </div>
+                <Badge variant="secondary" className="hidden md:flex">
+                    Sesión activa
+                </Badge>
+            </div>
 
 
 
@@ -232,7 +235,17 @@ export default function ProfilePage() {
                                     <div className="mt-3">
                                         <span className="font-medium text-gray-600">Centro Escolar:</span>
                                         {schoolCenterSaved ? (
-                                            <span className="ml-2 text-gray-900">{schoolCenter}</span>
+                                            <div className="flex items-center justify-between">
+                                                <span className="ml-2 text-gray-900">{schoolCenter}</span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => setSchoolCenterSaved(false)}
+                                                    className="text-xs h-6"
+                                                >
+                                                    Cambiar
+                                                </Button>
+                                            </div>
                                         ) : (
                                             <Input
                                                 className="mt-1 h-8 text-sm"
@@ -242,25 +255,22 @@ export default function ProfilePage() {
                                                 onKeyPress={(e) => {
                                                     if (e.key === 'Enter' && schoolCenter.trim()) {
                                                         setSchoolCenterSaved(true);
-                                                        // Aquí guardaríamos en localStorage o backend
-                                                        localStorage.setItem('storyup_school_center', schoolCenter.trim());
-                                                        console.log('Centro escolar guardado:', schoolCenter.trim());
+                                                        console.log('Centro escolar configurado (temporal):', schoolCenter.trim());
                                                     }
                                                 }}
                                                 onBlur={() => {
                                                     if (schoolCenter.trim()) {
                                                         setSchoolCenterSaved(true);
-                                                        localStorage.setItem('storyup_school_center', schoolCenter.trim());
-                                                        console.log('Centro escolar guardado:', schoolCenter.trim());
+                                                        console.log('Centro escolar configurado (temporal):', schoolCenter.trim());
                                                     }
                                                 }}
                                             />
                                         )}
                                     </div>
 
-                                    {/* Estadísticas en grid compacto */}
+                                    {/* Estadísticas en grid compacto con efectos hover */}
                                     <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
-                                        <div className="text-center cursor-pointer" onClick={() => {
+                                        <div className="text-center cursor-pointer p-2 rounded-lg hover:bg-blue-50 transition-colors" onClick={() => {
                                             if (userStats) {
                                                 alert(`Desglose de Likes:\n• Historias: ${userStats.likes.fromStories}\n• Trofeos: ${userStats.likes.fromTrophies}\n• Concursos: ${userStats.likes.fromContests}\n• Premios Admin: ${userStats.likes.fromAdmin}\n\nTotal: ${userStats.likes.total}`);
                                             }
@@ -268,31 +278,31 @@ export default function ProfilePage() {
                                             <div className="text-xl font-bold text-blue-600">
                                                 {userStats?.likes.total || 0}
                                             </div>
-                                            <div className="text-xs text-gray-600">Likes</div>
+                                            <div className="text-xs text-gray-600">Likes ❤️</div>
                                         </div>
-                                        <div className="text-center">
+                                        <div className="text-center p-2 rounded-lg hover:bg-green-50 transition-colors">
                                             <div className="text-xl font-bold text-green-600">
                                                 {userStats?.friends || 0}
                                             </div>
-                                            <div className="text-xs text-gray-600">Amigos</div>
+                                            <div className="text-xs text-gray-600">Amigos 👥</div>
                                         </div>
-                                        <div className="text-center">
+                                        <div className="text-center p-2 rounded-lg hover:bg-yellow-50 transition-colors">
                                             <div className="text-xl font-bold text-yellow-600">
                                                 {userStats?.trophies || 0}
                                             </div>
-                                            <div className="text-xs text-gray-600">Trofeos</div>
+                                            <div className="text-xs text-gray-600">Trofeos 🏆</div>
                                         </div>
-                                        <div className="text-center">
+                                        <div className="text-center p-2 rounded-lg hover:bg-purple-50 transition-colors">
                                             <div className="text-xl font-bold text-purple-600">
                                                 {userStats?.stories || 0}
                                             </div>
-                                            <div className="text-xs text-gray-600">Historias</div>
+                                            <div className="text-xs text-gray-600">Historias 📚</div>
                                         </div>
-                                        <div className="text-center col-span-2">
+                                        <div className="text-center col-span-2 p-2 rounded-lg hover:bg-red-50 transition-colors">
                                             <div className="text-xl font-bold text-red-600">
-                                                {userStats?.globalPosition || 'N/A'}
+                                                #{userStats?.globalPosition || '?'}
                                             </div>
-                                            <div className="text-xs text-gray-600">Posición Global</div>
+                                            <div className="text-xs text-gray-600">Ranking Global 🌟</div>
                                         </div>
                                     </div>
 
@@ -338,27 +348,61 @@ export default function ProfilePage() {
                 </div>
                 {/* Trofeos/Logros - 2/5 */}
                 <div className="md:w-5/12 w-full">
-                    <Card>
+                    <Card className="h-full">
                         <CardHeader>
-                            <CardTitle>Trofeos y logros</CardTitle>
+                            <CardTitle className="flex items-center gap-2">
+                                <Trophy className="w-5 h-5 text-yellow-600" />
+                                Trofeos y logros
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {userTrophies.length === 0 ? (
-                                <div className="text-center py-8 text-gray-500">
-                                    <Trophy className="mx-auto h-12 w-12 mb-4 text-gray-300" />
-                                    <p>Aún no tienes trofeos ni logros.</p>
+                                <div className="text-center py-8">
+                                    <div className="bg-gradient-to-br from-yellow-100 to-orange-100 p-6 rounded-xl mb-4">
+                                        <Trophy className="mx-auto h-16 w-16 mb-4 text-yellow-500" />
+                                        <h3 className="font-semibold text-gray-700 mb-2">¡Empieza tu colección!</h3>
+                                        <p className="text-sm text-gray-600">
+                                            Participa en concursos y escribe historias para ganar trofeos increíbles.
+                                        </p>
+                                    </div>
+                                    <Button
+                                        variant="outline"
+                                        className="mt-2"
+                                        onClick={() => navigate('/contests')}
+                                    >
+                                        Ver Concursos
+                                    </Button>
                                 </div>
                             ) : (
-                                <div className="grid gap-4 md:grid-cols-2">
+                                <div className="space-y-3">
                                     {userTrophies.map((trophy) => (
-                                        <div key={trophy.id} className="text-center p-4 bg-yellow-50 rounded-lg">
-                                            <Trophy className="mx-auto h-8 w-8 text-yellow-600 mb-2" />
-                                            <h3 className="font-semibold">{trophy.title}</h3>
-                                            <p className="text-sm text-gray-600">{trophy.description}</p>
+                                        <div key={trophy.id} className="flex items-center p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 hover:shadow-md transition-shadow">
+                                            <Trophy className="h-8 w-8 text-yellow-600 mr-3 flex-shrink-0" />
+                                            <div className="flex-grow">
+                                                <h3 className="font-semibold text-gray-800">{trophy.title}</h3>
+                                                <p className="text-xs text-gray-600">{trophy.description}</p>
+                                            </div>
+                                            <Badge variant="secondary" className="text-xs">
+                                                {trophy.date || 'Reciente'}
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
                             )}
+
+                            {/* Progreso hacia próximo trofeo */}
+                            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-sm font-medium text-blue-700">Próximo objetivo</span>
+                                    <span className="text-xs text-blue-600">3/5 historias</span>
+                                </div>
+                                <div className="w-full bg-blue-200 rounded-full h-2">
+                                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '60%' }}></div>
+                                </div>
+                                <p className="text-xs text-blue-600 mt-1">
+                                    ¡Solo 2 historias más para el trofeo "Escritor Novato"!
+                                </p>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
@@ -367,16 +411,44 @@ export default function ProfilePage() {
             <div className="w-full mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Panel de anuncios</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            <MessageCircle className="w-5 h-5 text-blue-600" />
+                            Panel de anuncios
+                            <Badge variant="secondary" className="ml-2">Demo</Badge>
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Textarea
-                            placeholder="Escribe un anuncio público..."
-                            className="mb-4"
-                            value={announcement}
-                            onChange={(e) => setAnnouncement(e.target.value)}
-                        />
-                        <Button className="w-full" onClick={handlePublishAnnouncement}>Publicar anuncio</Button>
+                        <div className="space-y-4">
+                            <Textarea
+                                placeholder="Comparte algo interesante con la comunidad StoryUp..."
+                                className="min-h-[100px] resize-none"
+                                value={announcement}
+                                onChange={(e) => setAnnouncement(e.target.value)}
+                            />
+                            <div className="flex items-center justify-between">
+                                <div className="text-sm text-gray-500">
+                                    {announcement.length}/280 caracteres
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setAnnouncement('')}
+                                        disabled={!announcement.trim()}
+                                    >
+                                        Limpiar
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        onClick={handlePublishAnnouncement}
+                                        disabled={!announcement.trim() || announcement.length > 280}
+                                        className="bg-blue-600 hover:bg-blue-700"
+                                    >
+                                        📢 Publicar
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -385,42 +457,58 @@ export default function ProfilePage() {
             <div className="w-full mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center space-x-2">
-                            <MessageCircle className="w-5 h-5" />
-                            <span>Chat Personal</span>
+                        <CardTitle className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                                <MessageCircle className="w-5 h-5 text-green-600" />
+                                <span>Chat Personal</span>
+                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">Demo</Badge>
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="h-96 bg-gray-50 rounded-lg p-4 flex flex-col">
-                            <div className="flex-1 overflow-y-auto mb-4">
-                                <div className="space-y-4">
-                                    <div className="flex justify-start">
-                                        <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
-                                            <p className="text-sm">¡Hola! ¿Cómo va el proyecto StoryUp?</p>
-                                            <p className="text-xs text-gray-500 mt-1">10:30</p>
-                                        </div>
+                        <div className="h-96 bg-gradient-to-b from-green-50 to-green-100 rounded-lg p-4 flex flex-col border">
+                            <div className="flex-1 overflow-y-auto mb-4 space-y-3">
+                                <div className="flex justify-start">
+                                    <div className="bg-white px-4 py-2 rounded-r-lg rounded-t-lg shadow-sm max-w-xs border">
+                                        <p className="text-sm">¡Hola! ¿Cómo va el proyecto StoryUp? 🚀</p>
+                                        <p className="text-xs text-gray-500 mt-1 flex items-center">
+                                            <span>10:30</span>
+                                            <span className="ml-2">✓</span>
+                                        </p>
                                     </div>
-                                    <div className="flex justify-end">
-                                        <div className="bg-blue-500 text-white px-4 py-2 rounded-lg max-w-xs">
-                                            <p className="text-sm">¡Muy bien! Ya tenemos el dashboard funcionando perfectamente.</p>
-                                            <p className="text-xs text-blue-100 mt-1">10:32</p>
-                                        </div>
+                                </div>
+                                <div className="flex justify-end">
+                                    <div className="bg-green-500 text-white px-4 py-2 rounded-l-lg rounded-t-lg max-w-xs shadow-sm">
+                                        <p className="text-sm">¡Muy bien! Ya tenemos el dashboard funcionando perfectamente. 🎉</p>
+                                        <p className="text-xs text-green-100 mt-1 flex items-center justify-end">
+                                            <span>10:32</span>
+                                            <span className="ml-2">✓✓</span>
+                                        </p>
                                     </div>
-                                    <div className="flex justify-start">
-                                        <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
-                                            <p className="text-sm">¡Genial! Me encanta cómo quedó el chat integrado.</p>
-                                            <p className="text-xs text-gray-500 mt-1">10:35</p>
-                                        </div>
+                                </div>
+                                <div className="flex justify-start">
+                                    <div className="bg-white px-4 py-2 rounded-r-lg rounded-t-lg shadow-sm max-w-xs border">
+                                        <p className="text-sm">¡Genial! Me encanta cómo quedó el chat integrado. 💬</p>
+                                        <p className="text-xs text-gray-500 mt-1 flex items-center">
+                                            <span>10:35</span>
+                                            <span className="ml-2">✓✓</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex justify-center">
+                                    <div className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs border border-yellow-200">
+                                        Hoy
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 bg-white p-2 rounded-lg border">
                                 <Input
                                     placeholder="Escribe un mensaje..."
-                                    className="flex-1"
+                                    className="flex-1 border-0 focus-visible:ring-0"
                                 />
-                                <Button size="icon" className="bg-blue-500 hover:bg-blue-600">
-                                    <MessageCircle className="w-4 h-4" />
+                                <Button size="icon" className="bg-green-500 hover:bg-green-600 rounded-full">
+                                    📤
                                 </Button>
                             </div>
                         </div>
@@ -429,33 +517,105 @@ export default function ProfilePage() {
             </div>
 
             {/* Bloques exclusivos para Padres/Docentes */}
-            {(fullUser?.user_type === 'padre-docente' || fullUser?.user_type === 'usuario') && (
-                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                    <Card>
+            {(fullUser?.user_type === 'padre-docente' || user?.role === 'padre-docente') && (
+                <div className="w-full mt-8">
+                    <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                        <h2 className="text-lg font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                            👨‍🏫 Panel de Padre/Docente
+                            <Badge className="bg-blue-600">Privilegios Especiales</Badge>
+                        </h2>
+                        <p className="text-blue-700 text-sm">Herramientas exclusivas para educadores y padres</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-green-500">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-green-700">
+                                    📰 Crear noticias
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600 text-sm mb-4">
+                                    Publica novedades importantes para toda la comunidad StoryUp.
+                                </p>
+                                <div className="space-y-2">
+                                    <div className="text-xs text-gray-500">• Noticias del centro</div>
+                                    <div className="text-xs text-gray-500">• Comunicados oficiales</div>
+                                    <div className="text-xs text-gray-500">• Eventos especiales</div>
+                                </div>
+                                <Button className="mt-4 w-full bg-green-600 hover:bg-green-700">
+                                    ✏️ Crear noticia
+                                </Button>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-purple-500">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-purple-700">
+                                    🏆 Crear concursos
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600 text-sm mb-4">
+                                    Organiza concursos literarios y actividades creativas.
+                                </p>
+                                <div className="space-y-2">
+                                    <div className="text-xs text-gray-500">• Concursos de escritura</div>
+                                    <div className="text-xs text-gray-500">• Desafíos creativos</div>
+                                    <div className="text-xs text-gray-500">• Premios y reconocimientos</div>
+                                </div>
+                                <Button className="mt-4 w-full bg-purple-600 hover:bg-purple-700">
+                                    🎯 Crear concurso
+                                </Button>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="hover:shadow-lg transition-shadow border-l-4 border-l-red-500">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-red-700">
+                                    ⚙️ Panel de administración
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-gray-600 text-sm mb-4">
+                                    Gestiona usuarios, configuraciones y moderación.
+                                </p>
+                                <div className="space-y-2">
+                                    <div className="text-xs text-gray-500">• Gestión de usuarios</div>
+                                    <div className="text-xs text-gray-500">• Moderación de contenido</div>
+                                    <div className="text-xs text-gray-500">• Estadísticas del centro</div>
+                                </div>
+                                <Button className="mt-4 w-full bg-red-600 hover:bg-red-700">
+                                    🛠️ Ir al panel
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Estadísticas del educador */}
+                    <Card className="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200">
                         <CardHeader>
-                            <CardTitle>Crear noticias</CardTitle>
+                            <CardTitle className="text-blue-800">📊 Resumen de actividad docente</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p className="text-gray-600">Publica novedades para la comunidad.</p>
-                            <Button className="mt-4">Crear noticia</Button>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Crear concursos</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-gray-600">Organiza concursos y actividades.</p>
-                            <Button className="mt-4">Crear concurso</Button>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Panel de administración</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-gray-600">Gestiona usuarios y configuraciones avanzadas.</p>
-                            <Button className="mt-4">Ir al panel</Button>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="text-center p-3 bg-white rounded-lg border">
+                                    <div className="text-2xl font-bold text-blue-600">12</div>
+                                    <div className="text-xs text-gray-600">Estudiantes activos</div>
+                                </div>
+                                <div className="text-center p-3 bg-white rounded-lg border">
+                                    <div className="text-2xl font-bold text-green-600">8</div>
+                                    <div className="text-xs text-gray-600">Concursos creados</div>
+                                </div>
+                                <div className="text-center p-3 bg-white rounded-lg border">
+                                    <div className="text-2xl font-bold text-purple-600">45</div>
+                                    <div className="text-xs text-gray-600">Historias revisadas</div>
+                                </div>
+                                <div className="text-center p-3 bg-white rounded-lg border">
+                                    <div className="text-2xl font-bold text-orange-600">96%</div>
+                                    <div className="text-xs text-gray-600">Satisfacción</div>
+                                </div>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
