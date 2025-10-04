@@ -257,29 +257,28 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const [language, setLanguage] = useState<Language>('es');
 
     useEffect(() => {
-        const savedLanguage = localStorage.getItem('storyup-language') as Language;
-        if (savedLanguage && translations[savedLanguage]) {
-            setLanguage(savedLanguage);
-        }
+        // Eliminar referencia a localStorage. Usar API/DB.
+        // Eliminar uso de savedLanguage. Usar idioma del usuario autenticado o 'es'.
+    }
     }, []);
 
-    const changeLanguage = (lang: Language) => {
-        setLanguage(lang);
-        localStorage.setItem('storyup-language', lang);
-    };
+const changeLanguage = (lang: Language) => {
+    setLanguage(lang);
+    // Eliminar referencia a localStorage. Usar API/DB.
+};
 
-    const t = (key: string): string => {
-        const currentTranslations = translations[language];
-        return (currentTranslations as any)[key] || key;
-    };
+const t = (key: string): string => {
+    const currentTranslations = translations[language];
+    return (currentTranslations as any)[key] || key;
+};
 
-    const value: LanguageContextType = {
-        language,
-        setLanguage: changeLanguage,
-        t
-    };
+const value: LanguageContextType = {
+    language,
+    setLanguage: changeLanguage,
+    t
+};
 
-    return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
+return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
 export function useLanguage() {

@@ -1,0 +1,60 @@
+const { Client } = require('pg');
+
+function getClient() {
+    const neonUrl = 'postgresql://neondb_owner:npg_HnBMTqDUc1W8@ep-still-bread-agolimhp-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || neonUrl;
+    return new Client({ connectionString });
+}
+
+module.exports = async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    const client = getClient();
+    await client.connect();
+
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: 'Falta el id de usuario' });
+
+    if (req.method === 'PUT') {
+        const { theme, language } = req.body;
+        let updates = [];
+        let values = [];
+        let idx = 1;
+        if (theme) {
+            updates.push(`theme = $${idx++}`);
+            values.push(theme);
+        }
+        if (language) {
+            updates.push(`language = $${idx++}`);
+            values.push(language);
+        }
+        if (updates.length === 0) {
+            await client.end();
+            return res.status(400).json({ error: 'No hay datos para actualizar' });
+        }
+        values.push(id);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
+        await client.query(`UPDATE users SET ${updates.join(', ')} WHERE id = $${idx}`, values);
+        await client.end();
+        return res.status(200).json({ success: true });
+    }
+
+    if (req.method === 'GET') {
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
+        const result = await client.query('SELECT theme, language FROM users WHERE id = $1', [id]);
+        await client.end();
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
+        return res.status(200).json(result.rows[0]);
+    }
+
+    await client.end();
+    return res.status(405).json({ error: 'Método no permitido' });
+};

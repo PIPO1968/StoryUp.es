@@ -61,6 +61,7 @@ export const migrateStoriesWithNewFields = (): void => {
         console.error('Error migrando historias:', error);
     }
 };
+// Eliminado: migración de historias en localStorage. Usar API/DB.
 
 // Limpiar datos de prueba/ficticios (solo datos inválidos, no todas las historias)
 export const clearTestData = (): void => {
@@ -96,6 +97,7 @@ export const clearTestData = (): void => {
         console.error('Error limpiando datos de prueba:', error);
     }
 };
+// Eliminado: limpieza de historias en localStorage. Usar API/DB.
 
 // Obtener todas las historias ordenadas por fecha (más recientes primero)
 export const getAllStories = (): Story[] => {

@@ -73,6 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }, [user]);
 
     const handleLogout = () => {
+        // Eliminar referencia a localStorage. Usar API/DB.
         setUser(null);
         navigate('/');
     };
