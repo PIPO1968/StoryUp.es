@@ -164,7 +164,7 @@ const CreateNewsPage: React.FC = () => {
                     id: user?.id || user?.username,
                     username: user?.username,
                     name: user?.name,
-                    role: user?.role
+                    role: user?.role === 'student' ? 'teacher' : user?.role
                 },
                 likes: 0,
                 likedBy: [],

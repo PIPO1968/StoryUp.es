@@ -71,7 +71,10 @@ body {
     /* Estilos para animaciones suaves */
     min-height: 100vh;
 
-    .fade-in {}
+    .fade-in {
+        opacity: 1;
+        transition: opacity 0.3s ease-in-out;
+    }
 
     animation: fadeIn 0.3s ease-in;
 
