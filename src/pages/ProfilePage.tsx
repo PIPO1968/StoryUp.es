@@ -11,7 +11,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
-import { getUserStats, UserStats } from '../lib/userStatsManager';
+import { 
+    getUserStats, 
+    UserStats, 
+    addStoryLikes, 
+    addTrophyLikes, 
+    addContestLikes, 
+    addAdminLikes, 
+    addFriend, 
+    addTrophy, 
+    addStory 
+} from '../lib/userStatsManager';
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -297,7 +307,6 @@ export default function ProfilePage() {
                                         <div className="flex flex-wrap gap-2">
                                             <Button size="sm" variant="outline" onClick={() => {
                                                 if (user) {
-                                                    const { addStoryLikes } = require('../lib/userStatsManager');
                                                     addStoryLikes(user.id || user.username, 5);
                                                     const newStats = getUserStats(user.id || user.username);
                                                     setUserStats(newStats);
@@ -305,7 +314,6 @@ export default function ProfilePage() {
                                             }}>+5 Likes Historia</Button>
                                             <Button size="sm" variant="outline" onClick={() => {
                                                 if (user) {
-                                                    const { addTrophyLikes } = require('../lib/userStatsManager');
                                                     addTrophyLikes(user.id || user.username, 10);
                                                     const newStats = getUserStats(user.id || user.username);
                                                     setUserStats(newStats);
@@ -313,7 +321,20 @@ export default function ProfilePage() {
                                             }}>+10 Likes Trofeo</Button>
                                             <Button size="sm" variant="outline" onClick={() => {
                                                 if (user) {
-                                                    const { addFriend } = require('../lib/userStatsManager');
+                                                    addContestLikes(user.id || user.username, 8);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+8 Likes Concurso</Button>
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
+                                                    addAdminLikes(user.id || user.username, 15);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+15 Likes Admin</Button>
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
                                                     addFriend(user.id || user.username);
                                                     const newStats = getUserStats(user.id || user.username);
                                                     setUserStats(newStats);
@@ -321,7 +342,6 @@ export default function ProfilePage() {
                                             }}>+1 Amigo</Button>
                                             <Button size="sm" variant="outline" onClick={() => {
                                                 if (user) {
-                                                    const { addTrophy } = require('../lib/userStatsManager');
                                                     addTrophy(user.id || user.username);
                                                     const newStats = getUserStats(user.id || user.username);
                                                     setUserStats(newStats);
@@ -329,7 +349,6 @@ export default function ProfilePage() {
                                             }}>+1 Trofeo</Button>
                                             <Button size="sm" variant="outline" onClick={() => {
                                                 if (user) {
-                                                    const { addStory } = require('../lib/userStatsManager');
                                                     addStory(user.id || user.username);
                                                     const newStats = getUserStats(user.id || user.username);
                                                     setUserStats(newStats);
