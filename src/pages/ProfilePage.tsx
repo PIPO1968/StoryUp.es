@@ -64,7 +64,7 @@ export default function ProfilePage() {
 
                         // Cargar estadísticas del usuario
                         let stats = getUserStats(user.id || user.username);
-                        
+
                         // Forzar inicialización con datos reales para PIPO68
                         if (user.username === 'PIPO68') {
                             // Crear estadísticas con datos reales conocidos
@@ -83,7 +83,7 @@ export default function ProfilePage() {
                                 globalPosition: 1, // Primera posición por tener datos
                                 lastUpdated: new Date().toISOString()
                             };
-                            
+
                             // Guardar estadísticas actualizadas
                             localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(updatedStats));
                             setUserStats(updatedStats);
@@ -182,7 +182,89 @@ export default function ProfilePage() {
         <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-4">Mi Perfil</h1>
 
+            {/* Debug info - temporal */}
+            <div className="mb-4 p-2 bg-gray-100 border rounded text-xs">
+                <p>Debug - Usuario actual: {user?.username || 'NO_USERNAME'}</p>
+                <p>Debug - Nombre: {user?.name || 'NO_NAME'}</p>
+                <p>Debug - ID: {user?.id || 'NO_ID'}</p>
+                <p>Debug - Condición botón: {user?.username === 'PIPO68' ? 'TRUE' : 'FALSE'}</p>
+            </div>
 
+            {/* Botón temporal para reinicializar estadísticas PIPO68 */}
+            {user?.username === 'PIPO68' && (
+                <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p className="text-sm text-yellow-800 mb-2">🔧 Botón temporal para reinicializar estadísticas (PIPO68)</p>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                            // Limpiar localStorage
+                            localStorage.removeItem(`storyup_user_stats_${user.id || user.username}`);
+
+                            // Forzar reinicialización
+                            const newStats: UserStats = {
+                                userId: user.id || user.username,
+                                friends: 0,
+                                trophies: 0,
+                                stories: 1, // 1 historia creada (dato real)
+                                likes: {
+                                    fromStories: 1, // 1 like recibido (dato real)
+                                    fromTrophies: 0,
+                                    fromContests: 0,
+                                    fromAdmin: 0,
+                                    total: 1
+                                },
+                                globalPosition: 1,
+                                lastUpdated: new Date().toISOString()
+                            };
+
+                            localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(newStats));
+                            setUserStats(newStats);
+                            alert('Estadísticas reinicializadas correctamente!');
+                        }}
+                    >
+                        🔄 Reinicializar mis estadísticas
+                    </Button>
+                </div>
+            )}
+
+            {/* Botón alternativo para cualquier usuario - temporal */}
+            {user && (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-sm text-blue-800 mb-2">🔧 Botón temporal para cualquier usuario</p>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                            // Limpiar localStorage
+                            localStorage.removeItem(`storyup_user_stats_${user.id || user.username}`);
+
+                            // Forzar reinicialización con datos de ejemplo
+                            const newStats: UserStats = {
+                                userId: user.id || user.username,
+                                friends: 0,
+                                trophies: 0,
+                                stories: 1, // 1 historia creada
+                                likes: {
+                                    fromStories: 1, // 1 like recibido
+                                    fromTrophies: 0,
+                                    fromContests: 0,
+                                    fromAdmin: 0,
+                                    total: 1
+                                },
+                                globalPosition: 1,
+                                lastUpdated: new Date().toISOString()
+                            };
+
+                            localStorage.setItem(`storyup_user_stats_${user.id || user.username}`, JSON.stringify(newStats));
+                            setUserStats(newStats);
+                            alert('Estadísticas reinicializadas correctamente para ' + (user.username || user.name));
+                        }}
+                    >
+                        🔄 Reinicializar estadísticas (cualquier usuario)
+                    </Button>
+                </div>
+            )}
 
             {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
             <div className="flex flex-col md:flex-row gap-8">
