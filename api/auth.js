@@ -127,10 +127,10 @@ module.exports = async function handler(req, res) {
 
                 console.log('Insertando usuario en la base de datos...');
                 const result = await client.query(
-                    `INSERT INTO usuarios (email, username, password, name) 
-                     VALUES ($1, $2, $3, $4) 
-                     RETURNING id, email, username, name, avatar, bio, user_type, school, grade, followers, following, is_verified`,
-                    [email, username, hashedPassword, name || username]
+                    `INSERT INTO usuarios (email, username, password, name, centro_escolar) 
+                     VALUES ($1, $2, $3, $4, $5) 
+                     RETURNING id, email, username, name, avatar, bio, user_type, school, grade, followers, following, is_verified, centro_escolar`,
+                    [email, username, hashedPassword, name || username, null]
                 );
 
                 console.log('Usuario insertado exitosamente');
