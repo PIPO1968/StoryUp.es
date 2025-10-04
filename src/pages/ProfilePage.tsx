@@ -153,7 +153,7 @@ export default function ProfilePage() {
                         Volver
                     </Button>
                     <div className="h-6 w-px bg-gray-300"></div>
-                    <h1 className="text-3xl font-bold text-gray-800">Mi Perfil 👤</h1>
+
                 </div>
                 <Badge variant="secondary" className="hidden md:flex">
                     Sesión activa
