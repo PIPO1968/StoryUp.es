@@ -168,7 +168,7 @@ export default function ProfilePage() {
                 <div className="md:w-7/12 w-full">
                     <Card>
                         <CardHeader>
-                            <CardTitle>MI INFORMACIÓN</CardTitle>
+                            <CardTitle>DATOS PERSONALES</CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
                             <div className="flex flex-col items-center md:items-start">
