@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trophy, Calendar, Award, Star, Clock, User } from 'lucide-react';
-import { getAllContests, getActiveContests, getFinishedContests, updateContestStatuses } from '../lib/contestsManager';
+import { getActiveContests, getFinishedContests, updateContestStatuses } from '../lib/contestsManager';
 
 interface TrophyData {
     id: string;
