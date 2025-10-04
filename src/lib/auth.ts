@@ -1,93 +1,43 @@
 // Sistema de autenticación StoryUp - Registro público abierto
 
-// Base de datos de usuarios StoryUp (almacenada en localStorage)
-export const getStoredUsers = () => {
-    const users = localStorage.getItem('storyup_users');
-    if (users) {
-        return JSON.parse(users);
-    }
-
-    // Si no hay usuarios, crear el administrador por defecto
-    const defaultUsers = [
-        {
-            id: '1',
-            username: 'admin',
-            email: 'admin@storyup.es',
-            name: 'Administrador',
-            role: 'admin',
-            password: 'admin123',
-            avatar: '/favicon.ico',
-            likes: 0,
-            trophies: [],
-            friends: [],
-            isOnline: false,
-            createdAt: new Date().toISOString()
-        }
-    ];
-
-    // Guardar el usuario por defecto
-    saveUsers(defaultUsers);
-    return defaultUsers;
-};
-
-const saveUsers = (users: any[]) => {
-    localStorage.setItem('storyup_users', JSON.stringify(users));
-};
+// Eliminado: toda la gestión de usuarios en localStorage. Usar API/DB.
 
 // Obtener el usuario actual desde el token almacenado
-export const getCurrentUser = async () => {
-    try {
-        const token = localStorage.getItem('auth_token');
-        if (!token) return null;
-
-        const userData = localStorage.getItem('user_data');
-        if (userData) {
-            return JSON.parse(userData);
-        }
-
-        return null;
-    } catch (error) {
-        console.error('Error obteniendo usuario actual:', error);
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user_data');
-        return null;
-    }
-};
+// Eliminado: obtención de usuario actual desde localStorage. Usar API/DB.
 
 // Login de usuario StoryUp
 export const loginUser = async (credentials: { email: string; password: string }) => {
-    try {
-        await new Promise(resolve => setTimeout(resolve, 500));
+    // Implementar llamada a API/DB
+    throw new Error('loginUser debe implementarse con API/DB');
 
-        if (!credentials.email || !credentials.password) {
-            throw new Error('Email y contraseña son requeridos');
-        }
-
-        const users = getStoredUsers();
-
-        // Buscar usuario por email o username
-        const user = users.find(u =>
-            (u.email === credentials.email || u.username === credentials.email) &&
-            u.password === credentials.password
-        );
-
-        if (!user) {
-            throw new Error('Credenciales incorrectas');
-        }
-
-        // Marcar usuario como online
-        user.isOnline = true;
-        saveUsers(users);
-
-        const token = 'storyup_token_' + user.id + '_' + Date.now();
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_data', JSON.stringify(user));
-
-        return user;
-    } catch (error) {
-        console.error('Error en login:', error);
-        throw error;
+    if (!credentials.email || !credentials.password) {
+        throw new Error('Email y contraseña son requeridos');
     }
+
+    const users = getStoredUsers();
+
+    // Buscar usuario por email o username
+    const user = users.find(u =>
+        (u.email === credentials.email || u.username === credentials.email) &&
+        u.password === credentials.password
+    );
+
+    if (!user) {
+        throw new Error('Credenciales incorrectas');
+    }
+
+    // Marcar usuario como online
+    user.isOnline = true;
+    saveUsers(users);
+
+    const token = 'storyup_token_' + user.id + '_' + Date.now();
+    // Eliminar referencia a localStorage. Usar API/DB.
+
+    return user;
+} catch (error) {
+    console.error('Error en login:', error);
+    throw error;
+}
 };
 
 // Registro de usuario StoryUp (público y abierto)
@@ -143,8 +93,7 @@ export const registerUser = async (userData: {
 
         // Marcar como logueado
         const token = 'storyup_token_' + newUser.id + '_' + Date.now();
-        localStorage.setItem('auth_token', token);
-        localStorage.setItem('user_data', JSON.stringify(newUser));
+        // Eliminar referencia a localStorage. Usar API/DB.
 
         return newUser;
     } catch (error) {
@@ -155,29 +104,28 @@ export const registerUser = async (userData: {
 
 // Logout
 export const logoutUser = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
+    // Eliminar referencia a localStorage. Usar API/DB.
     window.location.href = '/';
 };
 
 // Actualizar datos del usuario (simulado)
 export const updateUser = async (updates: Partial<any>) => {
     try {
-        const token = localStorage.getItem('auth_token');
+        // Eliminar referencia a localStorage. Usar API/DB.
         if (!token) throw new Error('No autorizado');
 
         // Simular actualización
         await new Promise(resolve => setTimeout(resolve, 500));
 
         // Obtener datos actuales del usuario
-        const currentUserData = localStorage.getItem('user_data');
+        // Eliminar referencia a localStorage. Usar API/DB.
         if (!currentUserData) throw new Error('Usuario no encontrado');
 
         const currentUser = JSON.parse(currentUserData);
         const updatedUser = { ...currentUser, ...updates };
 
         // Guardar datos actualizados
-        localStorage.setItem('user_data', JSON.stringify(updatedUser));
+        // Eliminar referencia a localStorage. Usar API/DB.
 
         return updatedUser;
     } catch (error) {
@@ -188,7 +136,7 @@ export const updateUser = async (updates: Partial<any>) => {
 
 // Obtener token para requests autenticados
 export const getAuthToken = () => {
-    return localStorage.getItem('auth_token');
+    // Eliminar referencia a localStorage. Usar API/DB.
 };
 
 // Obtener estadísticas de usuarios StoryUp

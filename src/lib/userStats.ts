@@ -15,44 +15,10 @@ export interface UserStats {
 const INACTIVE_THRESHOLD = 5 * 60 * 1000; // 5 minutos en milisegundos
 
 // Obtener todos los usuarios registrados reales
-export const getTotalRegisteredUsers = (): number => {
-    try {
-        const users = localStorage.getItem('storyup_users');
-        if (users) {
-            const parsedUsers = JSON.parse(users);
-            return Array.isArray(parsedUsers) ? parsedUsers.length : 0;
-        }
-        return 0;
-    } catch (error) {
-        console.error('Error obteniendo usuarios totales:', error);
-        return 0;
-    }
-};
+// Eliminado: obtención de usuarios totales desde localStorage. Usar API/DB.
 
 // Obtener usuarios online reales (filtrados por actividad reciente)
-export const getActiveOnlineUsers = (): OnlineUser[] => {
-    try {
-        const onlineData = localStorage.getItem('storyup_online_users');
-        const currentTimestamp = Date.now();
-
-        if (onlineData) {
-            const parsedOnline: OnlineUser[] = JSON.parse(onlineData);
-
-            // Filtrar usuarios activos en los últimos 5 minutos
-            const activeUsers = parsedOnline.filter(userData =>
-                currentTimestamp - userData.lastActive < INACTIVE_THRESHOLD
-            );
-
-            // Actualizar la lista con solo usuarios activos
-            localStorage.setItem('storyup_online_users', JSON.stringify(activeUsers));
-            return activeUsers;
-        }
-        return [];
-    } catch (error) {
-        console.error('Error obteniendo usuarios online:', error);
-        return [];
-    }
-};
+// Eliminado: obtención de usuarios online desde localStorage. Usar API/DB.
 
 // Marcar usuario como online/activo
 export const markUserAsOnline = (userId: string, username: string): void => {

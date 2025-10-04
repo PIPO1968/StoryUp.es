@@ -56,6 +56,11 @@ export default function ProfilePage() {
                 } catch (err) {
                     console.error('Error recargando datos de usuario:', err);
                 }
+            } else {
+                // Si no hay usuario en contexto, mostrar null o pedir login
+                setFullUser(null);
+                setAvatarUrl('');
+                setEditForm({ name: '', bio: '', username: '' });
             }
         }
         fetchUserData();

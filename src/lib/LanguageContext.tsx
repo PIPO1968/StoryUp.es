@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { getTranslations, getSavedLanguage, saveLanguage, formatDate, Translations } from './i18n';
+import { getTranslations, formatDate, Translations, saveLanguage } from './i18n';
+import { useAuth } from '../App';
 
 interface LanguageContextType {
     language: string;
@@ -23,13 +24,16 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-    const [language, setLanguageState] = useState<string>(getSavedLanguage());
+    const { user } = useAuth();
+    const [language, setLanguageState] = useState<string>(user?.language || 'es');
     const [t, setTranslations] = useState<Translations>(getTranslations(language));
 
-    const setLanguage = (lang: string) => {
+    const setLanguage = async (lang: string) => {
         setLanguageState(lang);
         setTranslations(getTranslations(lang));
-        saveLanguage(lang);
+        if (user?.id) {
+            await saveLanguage(user.id, lang);
+        }
     };
 
     const formatDateWithLanguage = (date: Date): string => {

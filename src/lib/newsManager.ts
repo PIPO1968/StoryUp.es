@@ -46,42 +46,7 @@ export interface NewsStats {
 }
 
 // Limpiar datos de prueba/ficticios (solo datos inválidos, no todas las noticias)
-export const clearTestNewsData = (): void => {
-    try {
-        const news = localStorage.getItem('storyup_news');
-        if (news) {
-            const parsedNews = JSON.parse(news);
-            // Solo mantener noticias válidas
-            const validNews = parsedNews.filter((item: any) =>
-                item &&
-                item.id &&
-                item.title &&
-                item.content &&
-                item.author &&
-                item.author.id &&
-                item.author.username &&
-                item.author.role &&
-                typeof item.likes === 'number' &&
-                Array.isArray(item.likedBy) &&
-                typeof item.views === 'number' &&
-                item.createdAt
-            ).map((item: any) => ({
-                ...item,
-                // Asignar valores por defecto para campos nuevos si no existen
-                summary: item.summary || item.content.substring(0, 200) + '...',
-                category: item.category || 'Educación',
-                featured: item.featured || false
-            }));
-
-            if (validNews.length !== parsedNews.length) {
-                localStorage.setItem('storyup_news', JSON.stringify(validNews));
-                console.log('Noticias inválidas eliminadas, noticias válidas preservadas');
-            }
-        }
-    } catch (error) {
-        console.error('Error limpiando datos de noticias:', error);
-    }
-};
+// Eliminado: limpieza de noticias en localStorage. Usar API/DB.
 
 // Migrar noticias existentes para añadir campos nuevos
 export const migrateNewsWithNewFields = (): void => {
