@@ -23,6 +23,9 @@ export default function ProfilePage() {
                     if (data.centro_escolar) {
                         setSchoolCenter(data.centro_escolar);
                         setSchoolCenterSaved(true);
+                    } else {
+                        setSchoolCenter('');
+                        setSchoolCenterSaved(false);
                     }
                 });
         }
@@ -107,25 +110,27 @@ export default function ProfilePage() {
                             {/* Centro Escolar editable solo una vez - debajo de Nombre completo */}
                             <div className="md:col-span-2 col-span-1">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Centro Escolar</label>
-                                {schoolCenterSaved ? (
+                                {schoolCenterSaved && schoolCenter ? (
                                     <Input value={schoolCenter} readOnly className="font-semibold text-blue-700" />
                                 ) : (
-                                    <Input
-                                        type="text"
-                                        value={schoolCenter}
-                                        onChange={e => setSchoolCenter(e.target.value)}
-                                        placeholder="Escribe tu centro escolar..."
-                                        onKeyPress={e => {
-                                            if (e.key === 'Enter' && schoolCenter.trim()) {
-                                                handleSaveSchoolCenter();
-                                            }
-                                        }}
-                                    />
-                                )}
-                                {!schoolCenterSaved && schoolCenter.trim() && (
-                                    <Button className="mt-2" onClick={handleSaveSchoolCenter}>
-                                        Guardar centro escolar
-                                    </Button>
+                                    <>
+                                        <Input
+                                            type="text"
+                                            value={schoolCenter}
+                                            onChange={e => setSchoolCenter(e.target.value)}
+                                            placeholder="Escribe tu centro escolar..."
+                                            onKeyPress={e => {
+                                                if (e.key === 'Enter' && schoolCenter.trim()) {
+                                                    handleSaveSchoolCenter();
+                                                }
+                                            }}
+                                        />
+                                        {schoolCenter.trim() && (
+                                            <Button className="mt-2" onClick={handleSaveSchoolCenter}>
+                                                Guardar centro escolar
+                                            </Button>
+                                        )}
+                                    </>
                                 )}
                             </div>
                             <div>
