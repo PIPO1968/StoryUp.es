@@ -121,99 +121,99 @@ const FeedPage: React.FC = () => {
     }
 
     return (
-        
-            <div className="max-w-2xl mx-auto">
-                {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                        <p className="text-red-800">{error}</p>
-                    </div>
-                )}
 
-                {stories.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="text-gray-500 mb-4">
-                            <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                            <h3 className="text-lg font-medium">No hay historias aún</h3>
-                            <p className="text-sm">¡Sé el primero en compartir una historia!</p>
-                        </div>
-                        <Button className="mt-4" onClick={() => navigate('/create')}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Crear Primera Historia
-                        </Button>
+        <div className="max-w-2xl mx-auto">
+            {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <p className="text-red-800">{error}</p>
+                </div>
+            )}
+
+            {stories.length === 0 ? (
+                <div className="text-center py-12">
+                    <div className="text-gray-500 mb-4">
+                        <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <h3 className="text-lg font-medium">No hay historias aún</h3>
+                        <p className="text-sm">¡Sé el primero en compartir una historia!</p>
                     </div>
-                ) : (
-                    <div className="space-y-6">
-                        {stories.map((story) => (
-                            <Card key={story.id} className="w-full">
-                                <CardHeader className="pb-3">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                            {(story.user.name || story.user.username).charAt(0).toUpperCase()}
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold text-sm">
-                                                {story.user.name || story.user.username}
-                                            </h3>
-                                            <p className="text-xs text-gray-500">
-                                                @{story.user.username} • {formatTime(story.created_at)}
-                                            </p>
-                                        </div>
+                    <Button className="mt-4" onClick={() => navigate('/create')}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Crear Primera Historia
+                    </Button>
+                </div>
+            ) : (
+                <div className="space-y-6">
+                    {stories.map((story) => (
+                        <Card key={story.id} className="w-full">
+                            <CardHeader className="pb-3">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                        {(story.user.name || story.user.username).charAt(0).toUpperCase()}
                                     </div>
-                                </CardHeader>
+                                    <div>
+                                        <h3 className="font-semibold text-sm">
+                                            {story.user.name || story.user.username}
+                                        </h3>
+                                        <p className="text-xs text-gray-500">
+                                            @{story.user.username} • {formatTime(story.created_at)}
+                                        </p>
+                                    </div>
+                                </div>
+                            </CardHeader>
 
-                                <CardContent className="pt-0">
-                                    {story.title && (
-                                        <h2 className="font-bold text-lg mb-2">{story.title}</h2>
-                                    )}
+                            <CardContent className="pt-0">
+                                {story.title && (
+                                    <h2 className="font-bold text-lg mb-2">{story.title}</h2>
+                                )}
 
-                                    <p className="text-gray-800 mb-4 whitespace-pre-line">
-                                        {story.content}
-                                    </p>
+                                <p className="text-gray-800 mb-4 whitespace-pre-line">
+                                    {story.content}
+                                </p>
 
-                                    {story.image_url && (
-                                        <div className="mb-4">
-                                            <img
-                                                src={story.image_url}
-                                                alt="Historia"
-                                                className="w-full rounded-lg max-h-96 object-cover"
-                                            />
-                                        </div>
-                                    )}
+                                {story.image_url && (
+                                    <div className="mb-4">
+                                        <img
+                                            src={story.image_url}
+                                            alt="Historia"
+                                            className="w-full rounded-lg max-h-96 object-cover"
+                                        />
+                                    </div>
+                                )}
 
-                                    {/* Actions */}
-                                    <div className="flex items-center justify-between pt-4 border-t">
-                                        <div className="flex items-center space-x-6">
-                                            <button
-                                                onClick={() => handleLike(story.id, story.liked_by_user)}
-                                                className={`flex items-center space-x-2 transition-colors ${story.liked_by_user
-                                                    ? 'text-red-500'
-                                                    : 'text-gray-500 hover:text-red-500'
+                                {/* Actions */}
+                                <div className="flex items-center justify-between pt-4 border-t">
+                                    <div className="flex items-center space-x-6">
+                                        <button
+                                            onClick={() => handleLike(story.id, story.liked_by_user)}
+                                            className={`flex items-center space-x-2 transition-colors ${story.liked_by_user
+                                                ? 'text-red-500'
+                                                : 'text-gray-500 hover:text-red-500'
+                                                }`}
+                                        >
+                                            <Heart
+                                                className={`w-5 h-5 ${story.liked_by_user ? 'fill-current' : ''
                                                     }`}
-                                            >
-                                                <Heart
-                                                    className={`w-5 h-5 ${story.liked_by_user ? 'fill-current' : ''
-                                                        }`}
-                                                />
-                                                <span className="text-sm">{story.likes}</span>
-                                            </button>
+                                            />
+                                            <span className="text-sm">{story.likes}</span>
+                                        </button>
 
-                                            <button className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors">
-                                                <MessageCircle className="w-5 h-5" />
-                                                <span className="text-sm">{story.comments}</span>
-                                            </button>
-                                        </div>
-
-                                        <button className="text-gray-500 hover:text-gray-700 transition-colors">
-                                            <Share className="w-5 h-5" />
+                                        <button className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors">
+                                            <MessageCircle className="w-5 h-5" />
+                                            <span className="text-sm">{story.comments}</span>
                                         </button>
                                     </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                )}
-            </div>
-        
+
+                                    <button className="text-gray-500 hover:text-gray-700 transition-colors">
+                                        <Share className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            )}
+        </div>
+
     );
 };
 
