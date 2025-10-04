@@ -43,19 +43,19 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ error: 'No hay datos para actualizar' });
         }
         values.push(id);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS centro_escolar VARCHAR(128);`);
-        await client.query(`UPDATE users SET ${updates.join(', ')} WHERE id = $${idx}`, values);
+        await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
+        await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
+        await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS centro_escolar VARCHAR(128);`);
+        await client.query(`UPDATE usuarios SET ${updates.join(', ')} WHERE id = $${idx}`, values);
         await client.end();
         return res.status(200).json({ success: true });
     }
 
     if (req.method === 'GET') {
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS centro_escolar VARCHAR(128);`);
-        const result = await client.query('SELECT theme, language, centro_escolar FROM users WHERE id = $1', [id]);
+        await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS theme VARCHAR(20);`);
+        await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS language VARCHAR(10);`);
+        await client.query(`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS centro_escolar VARCHAR(128);`);
+        const result = await client.query('SELECT theme, language, centro_escolar FROM usuarios WHERE id = $1', [id]);
         await client.end();
         if (result.rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
         return res.status(200).json(result.rows[0]);
