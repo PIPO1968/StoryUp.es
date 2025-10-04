@@ -150,7 +150,7 @@ export default function ProfilePage() {
                         className="hover:bg-gray-100"
                     >
                         <ArrowLeft className="mr-2 h-4 w-4" />
-                        Volver
+                        ← ATRÁS
                     </Button>
                     <div className="h-6 w-px bg-gray-300"></div>
 
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                 <div className="md:w-7/12 w-full">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Datos Personales</CardTitle>
+                            <CardTitle>MI INFORMACIÓN</CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
                             <div className="flex flex-col items-center md:items-start">
