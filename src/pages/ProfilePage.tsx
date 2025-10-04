@@ -32,6 +32,8 @@ export default function ProfilePage() {
     const [uploading, setUploading] = useState<boolean>(false);
     const [usersList, setUsersList] = useState<any[]>([]);
     const [announcement, setAnnouncement] = useState('');
+    const [schoolCenter, setSchoolCenter] = useState('');
+    const [schoolCenterSaved, setSchoolCenterSaved] = useState(false);
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
     const joinDate = new Date();
@@ -50,6 +52,14 @@ export default function ProfilePage() {
                             bio: (user as any).bio || '',
                             username: user.username || ''
                         });
+                        
+                        // Cargar centro escolar desde localStorage
+                        const savedSchoolCenter = localStorage.getItem('storyup_school_center');
+                        if (savedSchoolCenter) {
+                            setSchoolCenter(savedSchoolCenter);
+                            setSchoolCenterSaved(true);
+                        }
+                        
                         // Simular lista de usuarios
                         setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
                     }, 1000);
@@ -141,19 +151,22 @@ export default function ProfilePage() {
                 <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
                 {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
                 <div className="flex flex-col md:flex-row gap-8">
-                    {/* Editar perfil - 3/5 */}
+                    {/* Datos Personales - 3/5 */}
                     <div className="md:w-7/12 w-full">
                         <Card>
+                            <CardHeader>
+                                <CardTitle>Datos Personales</CardTitle>
+                            </CardHeader>
                             <CardContent className="p-6">
                                 <div className="flex flex-col items-center md:items-start">
-                                    <Avatar className="w-24 h-24">
+                                    <Avatar className="w-20 h-20">
                                         <AvatarImage src={avatarUrl || user.avatar} alt={user.name} />
                                         <AvatarFallback className="text-lg">
                                             {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                                         </AvatarFallback>
                                     </Avatar>
                                     {/* Buscador de imágenes para avatar */}
-                                    <div className="mt-4 w-full flex flex-col items-center">
+                                    <div className="mt-2 w-full flex flex-col items-center">
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -163,7 +176,6 @@ export default function ProfilePage() {
                                                 const file = e.target.files?.[0];
                                                 if (!file) return;
                                                 setUploading(true);
-                                                // Simular subida de imagen
                                                 setTimeout(() => {
                                                     setAvatarUrl(URL.createObjectURL(file));
                                                     setUploading(false);
@@ -172,32 +184,96 @@ export default function ProfilePage() {
                                         />
                                         <Button
                                             variant="outline"
-                                            className="mt-2"
+                                            size="sm"
+                                            className="mt-1"
                                             disabled={uploading}
                                             onClick={() => fileInputRef.current?.click()}
                                         >
-                                            <Upload className="mr-2 h-4 w-4" />
-                                            {uploading ? 'Subiendo...' : 'Cambiar avatar'}
+                                            <Upload className="mr-1 h-3 w-3" />
+                                            {uploading ? 'Subiendo...' : 'Cambiar'}
                                         </Button>
                                     </div>
-                                    <div className="mt-6 w-full">
-                                        <h2 className="text-2xl font-bold text-gray-900">{fullUser?.name || user.name}</h2>
-                                        <p className="text-gray-600">@{fullUser?.username || user.username}</p>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <Badge className={getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}>
-                                                {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}
-                                            </Badge>
+                                    
+                                    <div className="mt-4 w-full">
+                                        {/* Datos básicos en formato compacto */}
+                                        <div className="grid grid-cols-1 gap-2 text-sm">
+                                            <div>
+                                                <span className="font-medium text-gray-600">Nick:</span> 
+                                                <span className="ml-2 text-gray-900">{user.username}</span>
+                                            </div>
+                                            <div>
+                                                <span className="font-medium text-gray-600">Email:</span> 
+                                                <span className="ml-2 text-gray-900">{user.email}</span>
+                                            </div>
+                                            <div>
+                                                <span className="font-medium text-gray-600">Nombre completo:</span> 
+                                                <span className="ml-2 text-gray-900">{user.name}</span>
+                                            </div>
+                                            <div className="flex items-center">
+                                                <span className="font-medium text-gray-600">Rol:</span> 
+                                                <Badge className={`ml-2 ${getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}`}>
+                                                    {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}
+                                                </Badge>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-1 text-gray-500 text-sm mt-2">
-                                            <Calendar className="h-4 w-4" />
-                                            Se unió en {joinDate.toLocaleDateString('es-ES', {
-                                                month: 'long',
-                                                year: 'numeric'
-                                            })}
+                                        
+                                        {/* Centro Escolar */}
+                                        <div className="mt-3">
+                                            <span className="font-medium text-gray-600">Centro Escolar:</span>
+                                            {schoolCenterSaved ? (
+                                                <span className="ml-2 text-gray-900">{schoolCenter}</span>
+                                            ) : (
+                                                <Input
+                                                    className="mt-1 h-8 text-sm"
+                                                    placeholder="Escribe tu centro escolar..."
+                                                    value={schoolCenter}
+                                                    onChange={(e) => setSchoolCenter(e.target.value)}
+                                                    onKeyPress={(e) => {
+                                                        if (e.key === 'Enter' && schoolCenter.trim()) {
+                                                            setSchoolCenterSaved(true);
+                                                            // Aquí guardaríamos en localStorage o backend
+                                                            localStorage.setItem('storyup_school_center', schoolCenter.trim());
+                                                            console.log('Centro escolar guardado:', schoolCenter.trim());
+                                                        }
+                                                    }}
+                                                    onBlur={() => {
+                                                        if (schoolCenter.trim()) {
+                                                            setSchoolCenterSaved(true);
+                                                            localStorage.setItem('storyup_school_center', schoolCenter.trim());
+                                                            console.log('Centro escolar guardado:', schoolCenter.trim());
+                                                        }
+                                                    }}
+                                                />
+                                            )}
                                         </div>
+
+                                        {/* Estadísticas en grid compacto */}
+                                        <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
+                                            <div className="text-center">
+                                                <div className="text-xl font-bold text-blue-600">0</div>
+                                                <div className="text-xs text-gray-600">Likes</div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="text-xl font-bold text-green-600">0</div>
+                                                <div className="text-xs text-gray-600">Amigos</div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="text-xl font-bold text-yellow-600">0</div>
+                                                <div className="text-xs text-gray-600">Trofeos</div>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="text-xl font-bold text-purple-600">0</div>
+                                                <div className="text-xs text-gray-600">Historias</div>
+                                            </div>
+                                            <div className="text-center col-span-2">
+                                                <div className="text-xl font-bold text-red-600">0</div>
+                                                <div className="text-xs text-gray-600">Posición Global</div>
+                                            </div>
+                                        </div>
+
                                         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                                             <DialogTrigger asChild>
-                                                <Button variant="outline" className="mt-4">
+                                                <Button variant="outline" className="w-full mt-4">
                                                     <Edit className="mr-2 h-4 w-4" />
                                                     Editar perfil
                                                 </Button>
