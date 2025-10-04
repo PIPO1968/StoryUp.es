@@ -254,11 +254,6 @@ export default function ContestsPage() {
                                             <p className="text-xs text-gray-600 mt-1">
                                                 {trophy.description}
                                             </p>
-                                            {parseInt(trophy.id) <= 22 && (
-                                                <div className="inline-block px-2 py-1 rounded text-xs mt-2 bg-gray-100 text-gray-600">
-                                                    Por conseguir
-                                                </div>
-                                            )}
                                         </div>
                                     </div>
                                 </div>
