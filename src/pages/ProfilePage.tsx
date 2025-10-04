@@ -164,7 +164,65 @@ export default function ProfilePage() {
     return (
 
         <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
+            <h1 className="text-3xl font-bold mb-4">Mi Perfil</h1>
+            
+            {/* SISTEMA DE PRUEBAS - VISIBLE EN LA PARTE SUPERIOR */}
+            <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-lg">
+                <p className="text-lg font-bold text-red-600 mb-3">🧪 SISTEMA DE PRUEBAS - DEMO</p>
+                <p className="text-sm text-gray-600 mb-3">Usuario: {user ? `${user.name} (${user.username})` : 'NO LOGUEADO'}</p>
+                <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addStoryLikes(user.id || user.username, 5);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+5 Likes Historia</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addTrophyLikes(user.id || user.username, 10);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+10 Likes Trofeo</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addContestLikes(user.id || user.username, 8);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+8 Likes Concurso</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addAdminLikes(user.id || user.username, 15);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+15 Likes Admin</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addFriend(user.id || user.username);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+1 Amigo</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addTrophy(user.id || user.username);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+1 Trofeo</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                        if (user) {
+                            addStory(user.id || user.username);
+                            const newStats = getUserStats(user.id || user.username);
+                            setUserStats(newStats);
+                        }
+                    }}>+1 Historia</Button>
+                </div>
+            </div>
+            
             {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
             <div className="flex flex-col md:flex-row gap-8">
                 {/* Datos Personales - 3/5 */}
