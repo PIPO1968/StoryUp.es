@@ -69,30 +69,50 @@ module.exports = async function handler(req, res) {
             // Para login, el campo 'email' puede ser email o username
             const loginField = email; // En login, este campo puede contener email o username
 
+            console.log('=== DEBUG LOGIN ===');
+            console.log('Login field recibido:', loginField);
+            console.log('Password recibido:', password ? '[PRESENTE]' : '[FALTANTE]');
+
             // Buscar usuario por email O username (el campo email puede contener cualquiera de los dos)
             const existingUser = await client.query(
                 'SELECT * FROM users WHERE email = $1 OR username = $1',
                 [loginField]
             );
 
+            console.log('Usuarios encontrados:', existingUser.rows.length);
+
             if (existingUser.rows.length > 0) {
                 // Login
                 const user = existingUser.rows[0];
+                console.log('Usuario encontrado:', {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    user_type: user.user_type
+                });
 
                 // Verificar si la contraseña está hasheada o en texto plano
                 const isHashedPassword = user.password && user.password.startsWith('$2');
+                console.log('Contraseña es hash bcrypt:', isHashedPassword);
+                console.log('Hash almacenado:', user.password ? user.password.substring(0, 20) + '...' : '[NO PASSWORD]');
+                
                 let isValidPassword = false;
 
                 if (isHashedPassword) {
                     // Contraseña hasheada - usar bcrypt
+                    console.log('Comparando con bcrypt...');
                     isValidPassword = await bcrypt.compare(password, user.password);
                 } else {
                     // Contraseña en texto plano - comparación directa
+                    console.log('Comparación directa de texto...');
                     isValidPassword = password === user.password;
                 }
 
+                console.log('Contraseña válida:', isValidPassword);
+
                 if (!isValidPassword) {
-                    return res.status(400).json({ error: 'Contraseña incorrecta' });
+                    console.log('LOGIN FALLÓ - Contraseña incorrecta');
+                    return res.status(400).json({ error: 'Credenciales incorrectas' });
                 }
 
                 const token = jwt.sign(
