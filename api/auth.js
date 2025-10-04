@@ -1,3 +1,4 @@
+// Cambio menor para forzar despliegue Vercel - 04/10/2025
 const { Client } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -95,7 +96,7 @@ module.exports = async function handler(req, res) {
                 const isHashedPassword = user.password && user.password.startsWith('$2');
                 console.log('Contraseña es hash bcrypt:', isHashedPassword);
                 console.log('Hash almacenado:', user.password ? user.password.substring(0, 20) + '...' : '[NO PASSWORD]');
-                
+
                 let isValidPassword = false;
 
                 if (isHashedPassword) {
