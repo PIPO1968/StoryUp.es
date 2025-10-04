@@ -102,25 +102,20 @@ module.exports = async function handler(req, res) {
                 const user = existingUser.rows[0];
                 console.log('Usuario encontrado:', { id: user.id, email: user.email, username: user.username });
                 
-                console.log('Contraseña recibida:', password);
-                console.log('Hash en base de datos:', user.password);
-                console.log('Longitud del hash:', user.password ? user.password.length : 'null');
-                
-                const isValidPassword = await bcrypt.compare(password, user.password);
-                console.log('Contraseña válida:', isValidPassword);
+                // Verificar si la contraseña está hasheada o en texto plano
+                const isHashedPassword = user.password && user.password.startsWith('$2');
+                let isValidPassword = false;
 
-                // Temporal: verificar si la contraseña está sin hashear
-                const isPlainTextMatch = password === user.password;
-                console.log('¿Contraseña en texto plano?:', isPlainTextMatch);
-
-                if (!isValidPassword && !isPlainTextMatch) {
-                    console.log('Contraseña incorrecta para usuario:', user.email);
-                    return res.status(400).json({ error: 'Contraseña incorrecta' });
+                if (isHashedPassword) {
+                    // Contraseña hasheada - usar bcrypt
+                    isValidPassword = await bcrypt.compare(password, user.password);
+                } else {
+                    // Contraseña en texto plano - comparación directa
+                    isValidPassword = password === user.password;
                 }
 
-                // Si es texto plano, usar esa validación temporalmente
-                if (!isValidPassword && isPlainTextMatch) {
-                    console.log('⚠️ ADVERTENCIA: Contraseña en texto plano detectada para:', user.email);
+                if (!isValidPassword) {
+                    return res.status(400).json({ error: 'Contraseña incorrecta' });
                 }
 
                 const token = jwt.sign(
