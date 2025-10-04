@@ -46,50 +46,7 @@ function App() {
         loadUser();
     }, []);
 
-    // Inicialización robusta de datos críticos
-    useEffect(() => {
-        const initializeCriticalData = () => {
-            // Verificar y restaurar lista de usuarios si está vacía
-            const existingUsers = localStorage.getItem('storyup_users');
-            if (!existingUsers || JSON.parse(existingUsers).length === 0) {
-                console.log('🔄 Inicializando datos críticos: Lista de usuarios');
-                const defaultUsers = [
-                    { id: '1', username: 'ADMIN', name: 'Administrador', userType: 'padre-docente', email: 'admin@storyup.es' },
-                    { id: '2', username: 'PIPO68', name: 'Pipo Rodriguez Rodriguez', userType: 'usuario', email: 'pipocanarias@hotmail.com' },
-                    { id: '3', username: 'usuario.ejemplo', name: 'Usuario Ejemplo', userType: 'usuario', email: 'ejemplo@storyup.es' },
-                    { id: '4', username: 'maria.lopez', name: 'María López', userType: 'usuario', email: 'maria@storyup.es' },
-                    { id: '5', username: 'juan.garcia', name: 'Juan García', userType: 'padre-docente', email: 'juan@storyup.es' }
-                ];
-                localStorage.setItem('storyup_users', JSON.stringify(defaultUsers));
-                console.log('✅ Lista de usuarios inicializada:', defaultUsers.length, 'usuarios');
-            }
 
-            // Inicializar estadísticas para PIPO68 si no existen
-            const pipo68Stats = localStorage.getItem('storyup_user_stats_PIPO68');
-            if (!pipo68Stats) {
-                console.log('🔄 Inicializando estadísticas para PIPO68');
-                const initialStats = {
-                    userId: 'PIPO68',
-                    friends: 0,
-                    trophies: 0,
-                    stories: 1, // 1 historia creada (dato real)
-                    likes: {
-                        fromStories: 1, // 1 like recibido (dato real)
-                        fromTrophies: 0,
-                        fromContests: 0,
-                        fromAdmin: 0,
-                        total: 1
-                    },
-                    globalPosition: 1,
-                    lastUpdated: new Date().toISOString()
-                };
-                localStorage.setItem('storyup_user_stats_PIPO68', JSON.stringify(initialStats));
-                console.log('✅ Estadísticas PIPO68 inicializadas');
-            }
-        };
-
-        initializeCriticalData();
-    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
