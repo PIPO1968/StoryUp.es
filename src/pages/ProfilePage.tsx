@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
+import { getUserStats, UserStats } from '../lib/userStatsManager';
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -34,6 +35,7 @@ export default function ProfilePage() {
     const [announcement, setAnnouncement] = useState('');
     const [schoolCenter, setSchoolCenter] = useState('');
     const [schoolCenterSaved, setSchoolCenterSaved] = useState(false);
+    const [userStats, setUserStats] = useState<UserStats | null>(null);
     const userTrophies: any[] = [];
     const fileInputRef = useRef<HTMLInputElement>(null);
     const joinDate = new Date();
@@ -52,14 +54,18 @@ export default function ProfilePage() {
                             bio: (user as any).bio || '',
                             username: user.username || ''
                         });
-                        
+
                         // Cargar centro escolar desde localStorage
                         const savedSchoolCenter = localStorage.getItem('storyup_school_center');
                         if (savedSchoolCenter) {
                             setSchoolCenter(savedSchoolCenter);
                             setSchoolCenterSaved(true);
                         }
-                        
+
+                        // Cargar estadísticas del usuario
+                        const stats = getUserStats(user.id || user.username);
+                        setUserStats(stats);
+
                         // Simular lista de usuarios
                         setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
                     }, 1000);
@@ -87,17 +93,17 @@ export default function ProfilePage() {
 
     if (!user) {
         return (
-            
-                <div className="max-w-4xl mx-auto">
-                    <div className="text-center py-8">
-                        <p className="text-gray-600">Debes iniciar sesión para ver el perfil</p>
-                        <Button onClick={onBack} className="mt-4">
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            Volver
-                        </Button>
-                    </div>
+
+            <div className="max-w-4xl mx-auto">
+                <div className="text-center py-8">
+                    <p className="text-gray-600">Debes iniciar sesión para ver el perfil</p>
+                    <Button onClick={onBack} className="mt-4">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Volver
+                    </Button>
                 </div>
-            
+            </div>
+
         );
     }
 
@@ -146,295 +152,356 @@ export default function ProfilePage() {
     };
 
     return (
-        
-            <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
-                {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
-                <div className="flex flex-col md:flex-row gap-8">
-                    {/* Datos Personales - 3/5 */}
-                    <div className="md:w-7/12 w-full">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Datos Personales</CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-6">
-                                <div className="flex flex-col items-center md:items-start">
-                                    <Avatar className="w-20 h-20">
-                                        <AvatarImage src={avatarUrl || user.avatar} alt={user.name} />
-                                        <AvatarFallback className="text-lg">
-                                            {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    {/* Buscador de imágenes para avatar */}
-                                    <div className="mt-2 w-full flex flex-col items-center">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            ref={fileInputRef}
-                                            style={{ display: 'none' }}
-                                            onChange={async (e) => {
-                                                const file = e.target.files?.[0];
-                                                if (!file) return;
-                                                setUploading(true);
-                                                setTimeout(() => {
-                                                    setAvatarUrl(URL.createObjectURL(file));
-                                                    setUploading(false);
-                                                }, 1000);
-                                            }}
-                                        />
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="mt-1"
-                                            disabled={uploading}
-                                            onClick={() => fileInputRef.current?.click()}
-                                        >
-                                            <Upload className="mr-1 h-3 w-3" />
-                                            {uploading ? 'Subiendo...' : 'Cambiar'}
-                                        </Button>
-                                    </div>
-                                    
-                                    <div className="mt-4 w-full">
-                                        {/* Datos básicos en formato compacto */}
-                                        <div className="grid grid-cols-1 gap-2 text-sm">
-                                            <div>
-                                                <span className="font-medium text-gray-600">Nick:</span> 
-                                                <span className="ml-2 text-gray-900">{user.username}</span>
-                                            </div>
-                                            <div>
-                                                <span className="font-medium text-gray-600">Email:</span> 
-                                                <span className="ml-2 text-gray-900">{user.email}</span>
-                                            </div>
-                                            <div>
-                                                <span className="font-medium text-gray-600">Nombre completo:</span> 
-                                                <span className="ml-2 text-gray-900">{user.name}</span>
-                                            </div>
-                                            <div className="flex items-center">
-                                                <span className="font-medium text-gray-600">Rol:</span> 
-                                                <Badge className={`ml-2 ${getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}`}>
-                                                    {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                        
-                                        {/* Centro Escolar */}
-                                        <div className="mt-3">
-                                            <span className="font-medium text-gray-600">Centro Escolar:</span>
-                                            {schoolCenterSaved ? (
-                                                <span className="ml-2 text-gray-900">{schoolCenter}</span>
-                                            ) : (
-                                                <Input
-                                                    className="mt-1 h-8 text-sm"
-                                                    placeholder="Escribe tu centro escolar..."
-                                                    value={schoolCenter}
-                                                    onChange={(e) => setSchoolCenter(e.target.value)}
-                                                    onKeyPress={(e) => {
-                                                        if (e.key === 'Enter' && schoolCenter.trim()) {
-                                                            setSchoolCenterSaved(true);
-                                                            // Aquí guardaríamos en localStorage o backend
-                                                            localStorage.setItem('storyup_school_center', schoolCenter.trim());
-                                                            console.log('Centro escolar guardado:', schoolCenter.trim());
-                                                        }
-                                                    }}
-                                                    onBlur={() => {
-                                                        if (schoolCenter.trim()) {
-                                                            setSchoolCenterSaved(true);
-                                                            localStorage.setItem('storyup_school_center', schoolCenter.trim());
-                                                            console.log('Centro escolar guardado:', schoolCenter.trim());
-                                                        }
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
 
-                                        {/* Estadísticas en grid compacto */}
-                                        <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
-                                            <div className="text-center">
-                                                <div className="text-xl font-bold text-blue-600">0</div>
-                                                <div className="text-xs text-gray-600">Likes</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-xl font-bold text-green-600">0</div>
-                                                <div className="text-xs text-gray-600">Amigos</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-xl font-bold text-yellow-600">0</div>
-                                                <div className="text-xs text-gray-600">Trofeos</div>
-                                            </div>
-                                            <div className="text-center">
-                                                <div className="text-xl font-bold text-purple-600">0</div>
-                                                <div className="text-xs text-gray-600">Historias</div>
-                                            </div>
-                                            <div className="text-center col-span-2">
-                                                <div className="text-xl font-bold text-red-600">0</div>
-                                                <div className="text-xs text-gray-600">Posición Global</div>
-                                            </div>
-                                        </div>
-
-                                        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                                            <DialogTrigger asChild>
-                                                <Button variant="outline" className="w-full mt-4">
-                                                    <Edit className="mr-2 h-4 w-4" />
-                                                    Editar perfil
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader>
-                                                    <DialogTitle>Editar perfil</DialogTitle>
-                                                </DialogHeader>
-                                                <div className="space-y-4">
-                                                    <div>
-                                                        <label htmlFor="name" className="text-sm font-medium">
-                                                            Nombre completo
-                                                        </label>
-                                                        <Input id="name" name="name" value={editForm.name} onChange={handleInputChange} placeholder="Tu nombre completo" />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="username" className="text-sm font-medium">Nombre de usuario</label>
-                                                        <Input id="username" name="username" value={editForm.username} onChange={handleInputChange} placeholder="Tu nombre de usuario" />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="bio" className="text-sm font-medium">Biografía</label>
-                                                        <Textarea id="bio" name="bio" value={editForm.bio} onChange={handleInputChange} placeholder="Cuéntanos algo sobre ti..." rows={3} />
-                                                    </div>
-                                                    <div className="flex gap-2">
-                                                        <Button onClick={handleSaveProfile} className="flex-1">Guardar cambios</Button>
-                                                        <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancelar</Button>
-                                                    </div>
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                    {/* Trofeos/Logros - 2/5 */}
-                    <div className="md:w-5/12 w-full">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Trofeos y logros</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                {userTrophies.length === 0 ? (
-                                    <div className="text-center py-8 text-gray-500">
-                                        <Trophy className="mx-auto h-12 w-12 mb-4 text-gray-300" />
-                                        <p>Aún no tienes trofeos ni logros.</p>
-                                    </div>
-                                ) : (
-                                    <div className="grid gap-4 md:grid-cols-2">
-                                        {userTrophies.map((trophy) => (
-                                            <div key={trophy.id} className="text-center p-4 bg-yellow-50 rounded-lg">
-                                                <Trophy className="mx-auto h-8 w-8 text-yellow-600 mb-2" />
-                                                <h3 className="font-semibold">{trophy.title}</h3>
-                                                <p className="text-sm text-gray-600">{trophy.description}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
-                </div>
-                {/* Panel de anuncios */}
-                <div className="w-full mt-8">
+        <div className="max-w-4xl mx-auto">
+            <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
+            {/* Bloque superior: Editar perfil (izquierda) + Trofeos/Logros (derecha) */}
+            <div className="flex flex-col md:flex-row gap-8">
+                {/* Datos Personales - 3/5 */}
+                <div className="md:w-7/12 w-full">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Panel de anuncios</CardTitle>
+                            <CardTitle>Datos Personales</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <Textarea
-                                placeholder="Escribe un anuncio público..."
-                                className="mb-4"
-                                value={announcement}
-                                onChange={(e) => setAnnouncement(e.target.value)}
-                            />
-                            <Button className="w-full" onClick={handlePublishAnnouncement}>Publicar anuncio</Button>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Sección de Chat WhatsApp-style */}
-                <div className="w-full mt-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center space-x-2">
-                                <MessageCircle className="w-5 h-5" />
-                                <span>Chat Personal</span>
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="h-96 bg-gray-50 rounded-lg p-4 flex flex-col">
-                                <div className="flex-1 overflow-y-auto mb-4">
-                                    <div className="space-y-4">
-                                        <div className="flex justify-start">
-                                            <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
-                                                <p className="text-sm">¡Hola! ¿Cómo va el proyecto StoryUp?</p>
-                                                <p className="text-xs text-gray-500 mt-1">10:30</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-end">
-                                            <div className="bg-blue-500 text-white px-4 py-2 rounded-lg max-w-xs">
-                                                <p className="text-sm">¡Muy bien! Ya tenemos el dashboard funcionando perfectamente.</p>
-                                                <p className="text-xs text-blue-100 mt-1">10:32</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-start">
-                                            <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
-                                                <p className="text-sm">¡Genial! Me encanta cómo quedó el chat integrado.</p>
-                                                <p className="text-xs text-gray-500 mt-1">10:35</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    <Input
-                                        placeholder="Escribe un mensaje..."
-                                        className="flex-1"
+                        <CardContent className="p-6">
+                            <div className="flex flex-col items-center md:items-start">
+                                <Avatar className="w-20 h-20">
+                                    <AvatarImage src={avatarUrl || user.avatar} alt={user.name} />
+                                    <AvatarFallback className="text-lg">
+                                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                                    </AvatarFallback>
+                                </Avatar>
+                                {/* Buscador de imágenes para avatar */}
+                                <div className="mt-2 w-full flex flex-col items-center">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        ref={fileInputRef}
+                                        style={{ display: 'none' }}
+                                        onChange={async (e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+                                            setUploading(true);
+                                            setTimeout(() => {
+                                                setAvatarUrl(URL.createObjectURL(file));
+                                                setUploading(false);
+                                            }, 1000);
+                                        }}
                                     />
-                                    <Button size="icon" className="bg-blue-500 hover:bg-blue-600">
-                                        <MessageCircle className="w-4 h-4" />
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-1"
+                                        disabled={uploading}
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        <Upload className="mr-1 h-3 w-3" />
+                                        {uploading ? 'Subiendo...' : 'Cambiar'}
                                     </Button>
+                                </div>
+
+                                <div className="mt-4 w-full">
+                                    {/* Datos básicos en formato compacto */}
+                                    <div className="grid grid-cols-1 gap-2 text-sm">
+                                        <div>
+                                            <span className="font-medium text-gray-600">Nick:</span>
+                                            <span className="ml-2 text-gray-900">{user.username}</span>
+                                        </div>
+                                        <div>
+                                            <span className="font-medium text-gray-600">Email:</span>
+                                            <span className="ml-2 text-gray-900">{user.email}</span>
+                                        </div>
+                                        <div>
+                                            <span className="font-medium text-gray-600">Nombre completo:</span>
+                                            <span className="ml-2 text-gray-900">{user.name}</span>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <span className="font-medium text-gray-600">Rol:</span>
+                                            <Badge className={`ml-2 ${getUserTypeColor(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}`}>
+                                                {getUserTypeLabel(fullUser?.user_type === 'padre-docente' ? 'padre-docente' : fullUser?.user_type === 'usuario' ? 'usuario' : undefined)}
+                                            </Badge>
+                                        </div>
+                                    </div>
+
+                                    {/* Centro Escolar */}
+                                    <div className="mt-3">
+                                        <span className="font-medium text-gray-600">Centro Escolar:</span>
+                                        {schoolCenterSaved ? (
+                                            <span className="ml-2 text-gray-900">{schoolCenter}</span>
+                                        ) : (
+                                            <Input
+                                                className="mt-1 h-8 text-sm"
+                                                placeholder="Escribe tu centro escolar..."
+                                                value={schoolCenter}
+                                                onChange={(e) => setSchoolCenter(e.target.value)}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter' && schoolCenter.trim()) {
+                                                        setSchoolCenterSaved(true);
+                                                        // Aquí guardaríamos en localStorage o backend
+                                                        localStorage.setItem('storyup_school_center', schoolCenter.trim());
+                                                        console.log('Centro escolar guardado:', schoolCenter.trim());
+                                                    }
+                                                }}
+                                                onBlur={() => {
+                                                    if (schoolCenter.trim()) {
+                                                        setSchoolCenterSaved(true);
+                                                        localStorage.setItem('storyup_school_center', schoolCenter.trim());
+                                                        console.log('Centro escolar guardado:', schoolCenter.trim());
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+
+                                    {/* Estadísticas en grid compacto */}
+                                    <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
+                                        <div className="text-center cursor-pointer" onClick={() => {
+                                            if (userStats) {
+                                                alert(`Desglose de Likes:\n• Historias: ${userStats.likes.fromStories}\n• Trofeos: ${userStats.likes.fromTrophies}\n• Concursos: ${userStats.likes.fromContests}\n• Premios Admin: ${userStats.likes.fromAdmin}\n\nTotal: ${userStats.likes.total}`);
+                                            }
+                                        }}>
+                                            <div className="text-xl font-bold text-blue-600">
+                                                {userStats?.likes.total || 0}
+                                            </div>
+                                            <div className="text-xs text-gray-600">Likes</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-green-600">
+                                                {userStats?.friends || 0}
+                                            </div>
+                                            <div className="text-xs text-gray-600">Amigos</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-yellow-600">
+                                                {userStats?.trophies || 0}
+                                            </div>
+                                            <div className="text-xs text-gray-600">Trofeos</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-xl font-bold text-purple-600">
+                                                {userStats?.stories || 0}
+                                            </div>
+                                            <div className="text-xs text-gray-600">Historias</div>
+                                        </div>
+                                        <div className="text-center col-span-2">
+                                            <div className="text-xl font-bold text-red-600">
+                                                {userStats?.globalPosition || 'N/A'}
+                                            </div>
+                                            <div className="text-xs text-gray-600">Posición Global</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Botones de prueba (temporal para demo) */}
+                                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                                        <p className="text-xs text-gray-600 mb-2">🧪 Demo - Probar estadísticas:</p>
+                                        <div className="flex flex-wrap gap-2">
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
+                                                    const { addStoryLikes } = require('../lib/userStatsManager');
+                                                    addStoryLikes(user.id || user.username, 5);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+5 Likes Historia</Button>
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
+                                                    const { addTrophyLikes } = require('../lib/userStatsManager');
+                                                    addTrophyLikes(user.id || user.username, 10);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+10 Likes Trofeo</Button>
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
+                                                    const { addFriend } = require('../lib/userStatsManager');
+                                                    addFriend(user.id || user.username);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+1 Amigo</Button>
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
+                                                    const { addTrophy } = require('../lib/userStatsManager');
+                                                    addTrophy(user.id || user.username);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+1 Trofeo</Button>
+                                            <Button size="sm" variant="outline" onClick={() => {
+                                                if (user) {
+                                                    const { addStory } = require('../lib/userStatsManager');
+                                                    addStory(user.id || user.username);
+                                                    const newStats = getUserStats(user.id || user.username);
+                                                    setUserStats(newStats);
+                                                }
+                                            }}>+1 Historia</Button>
+                                        </div>
+                                    </div>
+
+                                    <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button variant="outline" className="w-full mt-4">
+                                                <Edit className="mr-2 h-4 w-4" />
+                                                Editar perfil
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                            <DialogHeader>
+                                                <DialogTitle>Editar perfil</DialogTitle>
+                                            </DialogHeader>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <label htmlFor="name" className="text-sm font-medium">
+                                                        Nombre completo
+                                                    </label>
+                                                    <Input id="name" name="name" value={editForm.name} onChange={handleInputChange} placeholder="Tu nombre completo" />
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="username" className="text-sm font-medium">Nombre de usuario</label>
+                                                    <Input id="username" name="username" value={editForm.username} onChange={handleInputChange} placeholder="Tu nombre de usuario" />
+                                                </div>
+                                                <div>
+                                                    <label htmlFor="bio" className="text-sm font-medium">Biografía</label>
+                                                    <Textarea id="bio" name="bio" value={editForm.bio} onChange={handleInputChange} placeholder="Cuéntanos algo sobre ti..." rows={3} />
+                                                </div>
+                                                <div className="flex gap-2">
+                                                    <Button onClick={handleSaveProfile} className="flex-1">Guardar cambios</Button>
+                                                    <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancelar</Button>
+                                                </div>
+                                            </div>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
                             </div>
                         </CardContent>
                     </Card>
                 </div>
-
-                {/* Bloques exclusivos para Padres/Docentes */}
-                {(fullUser?.user_type === 'padre-docente' || fullUser?.user_type === 'usuario') && (
-                    <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Crear noticias</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-600">Publica novedades para la comunidad.</p>
-                                <Button className="mt-4">Crear noticia</Button>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Crear concursos</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-600">Organiza concursos y actividades.</p>
-                                <Button className="mt-4">Crear concurso</Button>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Panel de administración</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-600">Gestiona usuarios y configuraciones avanzadas.</p>
-                                <Button className="mt-4">Ir al panel</Button>
-                            </CardContent>
-                        </Card>
-                    </div>
-                )}
+                {/* Trofeos/Logros - 2/5 */}
+                <div className="md:w-5/12 w-full">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Trofeos y logros</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {userTrophies.length === 0 ? (
+                                <div className="text-center py-8 text-gray-500">
+                                    <Trophy className="mx-auto h-12 w-12 mb-4 text-gray-300" />
+                                    <p>Aún no tienes trofeos ni logros.</p>
+                                </div>
+                            ) : (
+                                <div className="grid gap-4 md:grid-cols-2">
+                                    {userTrophies.map((trophy) => (
+                                        <div key={trophy.id} className="text-center p-4 bg-yellow-50 rounded-lg">
+                                            <Trophy className="mx-auto h-8 w-8 text-yellow-600 mb-2" />
+                                            <h3 className="font-semibold">{trophy.title}</h3>
+                                            <p className="text-sm text-gray-600">{trophy.description}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        
+            {/* Panel de anuncios */}
+            <div className="w-full mt-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Panel de anuncios</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Textarea
+                            placeholder="Escribe un anuncio público..."
+                            className="mb-4"
+                            value={announcement}
+                            onChange={(e) => setAnnouncement(e.target.value)}
+                        />
+                        <Button className="w-full" onClick={handlePublishAnnouncement}>Publicar anuncio</Button>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Sección de Chat WhatsApp-style */}
+            <div className="w-full mt-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center space-x-2">
+                            <MessageCircle className="w-5 h-5" />
+                            <span>Chat Personal</span>
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="h-96 bg-gray-50 rounded-lg p-4 flex flex-col">
+                            <div className="flex-1 overflow-y-auto mb-4">
+                                <div className="space-y-4">
+                                    <div className="flex justify-start">
+                                        <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
+                                            <p className="text-sm">¡Hola! ¿Cómo va el proyecto StoryUp?</p>
+                                            <p className="text-xs text-gray-500 mt-1">10:30</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <div className="bg-blue-500 text-white px-4 py-2 rounded-lg max-w-xs">
+                                            <p className="text-sm">¡Muy bien! Ya tenemos el dashboard funcionando perfectamente.</p>
+                                            <p className="text-xs text-blue-100 mt-1">10:32</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-start">
+                                        <div className="bg-white px-4 py-2 rounded-lg shadow-sm max-w-xs">
+                                            <p className="text-sm">¡Genial! Me encanta cómo quedó el chat integrado.</p>
+                                            <p className="text-xs text-gray-500 mt-1">10:35</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder="Escribe un mensaje..."
+                                    className="flex-1"
+                                />
+                                <Button size="icon" className="bg-blue-500 hover:bg-blue-600">
+                                    <MessageCircle className="w-4 h-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Bloques exclusivos para Padres/Docentes */}
+            {(fullUser?.user_type === 'padre-docente' || fullUser?.user_type === 'usuario') && (
+                <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Crear noticias</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600">Publica novedades para la comunidad.</p>
+                            <Button className="mt-4">Crear noticia</Button>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Crear concursos</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600">Organiza concursos y actividades.</p>
+                            <Button className="mt-4">Crear concurso</Button>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Panel de administración</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-gray-600">Gestiona usuarios y configuraciones avanzadas.</p>
+                            <Button className="mt-4">Ir al panel</Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
+        </div>
+
     );
 }
 
