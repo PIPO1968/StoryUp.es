@@ -15,15 +15,17 @@ const RegisterPage: React.FC = () => {
         email: '',
         password: '',
         confirmPassword: '',
+        role: 'student',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Handler genérico para inputs y select
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
         if (error) setError(''); // Limpiar error al escribir
-    };
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,11 +46,17 @@ const RegisterPage: React.FC = () => {
         }
 
         try {
+            // Validar el rol
+            const allowedRoles: Array<'admin' | 'teacher' | 'student'> = ['admin', 'teacher', 'student'];
+            const role: 'admin' | 'teacher' | 'student' = allowedRoles.includes(formData.role as any)
+                ? (formData.role as 'admin' | 'teacher' | 'student')
+                : 'student';
             const userData = {
                 username: formData.username,
                 name: formData.name || formData.username,
                 email: formData.email,
-                password: formData.password
+                password: formData.password,
+                role
             };
 
             const user = await registerUser(userData);
@@ -78,6 +86,24 @@ const RegisterPage: React.FC = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+                            Rol
+                        </label>
+                        <select
+                            id="role"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            disabled={loading}
+                            className="w-full border rounded px-2 py-1"
+                            required
+                        >
+                            <option value="student">Estudiante</option>
+                            <option value="teacher">Padre/Docente</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
                             Nombre de Usuario

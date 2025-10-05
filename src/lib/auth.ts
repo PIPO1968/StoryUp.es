@@ -96,7 +96,7 @@ export const registerUser = async (userData: {
     email: string;
     password: string;
     name: string;
-    role?: string;
+    role?: 'admin' | 'teacher' | 'student';
 }) => {
     try {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -122,13 +122,17 @@ export const registerUser = async (userData: {
         }
 
         // Crear nuevo usuario
+        const allowedRoles: Array<'admin' | 'teacher' | 'student'> = ['admin', 'teacher', 'student'];
+        const role: 'admin' | 'teacher' | 'student' = allowedRoles.includes(userData.role as any)
+            ? (userData.role as 'admin' | 'teacher' | 'student')
+            : 'student';
         const newUser = {
             id: (users.length + 1).toString(),
             username: userData.username,
             email: userData.email,
             name: userData.name,
             password: userData.password,
-            role: userData.role || 'user', // Usar el rol seleccionado o 'user' por defecto
+            role,
             avatar: '/favicon.ico',
             likes: 0,
             trophies: [],
