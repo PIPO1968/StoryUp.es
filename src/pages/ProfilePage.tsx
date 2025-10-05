@@ -502,9 +502,10 @@ export default function ProfilePage() {
                                         description: data.get('description') as string,
                                         startDate: data.get('startDate') as string,
                                         endDate: data.get('endDate') as string,
-                                        winner: data.get('winner') ? (data.get('winner') as string) : null
+                                        winner: data.get('winner') ? (data.get('winner') as string) : null,
+                                        creatorUsername: user?.username || 'Invitado'
                                     };
-                                    const res = await fetch('/api/contests/create', {
+                                    const res = await fetch('/api/contests', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify(contest)
@@ -512,6 +513,7 @@ export default function ProfilePage() {
                                     if (res.ok) {
                                         alert('Concurso creado correctamente');
                                         form.reset();
+                                        // Opcional: recargar concursos
                                     } else {
                                         alert('Error al crear el concurso');
                                     }
