@@ -11,6 +11,7 @@ interface ContestData {
     startDate: string;
     endDate: string;
     status: string;
+    winner?: string;
 }
 
 interface TrophyPublic {
@@ -97,25 +98,29 @@ export default function ContestsPage() {
                             <div className="space-y-4 max-h-96 overflow-y-auto">
                                 {activeContests.map((contest) => (
                                     <div key={contest.id} className="border border-green-200 rounded-lg p-4 bg-green-50">
-                                        <h4 className="font-semibold text-gray-900">{contest.title}</h4>
-                                        <p className="text-sm text-gray-600 mt-1">{contest.description}</p>
-                                        <div className="mt-3 space-y-1">
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <User className="w-3 h-3 mr-1" />
-                                                Creado por: <span className="font-medium ml-1">{contest.creatorUsername}</span>
+                                        <details>
+                                            <summary className="font-semibold text-gray-900 cursor-pointer hover:underline">{contest.title}</summary>
+                                            <div className="pl-2 mt-2">
+                                                <p className="text-sm text-gray-600">{contest.description}</p>
+                                                <div className="mt-3 space-y-1">
+                                                    <div className="flex items-center text-xs text-gray-500">
+                                                        <User className="w-3 h-3 mr-1" />
+                                                        Creado por: <span className="font-medium ml-1">{contest.creatorUsername}</span>
+                                                    </div>
+                                                    <div className="flex items-center text-xs text-gray-500">
+                                                        <Clock className="w-3 h-3 mr-1" />
+                                                        Desde: {formatDate(contest.startDate)}
+                                                    </div>
+                                                    <div className="flex items-center text-xs text-gray-500">
+                                                        <Clock className="w-3 h-3 mr-1" />
+                                                        Hasta: {formatDate(contest.endDate)}
+                                                    </div>
+                                                </div>
+                                                <div className="mt-2 px-2 py-1 bg-green-100 text-green-700 rounded text-xs inline-block">
+                                                    📅 En período de inscripción
+                                                </div>
                                             </div>
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <Clock className="w-3 h-3 mr-1" />
-                                                Desde: {formatDate(contest.startDate)}
-                                            </div>
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <Clock className="w-3 h-3 mr-1" />
-                                                Hasta: {formatDate(contest.endDate)}
-                                            </div>
-                                        </div>
-                                        <div className="mt-2 px-2 py-1 bg-green-100 text-green-700 rounded text-xs inline-block">
-                                            📅 En período de inscripción
-                                        </div>
+                                        </details>
                                     </div>
                                 ))}
                             </div>
@@ -146,27 +151,34 @@ export default function ContestsPage() {
                             <div className="space-y-4 max-h-96 overflow-y-auto">
                                 {finishedContests.map((contest) => (
                                     <div key={contest.id} className="border border-blue-200 rounded-lg p-4 bg-blue-50">
-                                        <h4 className="font-semibold text-gray-900">{contest.title}</h4>
-                                        <p className="text-sm text-gray-600 mt-1">{contest.description}</p>
-                                        <div className="mt-3 space-y-1">
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <User className="w-3 h-3 mr-1" />
-                                                Creado por: <span className="font-medium ml-1">{contest.creatorUsername}</span>
+                                        <details>
+                                            <summary className="font-semibold text-gray-900 cursor-pointer hover:underline flex items-center">
+                                                {contest.title}
+                                                {contest.winner && (
+                                                    <span className="ml-2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">🏅 Ganador: {contest.winner}</span>
+                                                )}
+                                            </summary>
+                                            <div className="pl-2 mt-2">
+                                                <p className="text-sm text-gray-600">{contest.description}</p>
+                                                <div className="mt-3 space-y-1">
+                                                    <div className="flex items-center text-xs text-gray-500">
+                                                        <User className="w-3 h-3 mr-1" />
+                                                        Creado por: <span className="font-medium ml-1">{contest.creatorUsername}</span>
+                                                    </div>
+                                                    <div className="flex items-center text-xs text-gray-500">
+                                                        <Clock className="w-3 h-3 mr-1" />
+                                                        Desde: {formatDate(contest.startDate)}
+                                                    </div>
+                                                    <div className="flex items-center text-xs text-gray-500">
+                                                        <Clock className="w-3 h-3 mr-1" />
+                                                        Hasta: {formatDate(contest.endDate)}
+                                                    </div>
+                                                </div>
+                                                <div className="mt-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs inline-block">
+                                                    🏆 Concurso finalizado
+                                                </div>
                                             </div>
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <Clock className="w-3 h-3 mr-1" />
-                                                Desde: {formatDate(contest.startDate)}
-                                            </div>
-                                            <div className="flex items-center text-xs text-gray-500">
-                                                <Clock className="w-3 h-3 mr-1" />
-                                                Hasta: {formatDate(contest.endDate)}
-                                            </div>
-                                        </div>
-                                        {contest.status === 'finished' && (
-                                            <div className="mt-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs inline-block">
-                                                🏆 Concurso finalizado
-                                            </div>
-                                        )}
+                                        </details>
                                     </div>
                                 ))}
                             </div>
