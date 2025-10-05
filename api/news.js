@@ -5,7 +5,7 @@ function getClient() {
     return new Client({ connectionString: neonUrl });
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     if (req.method === 'POST') {
         const { title, content, author, createdAt } = req.body;
         if (!title || !content || !author) {
@@ -35,4 +35,4 @@ module.exports = async function handler(req, res) {
         return res.status(200).json({ news: result.rows });
     }
     return res.status(405).json({ error: 'Método no permitido' });
-};
+}

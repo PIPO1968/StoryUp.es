@@ -1,6 +1,8 @@
 
 const { Client } = require('pg');
 
+const { Client } = require('pg');
+
 function getClient() {
     const neonUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || 'postgresql://user:password@localhost:5432/storyup';
     return new Client({ connectionString: neonUrl });
@@ -40,5 +42,4 @@ export default async function handler(req, res) {
         return res.status(200).json({ contests: result.rows });
     }
     return res.status(405).json({ error: 'Método no permitido' });
-};
 }
