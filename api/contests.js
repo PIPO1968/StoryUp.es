@@ -1,53 +1,44 @@
-// API para gestión de concursos y trofeos SIN localStorage
-const express = require('express');
-const router = express.Router();
-const db = require('../db'); // Asume conexión a Neon/PostgreSQL
 
-// Obtener concursos activos
-router.get('/active', async (req, res) => {
-    try {
-        const contests = await db.query('SELECT * FROM contests WHERE status = $1', ['active']);
-        res.json({ contests: contests.rows });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al consultar concursos activos' });
+import { sql } from '@vercel/postgres';
+
+export default async function handler(req, res) {
+    const { method, url } = req;
+    // Crear concurso
+    if (method === 'POST' && url.endsWith('/contests')) {
+        const { title, description, startDate, endDate, winner, creatorUsername } = req.body;
+        await sql`
+            INSERT INTO contests (title, description, creator_username, start_date, end_date, winner)
+            VALUES (${title}, ${description}, ${creatorUsername}, ${startDate}, ${endDate}, ${winner || null})
+        `;
+        return res.json({ success: true });
     }
-});
-
-// Obtener concursos terminados
-router.get('/finished', async (req, res) => {
-    try {
-        const contests = await db.query('SELECT * FROM contests WHERE status = $1', ['finished']);
-        res.json({ contests: contests.rows });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al consultar concursos terminados' });
+    // Actualizar ganador
+    if (method === 'POST' && url.match(/\/contests\/(\d+)\/winner$/)) {
+        const id = url.split('/')[3];
+        const { winner } = req.body;
+        await sql`UPDATE contests SET winner = ${winner} WHERE id = ${id}`;
+        return res.json({ success: true });
     }
-});
-
-// Asignar trofeo al ganador de un concurso
-const { assignTrophies } = require('./trophyHelper');
-router.post('/assign-trophy', async (req, res) => {
-    const { contestId, userId, trophyId } = req.body;
-    try {
-        // Marcar ganador en el concurso
-        await db.query('UPDATE contests SET winner = $1 WHERE id = $2', [userId, contestId]);
-        // Asignar trofeo al usuario (legacy)
-        await db.query('INSERT INTO user_trophies (user_id, trophy_id, awarded_at) VALUES ($1, $2, NOW())', [userId, trophyId]);
-        // Asignar trofeos automáticos según lógica
-        await assignTrophies(db, userId);
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al asignar trofeo al ganador' });
+    // Listar concursos activos y actualizar estado
+    if (method === 'GET' && url.endsWith('/contests/active')) {
+        const now = new Date().toISOString().slice(0, 10);
+        await sql`UPDATE contests SET status = 'finished' WHERE end_date < ${now} AND status = 'active'`;
+        const { rows } = await sql`
+            SELECT * FROM contests
+            WHERE status = 'active' AND start_date <= ${now} AND end_date >= ${now}
+            ORDER BY id DESC
+        `;
+        return res.json({ contests: rows });
     }
-});
-
-// Consultar trofeos disponibles
-router.get('/trophies', async (req, res) => {
-    try {
-        const trophies = await db.query('SELECT * FROM trophies');
-        res.json({ trophies: trophies.rows });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al consultar trofeos' });
+    // Listar concursos terminados
+    if (method === 'GET' && url.endsWith('/contests/finished')) {
+        const { rows } = await sql`
+            SELECT * FROM contests
+            WHERE status = 'finished'
+            ORDER BY end_date DESC
+        `;
+        return res.json({ contests: rows });
     }
-});
-
-module.exports = router;
+    // Si no coincide ninguna ruta
+    res.status(404).json({ error: 'Not found' });
+}
