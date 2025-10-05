@@ -111,10 +111,12 @@ export default function ProfilePage() {
                             <div className="md:col-span-2 col-span-1">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Centro Escolar</label>
                                 {schoolCenterSaved && schoolCenter ? (
-                                    <Input value={schoolCenter} readOnly className="font-semibold text-blue-700" />
+                                    <Input id="centro_escolar" name="centro_escolar" value={schoolCenter} readOnly className="font-semibold text-blue-700" />
                                 ) : (
                                     <>
                                         <Input
+                                            id="centro_escolar"
+                                            name="centro_escolar"
                                             type="text"
                                             value={schoolCenter}
                                             onChange={e => setSchoolCenter(e.target.value)}
