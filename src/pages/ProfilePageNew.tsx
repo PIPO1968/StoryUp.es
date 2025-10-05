@@ -16,6 +16,7 @@ export default function ProfilePage() {
     const [schoolCenterSaved, setSchoolCenterSaved] = useState(false);
     const [likes, setLikes] = useState(0);
     const [likesBreakdown, setLikesBreakdown] = useState({ storyLikes: 0, panelLikes: 0, contestLikes: 0 });
+    const [trophies, setTrophies] = useState([]);
 
     // Leer centro escolar desde la API al cargar el perfil
     React.useEffect(() => {
@@ -42,6 +43,12 @@ export default function ProfilePage() {
                         contestLikes: data.contestLikes || 0
                     });
                 });
+            // Consultar trofeos reales
+            fetch(`/api/user/trophies?id=${user.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    setTrophies(data.trophies || []);
+                });
         }
     }, [user?.id]);
 
@@ -63,7 +70,7 @@ export default function ProfilePage() {
         username: user?.username || '',
         role: user?.role || 'user',
         likes,
-        trophies: user?.trophies || [],
+        trophies,
         friends: user?.friends || []
     };
 
@@ -204,8 +211,9 @@ export default function ProfilePage() {
                             <div className="grid grid-cols-3 gap-2">
                                 {profileData.trophies.map((trophy, index) => (
                                     <div key={index} className="text-center p-2 bg-yellow-50 rounded">
-                                        <div className="text-2xl">{trophy.icon}</div>
-                                        <div className="text-xs text-gray-600">{trophy.name}</div>
+                                        <div className="text-2xl">{trophy.trophy_icon || <Trophy className="w-6 h-6 text-yellow-600" />}</div>
+                                        <div className="text-xs text-gray-600">{trophy.trophy_name}</div>
+                                        <div className="text-[10px] text-gray-400">{trophy.awarded_at ? new Date(trophy.awarded_at).toLocaleDateString() : ''}</div>
                                     </div>
                                 ))}
                             </div>

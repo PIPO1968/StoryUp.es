@@ -7,6 +7,27 @@ function getClient() {
 }
 
 module.exports = async function handler(req, res) {
+    // Endpoint para obtener los trofeos del usuario
+    if (req.method === 'GET' && req.url.includes('/trophies')) {
+        const client = getClient();
+        await client.connect();
+        const { id } = req.query;
+        if (!id) {
+            await client.end();
+            return res.status(400).json({ error: 'Falta el id de usuario' });
+        }
+        // Obtener trofeos del usuario
+        await client.query(`CREATE TABLE IF NOT EXISTS user_trophies (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            trophy_name VARCHAR(128) NOT NULL,
+            trophy_icon VARCHAR(32),
+            awarded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`);
+        const trophiesRes = await client.query('SELECT trophy_name, trophy_icon, awarded_at FROM user_trophies WHERE user_id = $1', [id]);
+        await client.end();
+        return res.status(200).json({ trophies: trophiesRes.rows });
+    }
     // Endpoint para obtener el total de likes del usuario
     if (req.method === 'GET' && req.url.includes('/likes')) {
         const client = getClient();
