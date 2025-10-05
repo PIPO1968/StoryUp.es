@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 import { useAuth } from '../App';
 import { useNavigate } from 'react-router-dom';
-import { getUserStats, UserStats } from '../lib/userStatsManager';
+import { getUserStats, UserStats } from '../lib/userStats';
 
 export default function ProfilePage() {
     const { user } = useAuth();
@@ -63,7 +63,7 @@ export default function ProfilePage() {
                         }
 
                         // Cargar estadísticas del usuario
-                        const stats = getUserStats(user.id || user.username);
+                        const stats = getUserStats();
                         setUserStats(stats);
 
                         // Simular lista de usuarios
@@ -255,39 +255,17 @@ export default function ProfilePage() {
 
                                     {/* Estadísticas en grid compacto */}
                                     <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t">
-                                        <div className="text-center cursor-pointer" onClick={() => {
-                                            if (userStats) {
-                                                alert(`Desglose de Likes:\n• Historias: ${userStats.likes.fromStories}\n• Trofeos: ${userStats.likes.fromTrophies}\n• Concursos: ${userStats.likes.fromContests}\n• Premios Admin: ${userStats.likes.fromAdmin}\n\nTotal: ${userStats.likes.total}`);
-                                            }
-                                        }}>
+                                        <div className="text-center">
                                             <div className="text-xl font-bold text-blue-600">
-                                                {userStats?.likes.total || 0}
+                                                {userStats?.totalUsers || 0}
                                             </div>
-                                            <div className="text-xs text-gray-600">Likes</div>
+                                            <div className="text-xs text-gray-600">Usuarios totales</div>
                                         </div>
                                         <div className="text-center">
                                             <div className="text-xl font-bold text-green-600">
-                                                {userStats?.friends || 0}
+                                                {userStats?.onlineUsers || 0}
                                             </div>
-                                            <div className="text-xs text-gray-600">Amigos</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="text-xl font-bold text-yellow-600">
-                                                {userStats?.trophies || 0}
-                                            </div>
-                                            <div className="text-xs text-gray-600">Trofeos</div>
-                                        </div>
-                                        <div className="text-center">
-                                            <div className="text-xl font-bold text-purple-600">
-                                                {userStats?.stories || 0}
-                                            </div>
-                                            <div className="text-xs text-gray-600">Historias</div>
-                                        </div>
-                                        <div className="text-center col-span-2">
-                                            <div className="text-xl font-bold text-red-600">
-                                                {userStats?.globalPosition || 'N/A'}
-                                            </div>
-                                            <div className="text-xs text-gray-600">Posición Global</div>
+                                            <div className="text-xs text-gray-600">Usuarios online</div>
                                         </div>
                                     </div>
 
@@ -299,7 +277,7 @@ export default function ProfilePage() {
                                                 if (user) {
                                                     const { addStoryLikes } = require('../lib/userStatsManager');
                                                     addStoryLikes(user.id || user.username, 5);
-                                                    const newStats = getUserStats(user.id || user.username);
+                                                    const newStats = getUserStats();
                                                     setUserStats(newStats);
                                                 }
                                             }}>+5 Likes Historia</Button>
@@ -307,7 +285,7 @@ export default function ProfilePage() {
                                                 if (user) {
                                                     const { addTrophyLikes } = require('../lib/userStatsManager');
                                                     addTrophyLikes(user.id || user.username, 10);
-                                                    const newStats = getUserStats(user.id || user.username);
+                                                    const newStats = getUserStats();
                                                     setUserStats(newStats);
                                                 }
                                             }}>+10 Likes Trofeo</Button>
@@ -315,7 +293,7 @@ export default function ProfilePage() {
                                                 if (user) {
                                                     const { addFriend } = require('../lib/userStatsManager');
                                                     addFriend(user.id || user.username);
-                                                    const newStats = getUserStats(user.id || user.username);
+                                                    const newStats = getUserStats();
                                                     setUserStats(newStats);
                                                 }
                                             }}>+1 Amigo</Button>
@@ -323,7 +301,7 @@ export default function ProfilePage() {
                                                 if (user) {
                                                     const { addTrophy } = require('../lib/userStatsManager');
                                                     addTrophy(user.id || user.username);
-                                                    const newStats = getUserStats(user.id || user.username);
+                                                    const newStats = getUserStats();
                                                     setUserStats(newStats);
                                                 }
                                             }}>+1 Trofeo</Button>
@@ -331,7 +309,7 @@ export default function ProfilePage() {
                                                 if (user) {
                                                     const { addStory } = require('../lib/userStatsManager');
                                                     addStory(user.id || user.username);
-                                                    const newStats = getUserStats(user.id || user.username);
+                                                    const newStats = getUserStats();
                                                     setUserStats(newStats);
                                                 }
                                             }}>+1 Historia</Button>
