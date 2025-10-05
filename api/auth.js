@@ -40,10 +40,11 @@ async function ensureUsersTable(client) {
 }
 
 module.exports = async function handler(req, res) {
-    // Agregar headers CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Agregar headers CORS y permitir credenciales
+    res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
@@ -77,43 +78,15 @@ module.exports = async function handler(req, res) {
                 [email, username]
             );
 
+            let user;
             if (existingUser.rows.length > 0) {
                 // Login
-                const user = existingUser.rows[0];
+                user = existingUser.rows[0];
                 const isValidPassword = await bcrypt.compare(password, user.password);
 
                 if (!isValidPassword) {
                     return res.status(400).json({ error: 'Contraseña incorrecta' });
                 }
-
-                const token = jwt.sign(
-                    {
-                        userId: user.id,
-                        email: user.email,
-                        username: user.username
-                    },
-                    process.env.JWT_SECRET || 'storyup-secret-key',
-                    { expiresIn: '7d' }
-                );
-
-                return res.json({
-                    token,
-                    user: {
-                        id: user.id,
-                        email: user.email,
-                        username: user.username,
-                        name: user.name,
-                        avatar: user.avatar,
-                        bio: user.bio,
-                        userType: user.user_type,
-                        school: user.school,
-                        grade: user.grade,
-                        followers: user.followers,
-                        following: user.following,
-                        isVerified: user.is_verified,
-                        centro_escolar: user.centro_escolar
-                    }
-                });
             } else {
                 // Registro
                 console.log('Iniciando proceso de registro para:', email);
@@ -135,45 +108,52 @@ module.exports = async function handler(req, res) {
                 );
 
                 console.log('Usuario insertado exitosamente');
-                const newUser = result.rows[0];
-
-                const token = jwt.sign(
-                    {
-                        userId: newUser.id,
-                        email: newUser.email,
-                        username: newUser.username
-                    },
-                    process.env.JWT_SECRET || 'storyup-secret-key',
-                    { expiresIn: '7d' }
-                );
-
-                return res.json({
-                    token,
-                    user: {
-                        id: newUser.id,
-                        email: newUser.email,
-                        username: newUser.username,
-                        name: newUser.name,
-                        avatar: newUser.avatar,
-                        bio: newUser.bio,
-                        userType: newUser.user_type,
-                        school: newUser.school,
-                        grade: newUser.grade,
-                        followers: newUser.followers,
-                        following: newUser.following,
-                        isVerified: newUser.is_verified,
-                        centro_escolar: newUser.centro_escolar
-                    }
-                });
+                user = result.rows[0];
             }
+
+            // Emitir JWT como cookie HTTP Only
+            const token = jwt.sign(
+                {
+                    userId: user.id,
+                    email: user.email,
+                    username: user.username
+                },
+                process.env.JWT_SECRET || 'storyup-secret-key',
+                { expiresIn: '7d' }
+            );
+
+            // Set cookie (secure solo en producción)
+            res.setHeader('Set-Cookie', `storyup_token=${token}; HttpOnly; Path=/; Max-Age=${7 * 24 * 60 * 60}; SameSite=Lax${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`);
+
+            return res.json({
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    username: user.username,
+                    name: user.name,
+                    avatar: user.avatar,
+                    bio: user.bio,
+                    userType: user.user_type,
+                    school: user.school,
+                    grade: user.grade,
+                    followers: user.followers,
+                    following: user.following,
+                    isVerified: user.is_verified,
+                    centro_escolar: user.centro_escolar
+                }
+            });
         } else if (req.method === 'GET') {
-            // Obtener perfil de usuario
-            const authHeader = req.headers.authorization;
-            if (!authHeader) {
-                return res.status(401).json({ error: 'Token de autorización requerido' });
+            // Obtener perfil de usuario desde cookie
+            const cookie = req.headers.cookie;
+            if (!cookie) {
+                return res.status(401).json({ error: 'Cookie de autenticación requerida' });
             }
-
-            const token = authHeader.split(' ')[1];
+            // Extraer token de la cookie
+            const match = cookie.match(/storyup_token=([^;]+)/);
+            if (!match) {
+                return res.status(401).json({ error: 'Token no encontrado en cookie' });
+            }
+            const token = match[1];
 
             try {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET || 'storyup-secret-key');

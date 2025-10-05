@@ -9,10 +9,13 @@ import { useAuth } from '../App';
 
 export default function ProfilePage() {
     const { user } = useAuth();
+    console.log('USER CONTEXT:', user);
     const [chatMessage, setChatMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [schoolCenter, setSchoolCenter] = useState('');
     const [schoolCenterSaved, setSchoolCenterSaved] = useState(false);
+    const [likes, setLikes] = useState(0);
+    const [likesBreakdown, setLikesBreakdown] = useState({ storyLikes: 0, panelLikes: 0, contestLikes: 0 });
 
     // Leer centro escolar desde la API al cargar el perfil
     React.useEffect(() => {
@@ -27,6 +30,17 @@ export default function ProfilePage() {
                         setSchoolCenter('');
                         setSchoolCenterSaved(false);
                     }
+                });
+            // Consultar likes reales
+            fetch(`/api/user/likes?id=${user.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    setLikes(data.totalLikes || 0);
+                    setLikesBreakdown({
+                        storyLikes: data.storyLikes || 0,
+                        panelLikes: data.panelLikes || 0,
+                        contestLikes: data.contestLikes || 0
+                    });
                 });
         }
     }, [user?.id]);
@@ -48,7 +62,7 @@ export default function ProfilePage() {
         email: user?.email || '',
         username: user?.username || '',
         role: user?.role || 'user',
-        likes: user?.likes || 0,
+        likes,
         trophies: user?.trophies || [],
         friends: user?.friends || []
     };
@@ -132,6 +146,9 @@ export default function ProfilePage() {
                                                 Guardar centro escolar
                                             </Button>
                                         )}
+                                        {!schoolCenter && !schoolCenterSaved && (
+                                            <div className="mt-2 text-red-600 font-bold">No se detecta el campo centro escolar. Si ves este mensaje, contacta soporte.</div>
+                                        )}
                                     </>
                                 )}
                             </div>
@@ -150,6 +167,9 @@ export default function ProfilePage() {
                             <div className="text-center">
                                 <div className="text-2xl font-bold text-blue-600">{profileData.likes}</div>
                                 <div className="text-sm text-gray-600">Likes</div>
+                                <div className="text-xs text-gray-400 mt-1">
+                                    <span title={`Historias: ${likesBreakdown.storyLikes}\nPanel: ${likesBreakdown.panelLikes}\nConcursos: ${likesBreakdown.contestLikes}`}>Desglose: {likesBreakdown.storyLikes} + {likesBreakdown.panelLikes} + {likesBreakdown.contestLikes}</span>
+                                </div>
                             </div>
                             <div className="text-center">
                                 <div className="text-2xl font-bold text-green-600">{profileData.friends.length}</div>

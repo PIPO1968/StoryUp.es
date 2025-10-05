@@ -7,6 +7,32 @@ function getClient() {
 }
 
 module.exports = async function handler(req, res) {
+    // Endpoint para obtener el total de likes del usuario
+    if (req.method === 'GET' && req.url.includes('/likes')) {
+        const client = getClient();
+        await client.connect();
+        const { id } = req.query;
+        if (!id) {
+            await client.end();
+            return res.status(400).json({ error: 'Falta el id de usuario' });
+        }
+        // Likes en historias
+        const storiesLikesRes = await client.query('SELECT SUM(likes) as story_likes FROM historias WHERE author_id = $1', [id]);
+        const storyLikes = storiesLikesRes.rows[0]?.story_likes || 0;
+        // Likes manuales (panel)
+        const userRes = await client.query('SELECT likes FROM usuarios WHERE id = $1', [id]);
+        const panelLikes = userRes.rows[0]?.likes || 0;
+        // Likes en concursos
+        const contestRes = await client.query('SELECT SUM(likes) as contest_likes FROM concursos WHERE ganador_id = $1', [id]);
+        const contestLikes = contestRes.rows[0]?.contest_likes || 0;
+        await client.end();
+        return res.status(200).json({
+            totalLikes: storyLikes + panelLikes + contestLikes,
+            storyLikes,
+            panelLikes,
+            contestLikes
+        });
+    }
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');

@@ -36,17 +36,10 @@ function App() {
     useEffect(() => {
         const loadUser = async () => {
             try {
-                // Obtener token JWT del almacenamiento local
-                const token = localStorage.getItem('auth_token');
-                if (!token) {
-                    setUser(null);
-                    setLoading(false);
-                    return;
-                }
-                // Consultar usuario real desde la API usando el token
+                // Consultar usuario real desde la API usando la cookie HTTP Only
                 const res = await fetch('/api/auth', {
                     method: 'GET',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    credentials: 'include'
                 });
                 const data = await res.json();
                 if (data.user) {

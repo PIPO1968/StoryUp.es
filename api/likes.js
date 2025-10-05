@@ -38,15 +38,16 @@ module.exports = async function handler(req, res) {
                 return res.status(400).json({ error: 'ID de historia requerido' });
             }
 
-            // Verificar que la historia existe
+            // Verificar que la historia existe y obtener el autor
             const storyCheck = await client.query(
-                'SELECT id FROM stories WHERE id = $1',
+                'SELECT id, user_id FROM stories WHERE id = $1',
                 [storyId]
             );
 
             if (storyCheck.rows.length === 0) {
                 return res.status(404).json({ error: 'Historia no encontrada' });
             }
+            const authorId = storyCheck.rows[0].user_id;
 
             try {
                 // Intentar agregar el like
@@ -54,6 +55,9 @@ module.exports = async function handler(req, res) {
                     INSERT INTO story_likes (story_id, user_id, username)
                     VALUES ($1, $2, $3)
                 `, [storyId, decoded.userId, decoded.username]);
+
+                // Actualizar likes del autor
+                await client.query('UPDATE usuarios SET likes = likes + 1 WHERE id = $1', [authorId]);
 
                 // Obtener el nuevo conteo de likes
                 const likesResult = await client.query(
@@ -87,10 +91,23 @@ module.exports = async function handler(req, res) {
                 return res.status(400).json({ error: 'ID de historia requerido' });
             }
 
+            // Verificar que la historia existe y obtener el autor
+            const storyCheck = await client.query(
+                'SELECT id, user_id FROM stories WHERE id = $1',
+                [storyId]
+            );
+            if (storyCheck.rows.length === 0) {
+                return res.status(404).json({ error: 'Historia no encontrada' });
+            }
+            const authorId = storyCheck.rows[0].user_id;
+
             await client.query(`
                 DELETE FROM story_likes 
                 WHERE story_id = $1 AND user_id = $2
             `, [storyId, decoded.userId]);
+
+            // Actualizar likes del autor
+            await client.query('UPDATE usuarios SET likes = GREATEST(0, likes - 1) WHERE id = $1', [authorId]);
 
             // Obtener el nuevo conteo de likes
             const likesResult = await client.query(
