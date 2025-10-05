@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { BookOpen, User } from "lucide-react";
+import type { StoryPreview } from "@/lib/storiesManager";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import { useLanguage } from '../lib/LanguageContext';
 import { getStoriesPreview, getStoriesStats } from '../lib/storiesManager';
-import type { StoryPreview } from '../lib/storiesManager';
+// import duplicado eliminado
 
 export default function StoriesPage() {
     // Inicialmente sin historias - lista vacía con numeración
-    const [stories] = useState<Story[]>([]);
+    const [stories] = useState<StoryPreview[]>([]);
 
     const renderEmptyStories = () => {
         const emptySlots = [];
@@ -64,7 +68,7 @@ export default function StoriesPage() {
                                         </h3>
                                         <div className="flex items-center text-sm text-gray-600 mt-1">
                                             <User className="w-4 h-4 mr-1" />
-                                            <span>{story.author}</span>
+                                            <span>{story.author?.username || story.author?.name || "Autor desconocido"}</span>
                                             <span className="mx-2">•</span>
                                             <span>{story.createdAt}</span>
                                         </div>
