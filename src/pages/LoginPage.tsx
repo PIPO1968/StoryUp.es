@@ -300,11 +300,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     <button
                         type="button"
                         onClick={() => {
-                            localStorage.clear();
                             window.location.reload();
                         }}
                         className="text-xs text-gray-400 hover:text-gray-600 underline"
-                        title="Limpiar datos y reiniciar"
+                        title="Reiniciar aplicación"
                     >
                         ¿Problemas? Reiniciar aplicación
                     </button>

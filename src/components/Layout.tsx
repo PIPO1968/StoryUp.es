@@ -51,7 +51,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('auth_token');
         setUser(null);
         navigate('/');
     };
