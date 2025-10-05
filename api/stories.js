@@ -1,5 +1,7 @@
+
 const { Client } = require('pg');
 import jwt from 'jsonwebtoken';
+const { assignTrophies } = require('./trophyHelper');
 
 function getClient() {
     return new Client({
@@ -127,6 +129,9 @@ module.exports = async function handler(req, res) {
             `, [decoded.userId, decoded.username, title, content, image, visibility, isNews]);
 
             const story = result.rows[0];
+
+            // Asignar trofeos automáticamente tras crear historia
+            await assignTrophies(client, decoded.userId);
 
             return res.json({
                 story: {
