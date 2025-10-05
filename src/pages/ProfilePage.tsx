@@ -455,7 +455,34 @@ export default function ProfilePage() {
                         </CardHeader>
                         <CardContent>
                             <p className="text-gray-600">Publica novedades para la comunidad.</p>
-                            <Button className="mt-4">Crear noticia</Button>
+                            <form className="space-y-3 mt-2" onSubmit={async (e) => {
+                                e.preventDefault();
+                                const form = e.target as HTMLFormElement;
+                                const data = new FormData(form);
+                                const news = {
+                                    title: data.get('title') as string,
+                                    content: data.get('content') as string,
+                                    author: user?.username || '',
+                                    createdAt: new Date().toISOString()
+                                };
+                                const res = await fetch('/api/news', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(news)
+                                });
+                                if (res.ok) {
+                                    alert('Noticia publicada correctamente');
+                                    form.reset();
+                                    // Opcional: redirigir a la página de noticias
+                                    navigate('/news');
+                                } else {
+                                    alert('Error al publicar la noticia');
+                                }
+                            }}>
+                                <Input name="title" placeholder="Título de la noticia" required />
+                                <Textarea name="content" placeholder="Contenido de la noticia..." required />
+                                <Button className="mt-2" type="submit">Publicar Noticia</Button>
+                            </form>
                         </CardContent>
                     </Card>
                     <Card>
