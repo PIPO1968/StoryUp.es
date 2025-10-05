@@ -39,8 +39,9 @@ export interface Trophy {
     description: string;
     icon: string;
     color: string;
-    earnedAt: Date;
+    earnedAt?: Date;
     category?: 'academic' | 'social' | 'participation' | 'behavior';
+    likes?: number;
 }
 
 export interface Contest {
