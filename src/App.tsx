@@ -52,7 +52,30 @@ export const useAuth = (): AuthContextType => {
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const res = await fetch('/api/auth', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                if (data.user) {
+                    setUser(data.user);
+                } else {
+                    setUser(null);
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadUser();
+    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
@@ -85,7 +108,6 @@ function App() {
         );
     }
 
-    // No hay usuario logueado - mostrar login
     return (
         <LanguageProvider>
             <AuthContext.Provider value={{ user, setUser }}>
