@@ -16,7 +16,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         email: '',
         password: '',
         name: '',
-        role: 'user'
+        role: 'student' as 'admin' | 'teacher' | 'student'
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -57,7 +57,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            const user = await registerUser(registerData);
+            // Validar el rol
+            const allowedRoles: Array<'admin' | 'teacher' | 'student'> = ['admin', 'teacher', 'student'];
+            const role: 'admin' | 'teacher' | 'student' = allowedRoles.includes(registerData.role as any)
+                ? (registerData.role as 'admin' | 'teacher' | 'student')
+                : 'student';
+            const user = await registerUser({ ...registerData, role });
             onLogin(user);
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');

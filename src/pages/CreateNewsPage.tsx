@@ -31,7 +31,7 @@ const CreateNewsPage: React.FC = () => {
                         onClick={() => navigate('/news')}
                         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                        ← Volver a Noticias
+                         Volver a Noticias
                     </button>
                 </div>
             </div>
@@ -164,7 +164,7 @@ const CreateNewsPage: React.FC = () => {
                     id: user?.id || user?.username,
                     username: user?.username,
                     name: user?.name,
-                    role: user?.role
+                    role: (user?.role === 'admin' || user?.role === 'teacher') ? user.role : 'teacher' // Solo 'admin' o 'teacher'
                 },
                 likes: 0,
                 likedBy: [],
