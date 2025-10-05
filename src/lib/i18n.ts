@@ -404,19 +404,14 @@ export const getTranslations = (language: string): Translations => {
     return translations[language] || translations.es;
 };
 
-// Función para obtener el idioma guardado desde la base de datos del usuario
-export const getSavedLanguage = (user: { language?: string }): string => {
-    return user.language || 'es';
+// Función para obtener el idioma guardado
+export const getSavedLanguage = (): string => {
+    return localStorage.getItem('storyup_language') || 'es';
 };
 
-// Función para guardar el idioma seleccionado en la base de datos del usuario
-export const saveLanguage = async (userId: string, language: string): Promise<void> => {
-    // Implementar llamada a la API para actualizar el idioma del usuario
-    await fetch(`/api/user/${userId}/language`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language })
-    });
+// Función para guardar el idioma seleccionado
+export const saveLanguage = (language: string): void => {
+    localStorage.setItem('storyup_language', language);
 };
 
 // Función para formatear fechas según el idioma

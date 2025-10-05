@@ -4,17 +4,6 @@ import { useAuth } from '../App';
 import { useLanguage } from '../lib/LanguageContext';
 import { getStoriesPreview, getStoriesStats } from '../lib/storiesManager';
 import type { StoryPreview } from '../lib/storiesManager';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, User } from 'lucide-react';
-
-interface Story {
-    id: string;
-    title: string;
-    author: string;
-    createdAt: string;
-    likes: number;
-}
 
 export default function StoriesPage() {
     // Inicialmente sin historias - lista vacía con numeración

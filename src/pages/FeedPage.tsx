@@ -42,10 +42,10 @@ const FeedPage: React.FC = () => {
 
     const fetchStories = async () => {
         try {
-            // Eliminar referencia a localStorage. Usar API/DB.
+            const token = localStorage.getItem('auth_token');
             const response = await fetch('/api/stories', {
                 headers: {
-                    'Authorization': user ? `Bearer ${user.id}` : '',
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -66,13 +66,13 @@ const FeedPage: React.FC = () => {
 
     const handleLike = async (storyId: string, isLiked: boolean) => {
         try {
-            // Eliminar referencia a localStorage. Usar API/DB.
+            const token = localStorage.getItem('auth_token');
             const method = isLiked ? 'DELETE' : 'POST';
 
             const response = await fetch('/api/likes', {
                 method,
                 headers: {
-                    'Authorization': user ? `Bearer ${user.id}` : '',
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ story_id: storyId })

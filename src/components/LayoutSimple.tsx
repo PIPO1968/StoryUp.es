@@ -73,7 +73,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }, [user]);
 
     const handleLogout = () => {
-        // Eliminar referencia a localStorage. Usar API/DB.
+        localStorage.removeItem('auth_token');
         setUser(null);
         navigate('/');
     };

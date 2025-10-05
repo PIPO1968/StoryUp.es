@@ -1,34 +1,8 @@
 import React, { useState } from 'react';
-
-interface UserDB {
-    id: string;
-    username: string;
-    password: string;
-    email: string;
-    role: 'admin' | 'teacher' | 'student';
-    name: string;
-    nickname?: string;
-    avatar?: string;
-    likes?: number;
-    trophies?: any[];
-    friends?: any[];
-}
-
-interface User {
-    id: string;
-    username: string;
-    email: string;
-    role: 'admin' | 'teacher' | 'student';
-    name: string;
-    nickname?: string;
-    avatar?: string;
-    likes?: number;
-    trophies?: any[];
-    friends?: any[];
-}
+import { loginUser, registerUser } from '../lib/auth';
 
 interface LoginPageProps {
-    onLogin: (user: User) => void;
+    onLogin: (user: any) => void;
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
@@ -65,24 +39,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            // Autenticación contra la API real
-            const response = await fetch('/api/auth', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: loginData.email,
-                    password: loginData.password
-                })
+            const user = await loginUser({
+                email: loginData.email,
+                password: loginData.password
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message || 'Credenciales incorrectas');
-                setLoading(false);
-                return;
-            }
-            const user = await response.json();
             onLogin(user);
         } catch (err: any) {
             setError(err.message || 'Error al iniciar sesión');
@@ -97,8 +57,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            // Por ahora, deshabilitar registro - solo usuarios existentes
-            setError('El registro está deshabilitado. Use usuarios existentes: admin/admin123 o profesor/prof123');
+            const user = await registerUser(registerData);
+            onLogin(user);
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');
         } finally {
@@ -286,7 +246,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                     <button
                         type="button"
                         onClick={() => {
-                            // Eliminar referencia a localStorage. Usar API/DB.
+                            localStorage.clear();
                             window.location.reload();
                         }}
                         className="text-xs text-gray-400 hover:text-gray-600 underline"

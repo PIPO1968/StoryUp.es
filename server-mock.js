@@ -18,7 +18,7 @@ let users = [
         userType: 'usuario'
     }
 ];
-let totalUsuarios = 2;
+let totalUsuarios = 1247;
 let usuariosOnline = 89;
 
 // Rutas API simuladas

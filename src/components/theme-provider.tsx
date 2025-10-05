@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAuth } from '../App'
 
 type Theme = 'dark' | 'light' | 'system'
 
@@ -27,9 +26,9 @@ export function ThemeProvider({
     storageKey = 'vite-ui-theme',
     ...props
 }: ThemeProviderProps) {
-    // Leer el tema desde la base de datos del usuario autenticado
-    const { user } = useAuth();
-    const [theme, setTheme] = useState<Theme>(user?.theme || defaultTheme)
+    const [theme, setTheme] = useState<Theme>(
+        () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    )
 
     useEffect(() => {
         const root = window.document.documentElement
@@ -51,15 +50,9 @@ export function ThemeProvider({
 
     const value = {
         theme,
-        setTheme: async (newTheme: Theme) => {
-            setTheme(newTheme)
-            if (user?.id) {
-                await fetch(`/api/user/${user.id}/theme`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ theme: newTheme })
-                })
-            }
+        setTheme: (theme: Theme) => {
+            localStorage.setItem(storageKey, theme)
+            setTheme(theme)
         },
     }
 
