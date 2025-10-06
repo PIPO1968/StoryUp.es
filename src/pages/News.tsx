@@ -1,7 +1,61 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Newspaper, Calendar, User, ExternalLink } from 'lucide-react';
+import { Newspaper, Calendar, User, MessageCircle } from 'lucide-react';
+import { useAuth } from '../App';
+const { user } = useAuth?.() || {};
+const jwtToken = user?.jwt || user?.token || '';
+const [activeNewsId, setActiveNewsId] = useState<string | null>(null);
+const [comments, setComments] = useState<{ [key: string]: any[] }>({});
+const [commentInput, setCommentInput] = useState('');
+const [commentLoading, setCommentLoading] = useState(false);
+const [commentError, setCommentError] = useState('');
+
+// Cargar comentarios de una noticia
+const fetchComments = async (newsId: string) => {
+    try {
+        const res = await fetch(`/api/comments?storyId=${newsId}`);
+        const data = await res.json();
+        setComments(prev => ({ ...prev, [newsId]: data.comments || [] }));
+    } catch {
+        setComments(prev => ({ ...prev, [newsId]: [] }));
+    }
+};
+
+// Abrir/cerrar comentarios y cargar si es necesario
+const handleToggleComments = (newsId: string) => {
+    if (activeNewsId === newsId) {
+        setActiveNewsId(null);
+    } else {
+        setActiveNewsId(newsId);
+        if (!comments[newsId]) fetchComments(newsId);
+    }
+};
+
+// Enviar comentario
+const handleAddComment = async (newsId: string) => {
+    if (!commentInput.trim()) return;
+    setCommentLoading(true);
+    setCommentError('');
+    try {
+        const res = await fetch('/api/comments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {})
+            },
+            body: JSON.stringify({ storyId: newsId, content: commentInput })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error al comentar');
+        setCommentInput('');
+        fetchComments(newsId);
+    } catch (err: any) {
+        setCommentError(err.message);
+    } finally {
+        setCommentLoading(false);
+    }
+};
 
 
 
@@ -95,11 +149,49 @@ export default function News() {
                                         <span>{formatDate(item.created_at)}</span>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="sm">
-                                    <ExternalLink className="h-4 w-4 mr-1" />
-                                    Leer más
+                                <Button variant="ghost" size="sm" onClick={() => handleToggleComments(item.id)}>
+                                    <MessageCircle className="h-4 w-4 mr-1" />
+                                    Comentar
                                 </Button>
                             </div>
+                            {/* Área de comentarios */}
+                            {activeNewsId === item.id && (
+                                <div className="mt-6 border-t pt-4">
+                                    <h4 className="font-semibold mb-2 text-gray-700">Comentarios</h4>
+                                    {commentLoading && <div className="text-sm text-gray-500">Enviando comentario...</div>}
+                                    {commentError && <div className="text-sm text-red-500">{commentError}</div>}
+                                    <div className="space-y-3 mb-4">
+                                        {(comments[item.id] || []).length === 0 && <div className="text-sm text-gray-400">No hay comentarios aún.</div>}
+                                        {(comments[item.id] || []).map((c: any) => (
+                                            <div key={c.id} className="bg-gray-50 border rounded p-2">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <User className="h-4 w-4" />
+                                                    <span className="font-medium text-gray-700">{c.username || c.name}</span>
+                                                    <span className="text-xs text-gray-400 ml-2">{formatDate(c.createdAt)}</span>
+                                                </div>
+                                                <div className="text-gray-700 text-sm">{c.content}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {user ? (
+                                        <form className="flex gap-2" onSubmit={e => { e.preventDefault(); handleAddComment(item.id); }}>
+                                            <input
+                                                type="text"
+                                                value={commentInput}
+                                                onChange={e => setCommentInput(e.target.value)}
+                                                className="flex-1 border rounded px-3 py-2 text-sm"
+                                                placeholder="Escribe un comentario..."
+                                                disabled={commentLoading}
+                                            />
+                                            <Button type="submit" disabled={commentLoading || !commentInput.trim()}>
+                                                Publicar
+                                            </Button>
+                                        </form>
+                                    ) : (
+                                        <div className="text-sm text-gray-500">Inicia sesión para comentar.</div>
+                                    )}
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 ))}
@@ -141,11 +233,49 @@ export default function News() {
                                         <span>{formatDate(item.created_at)}</span>
                                     </div>
                                 </div>
-                                <Button variant="ghost" size="sm">
-                                    <ExternalLink className="h-4 w-4 mr-1" />
-                                    Leer más
+                                <Button variant="ghost" size="sm" onClick={() => handleToggleComments(item.id)}>
+                                    <MessageCircle className="h-4 w-4 mr-1" />
+                                    Comentar
                                 </Button>
                             </div>
+                            {/* Área de comentarios */}
+                            {activeNewsId === item.id && (
+                                <div className="mt-6 border-t pt-4">
+                                    <h4 className="font-semibold mb-2 text-gray-700">Comentarios</h4>
+                                    {commentLoading && <div className="text-sm text-gray-500">Enviando comentario...</div>}
+                                    {commentError && <div className="text-sm text-red-500">{commentError}</div>}
+                                    <div className="space-y-3 mb-4">
+                                        {(comments[item.id] || []).length === 0 && <div className="text-sm text-gray-400">No hay comentarios aún.</div>}
+                                        {(comments[item.id] || []).map((c: any) => (
+                                            <div key={c.id} className="bg-gray-50 border rounded p-2">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <User className="h-4 w-4" />
+                                                    <span className="font-medium text-gray-700">{c.username || c.name}</span>
+                                                    <span className="text-xs text-gray-400 ml-2">{formatDate(c.createdAt)}</span>
+                                                </div>
+                                                <div className="text-gray-700 text-sm">{c.content}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    {user ? (
+                                        <form className="flex gap-2" onSubmit={e => { e.preventDefault(); handleAddComment(item.id); }}>
+                                            <input
+                                                type="text"
+                                                value={commentInput}
+                                                onChange={e => setCommentInput(e.target.value)}
+                                                className="flex-1 border rounded px-3 py-2 text-sm"
+                                                placeholder="Escribe un comentario..."
+                                                disabled={commentLoading}
+                                            />
+                                            <Button type="submit" disabled={commentLoading || !commentInput.trim()}>
+                                                Publicar
+                                            </Button>
+                                        </form>
+                                    ) : (
+                                        <div className="text-sm text-gray-500">Inicia sesión para comentar.</div>
+                                    )}
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 ))}
