@@ -1,3 +1,38 @@
+// Mock: obtener estadísticas de usuario
+export const getUserStats = () => {
+    return {
+        teacher: 1,
+        user: 1,
+        newUsersThisMonth: 0,
+        totalUsers: 2
+    };
+};
+
+// Mock: obtener usuarios almacenados
+export const getStoredUsers = () => {
+    return [
+        {
+            id: '4',
+            nombre: 'PIPO68',
+            email: 'pipocanarias@hotmail.com',
+            username: 'PIPO68',
+            role: 'user'
+        },
+        {
+            id: '7',
+            nombre: 'StoryUp',
+            email: 'piporgz68@gmail.com',
+            username: 'StoryUp',
+            role: 'teacher'
+        }
+    ];
+};
+
+// Mock: actualizar usuario
+export const updateUser = async (userData: any) => {
+    // Aquí iría la lógica real de actualización vía backend
+    return { success: true, user: userData };
+};
 
 // Autenticación real contra backend Vercel/Neon
 const API_URL = '/api/auth';
