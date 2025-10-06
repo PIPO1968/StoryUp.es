@@ -5,67 +5,44 @@ import { Newspaper, Calendar, User, ExternalLink } from 'lucide-react';
 
 
 
+import React, { useEffect, useState } from 'react';
+
 export default function News() {
-    const news = [
-        {
-            id: 1,
-            title: 'Nuevo Sistema de Trofeos Disponible',
-            content: 'Hemos lanzado un sistema completamente renovado de trofeos y logros. Ahora puedes conseguir reconocimientos por tu participación activa en la comunidad.',
-            author: 'Administración StoryUp',
-            date: '2024-01-15',
-            category: 'Actualización',
-            isImportant: true
-        },
-        {
-            id: 2,
-            title: 'Concurso de Escritura Creativa',
-            content: 'Participa en nuestro concurso mensual de escritura creativa. Los ganadores recibirán trofeos especiales y reconocimiento en la comunidad.',
-            author: 'Prof. María García',
-            date: '2024-01-14',
-            category: 'Concurso',
-            isImportant: false
-        },
-        {
-            id: 3,
-            title: 'Nuevas Funciones de Chat',
-            content: 'El sistema de chat ha sido mejorado con nuevas funciones de formato de texto, envío de imágenes y videos de YouTube.',
-            author: 'Equipo Técnico',
-            date: '2024-01-13',
-            category: 'Mejora',
-            isImportant: false
-        },
-        {
-            id: 4,
-            title: 'Mantenimiento Programado',
-            content: 'El próximo sábado realizaremos mantenimiento en la plataforma entre las 2:00 y 4:00 AM. Durante este tiempo el servicio no estará disponible.',
-            author: 'Administración StoryUp',
-            date: '2024-01-12',
-            category: 'Mantenimiento',
-            isImportant: true
-        },
-        {
-            id: 5,
-            title: 'Celebramos 1000 Usuarios',
-            content: '¡Hemos alcanzado los 1000 usuarios registrados! Gracias a toda la comunidad por hacer de StoryUp un lugar increíble para compartir y aprender.',
-            author: 'Administración StoryUp',
-            date: '2024-01-10',
-            category: 'Celebración',
-            isImportant: false
-        }
-    ];
+    const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchNews = async () => {
+            try {
+                const res = await fetch('/api/news');
+                if (!res.ok) throw new Error('Error al cargar noticias');
+                const data = await res.json();
+                setNews(data.news || []);
+            } catch (err) {
+                setError('No se pudieron cargar las noticias');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchNews();
+    }, []);
 
     const getCategoryColor = (category: string) => {
         const colors = {
-            'Actualización': 'bg-blue-100 text-blue-800',
-            'Concurso': 'bg-green-100 text-green-800',
-            'Mejora': 'bg-purple-100 text-purple-800',
-            'Mantenimiento': 'bg-orange-100 text-orange-800',
-            'Celebración': 'bg-pink-100 text-pink-800'
+            'StoryUp': 'bg-indigo-100 text-indigo-800',
+            'Educación': 'bg-blue-100 text-blue-800',
+            'Tecnología': 'bg-purple-100 text-purple-800',
+            'Cultura': 'bg-pink-100 text-pink-800',
+            'Deportes': 'bg-green-100 text-green-800',
+            'Salud': 'bg-red-100 text-red-800',
+            'Comunidad': 'bg-gray-100 text-gray-800',
         };
         return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800';
     };
 
     const formatDate = (dateString: string) => {
+        if (!dateString) return '';
         const date = new Date(dateString);
         return date.toLocaleDateString('es-ES', {
             year: 'numeric',
@@ -74,6 +51,12 @@ export default function News() {
         });
     };
 
+    if (loading) {
+        return <div className="text-center py-12">Cargando noticias...</div>;
+    }
+    if (error) {
+        return <div className="text-center py-12 text-red-600">{error}</div>;
+    }
     return (
         <div className="max-w-4xl mx-auto space-y-6">
             {/* Header */}
@@ -84,13 +67,13 @@ export default function News() {
 
             {/* Noticias importantes destacadas */}
             <div className="space-y-4">
-                {news.filter(item => item.isImportant).map((item) => (
-                    <Card key={item.id} className="border-l-4 border-l-red-500 bg-red-50">
+                {news.filter((item: any) => item.featured).map((item: any) => (
+                    <Card key={item.id} className="border-l-4 border-l-yellow-500 bg-yellow-50">
                         <CardContent className="p-6">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <Badge className="bg-red-100 text-red-800">Importante</Badge>
+                                        <Badge className="bg-yellow-100 text-yellow-800">Destacada</Badge>
                                         <Badge className={getCategoryColor(item.category)}>
                                             {item.category}
                                         </Badge>
@@ -109,7 +92,7 @@ export default function News() {
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <Calendar className="h-4 w-4" />
-                                        <span>{formatDate(item.date)}</span>
+                                        <span>{formatDate(item.created_at)}</span>
                                     </div>
                                 </div>
                                 <Button variant="ghost" size="sm">
@@ -128,14 +111,14 @@ export default function News() {
                     Todas las Noticias
                 </h2>
 
-                {news.map((item) => (
+                {news.map((item: any) => (
                     <Card key={item.id} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-6">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-2">
-                                        {item.isImportant && (
-                                            <Badge className="bg-red-100 text-red-800">Importante</Badge>
+                                        {item.featured && (
+                                            <Badge className="bg-yellow-100 text-yellow-800">Destacada</Badge>
                                         )}
                                         <Badge className={getCategoryColor(item.category)}>
                                             {item.category}
@@ -155,7 +138,7 @@ export default function News() {
                                     </div>
                                     <div className="flex items-center gap-1">
                                         <Calendar className="h-4 w-4" />
-                                        <span>{formatDate(item.date)}</span>
+                                        <span>{formatDate(item.created_at)}</span>
                                     </div>
                                 </div>
                                 <Button variant="ghost" size="sm">
