@@ -36,6 +36,8 @@ interface User {
 interface AuthContextType {
     user: User | null;
     setUser: (user: User | null) => void;
+    token: string | null;
+    setToken: (token: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,6 +54,7 @@ export const useAuth = (): AuthContextType => {
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
+    const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -64,12 +67,15 @@ function App() {
                 const data = await res.json();
                 if (data.user) {
                     setUser(data.user);
+                    setToken(data.token || null);
                 } else {
                     setUser(null);
+                    setToken(null);
                 }
             } catch (error) {
                 console.error('Error loading user:', error);
                 setUser(null);
+                setToken(null);
             } finally {
                 setLoading(false);
             }
@@ -84,7 +90,7 @@ function App() {
     if (user) {
         return (
             <LanguageProvider>
-                <AuthContext.Provider value={{ user, setUser }}>
+                <AuthContext.Provider value={{ user, setUser, token, setToken }}>
                     <Router>
                         <Layout>
                             <Routes>
@@ -110,7 +116,7 @@ function App() {
 
     return (
         <LanguageProvider>
-            <AuthContext.Provider value={{ user, setUser }}>
+            <AuthContext.Provider value={{ user, setUser, token, setToken }}>
                 <LoginPage onLogin={setUser} />
             </AuthContext.Provider>
         </LanguageProvider>
