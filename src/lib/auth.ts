@@ -16,14 +16,20 @@ export const getStoredUsers = () => {
             nombre: 'PIPO68',
             email: 'pipocanarias@hotmail.com',
             username: 'PIPO68',
-            role: 'user'
+            role: 'user',
+            createdAt: '2025-10-01T10:00:00Z',
+            name: 'PIPO68',
+            isOnline: true
         },
         {
             id: '7',
             nombre: 'StoryUp',
             email: 'piporgz68@gmail.com',
             username: 'StoryUp',
-            role: 'teacher'
+            role: 'teacher',
+            createdAt: '2025-09-15T12:00:00Z',
+            name: 'StoryUp',
+            isOnline: false
         }
     ];
 };
