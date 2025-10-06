@@ -8,7 +8,7 @@ import { useAuth } from '@/App';
 
 const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
-    const { setUser } = useAuth();
+    const { setUser, setToken } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
         name: '',
@@ -59,10 +59,9 @@ const RegisterPage: React.FC = () => {
                 role
             };
 
-            const user = await registerUser(userData);
-
-            // Actualizar el contexto de autenticación inmediatamente
+            const { user, token } = await registerUser(userData);
             setUser(user);
+            setToken(token);
             navigate('/dashboard'); // Redirigir al dashboard tras registro exitoso
         } catch (err: any) {
             setError(err.message || 'Error al crear la cuenta');
