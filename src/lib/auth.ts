@@ -51,7 +51,7 @@ export const loginUser = async (credentials: { email: string; password: string }
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error de login');
-    return data.user;
+    return { user: data.user, token: data.token };
 };
 
 export const registerUser = async (userData: {
@@ -68,7 +68,7 @@ export const registerUser = async (userData: {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Error de registro');
-    return data.user;
+    return { user: data.user, token: data.token };
 };
 
 export const logoutUser = () => {

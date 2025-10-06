@@ -39,11 +39,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            const user = await loginUser({
+            const { user, token } = await loginUser({
                 email: loginData.email,
                 password: loginData.password
             });
-            onLogin(user);
+            onLogin({ ...user, token });
         } catch (err: any) {
             setError(err.message || 'Error al iniciar sesión');
         } finally {
@@ -62,8 +62,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             const role: 'admin' | 'teacher' | 'student' = allowedRoles.includes(registerData.role as any)
                 ? (registerData.role as 'admin' | 'teacher' | 'student')
                 : 'student';
-            const user = await registerUser({ ...registerData, role });
-            onLogin(user);
+            const { user, token } = await registerUser({ ...registerData, role });
+            onLogin({ ...user, token });
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');
         } finally {
