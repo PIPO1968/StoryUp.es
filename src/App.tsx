@@ -87,6 +87,11 @@ function App() {
         return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;
     }
 
+    const handleLogin = (loginData: any) => {
+        setUser(loginData);
+        setToken(loginData.token || null);
+    };
+
     if (user) {
         return (
             <LanguageProvider>
@@ -117,7 +122,7 @@ function App() {
     return (
         <LanguageProvider>
             <AuthContext.Provider value={{ user, setUser, token, setToken }}>
-                <LoginPage onLogin={setUser} />
+                <LoginPage onLogin={handleLogin} />
             </AuthContext.Provider>
         </LanguageProvider>
     );
