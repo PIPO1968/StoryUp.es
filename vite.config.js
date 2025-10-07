@@ -10,4 +10,7 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'src'),
         },
     },
+    preview: {
+        allowedHosts: ["storyup-es-0cs1.onrender.com"]
+    }
 });
