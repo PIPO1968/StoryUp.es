@@ -33,102 +33,22 @@ export interface StoryPreview {
 
 // Migrar historias existentes para añadir campos nuevos
 export const migrateStoriesWithNewFields = (): void => {
-    try {
-        const stories = localStorage.getItem('storyup_stories');
-        if (stories) {
-            const parsedStories = JSON.parse(stories);
-            let hasChanges = false;
-
-            const migratedStories = parsedStories.map((story: any) => {
-                // Si la historia no tiene los campos nuevos, añadirlos
-                if (!story.type || !story.theme) {
-                    hasChanges = true;
-                    return {
-                        ...story,
-                        type: story.type || 'Ficticia',
-                        theme: story.theme || 'Aventura'
-                    };
-                }
-                return story;
-            });
-
-            if (hasChanges) {
-                localStorage.setItem('storyup_stories', JSON.stringify(migratedStories));
-                console.log('✅ Historias migradas con nuevos campos (type y theme)');
-            }
-        }
-    } catch (error) {
-        console.error('Error migrando historias:', error);
-    }
+    // Implementar migración de historias vía API/DB
+    throw new Error('migrateStoriesWithNewFields debe implementarse con API/DB');
 };
-// Eliminado: migración de historias en localStorage. Usar API/DB.
+
 
 // Limpiar datos de prueba/ficticios (solo datos inválidos, no todas las historias)
 export const clearTestData = (): void => {
-    try {
-        const stories = localStorage.getItem('storyup_stories');
-        if (stories) {
-            const parsedStories = JSON.parse(stories);
-            // Solo mantener historias válidas (no eliminar todas)
-            const validStories = parsedStories.filter((story: any) =>
-                story &&
-                story.id &&
-                story.title &&
-                story.content &&
-                story.author &&
-                story.author.id &&
-                story.author.username &&
-                typeof story.likes === 'number' &&
-                Array.isArray(story.likedBy) &&
-                story.createdAt
-            ).map((story: any) => ({
-                ...story,
-                // Asignar valores por defecto para campos nuevos si no existen
-                type: story.type || 'Ficticia',
-                theme: story.theme || 'Aventura'
-            }));
-
-            if (validStories.length !== parsedStories.length) {
-                localStorage.setItem('storyup_stories', JSON.stringify(validStories));
-                console.log('Historias inválidas eliminadas, historias válidas preservadas');
-            }
-        }
-    } catch (error) {
-        console.error('Error limpiando datos de prueba:', error);
-    }
+    // Implementar limpieza de historias vía API/DB
+    throw new Error('clearTestData debe implementarse con API/DB');
 };
-// Eliminado: limpieza de historias en localStorage. Usar API/DB.
+
 
 // Obtener todas las historias ordenadas por fecha (más recientes primero)
 export const getAllStories = (): Story[] => {
-    try {
-        const stories = localStorage.getItem('storyup_stories');
-        if (stories) {
-            const parsedStories: Story[] = JSON.parse(stories);
-            // Verificar que las historias tengan la estructura correcta
-            const validStories = parsedStories.filter(story =>
-                story &&
-                story.id &&
-                story.title &&
-                story.content &&
-                story.author &&
-                story.author.id &&
-                story.author.username &&
-                typeof story.likes === 'number' &&
-                Array.isArray(story.likedBy) &&
-                story.createdAt
-            );
-
-            // Ordenar por fecha de creación (más recientes primero)
-            return validStories.sort((a, b) =>
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
-        }
-        return [];
-    } catch (error) {
-        console.error('Error obteniendo historias:', error);
-        return [];
-    }
+    // TODO: Reemplazar por llamada a la API/DB
+    return [];
 };
 
 // Obtener vista previa de historias para la lista
@@ -153,59 +73,19 @@ export const getStoryById = (storyId: string): Story | null => {
 
 // Guardar una nueva historia
 export const saveStory = (story: Omit<Story, 'id' | 'createdAt' | 'updatedAt'>): Story => {
-    const stories = getAllStories();
-
-    const newStory: Story = {
+    // TODO: Reemplazar por llamada a la API/DB
+    return {
         ...story,
         id: generateStoryId(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
-
-    stories.unshift(newStory); // Agregar al inicio para que aparezca primera
-
-    try {
-        localStorage.setItem('storyup_stories', JSON.stringify(stories));
-        return newStory;
-    } catch (error) {
-        console.error('Error guardando historia:', error);
-        throw error;
-    }
 };
 
 // Dar/quitar like a una historia
 export const toggleStoryLike = (storyId: string, userId: string): Story | null => {
-    const stories = getAllStories();
-    const storyIndex = stories.findIndex(story => story.id === storyId);
-
-    if (storyIndex === -1) return null;
-
-    const story = stories[storyIndex];
-    const hasLiked = story.likedBy.includes(userId);
-
-    if (hasLiked) {
-        // Quitar like
-        story.likedBy = story.likedBy.filter(id => id !== userId);
-        story.likes = Math.max(0, story.likes - 1);
-    } else {
-        // Agregar like
-        story.likedBy.push(userId);
-        story.likes += 1;
-    }
-
-    story.updatedAt = new Date().toISOString();
-
-    try {
-        localStorage.setItem('storyup_stories', JSON.stringify(stories));
-
-        // También actualizar los likes del usuario
-        updateUserLikes(story.author.id, hasLiked ? -1 : 1);
-
-        return story;
-    } catch (error) {
-        console.error('Error actualizando like:', error);
-        return null;
-    }
+    // TODO: Reemplazar por llamada a la API/DB
+    return null;
 };
 
 // Verificar si un usuario ha dado like a una historia
@@ -221,20 +101,7 @@ const generateStoryId = (): string => {
 
 // Actualizar likes del usuario en su perfil
 const updateUserLikes = (authorId: string, likeDelta: number): void => {
-    try {
-        const users = localStorage.getItem('storyup_users');
-        if (users) {
-            const parsedUsers = JSON.parse(users);
-            const userIndex = parsedUsers.findIndex((user: any) => user.id === authorId);
-
-            if (userIndex >= 0) {
-                parsedUsers[userIndex].likes = Math.max(0, (parsedUsers[userIndex].likes || 0) + likeDelta);
-                localStorage.setItem('storyup_users', JSON.stringify(parsedUsers));
-            }
-        }
-    } catch (error) {
-        console.error('Error actualizando likes del usuario:', error);
-    }
+    // TODO: Reemplazar por llamada a la API/DB
 };
 
 // Obtener estadísticas de historias

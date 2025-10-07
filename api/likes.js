@@ -2,9 +2,11 @@ const { Client } = require('pg');
 import jwt from 'jsonwebtoken';
 
 function getClient() {
-    return new Client({
-        connectionString: process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/storyup'
-    });
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+    if (!connectionString) {
+        throw new Error('No se ha definido la variable de entorno DATABASE_URL o POSTGRES_URL para la conexión a Neon.');
+    }
+    return new Client({ connectionString });
 }
 
 // Verificar token JWT

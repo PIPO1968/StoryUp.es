@@ -9,12 +9,11 @@ function getClient() {
     console.log('DATABASE_URL existe:', !!process.env.DATABASE_URL);
     console.log('POSTGRES_URL existe:', !!process.env.POSTGRES_URL);
 
-    // Hardcode temporal de la URL de Neon para testing
-    const neonUrl = 'postgresql://neondb_owner:npg_HnBMTqDUc1W8@ep-still-bread-agolimhp-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-
-    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || neonUrl;
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+    if (!connectionString) {
+        throw new Error('No se ha definido la variable de entorno DATABASE_URL o POSTGRES_URL para la conexión a Neon.');
+    }
     console.log('Usando conexión a:', connectionString.includes('neon') ? 'NEON DATABASE' : 'LOCAL/OTHER');
-
     return new Client({
         connectionString: connectionString
     });

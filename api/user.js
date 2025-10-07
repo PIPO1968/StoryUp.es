@@ -1,8 +1,10 @@
 const { Client } = require('pg');
 
 function getClient() {
-    const neonUrl = 'postgresql://neondb_owner:npg_HnBMTqDUc1W8@ep-still-bread-agolimhp-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
-    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL || neonUrl;
+    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+    if (!connectionString) {
+        throw new Error('No se ha definido la variable de entorno DATABASE_URL o POSTGRES_URL para la conexión a Neon.');
+    }
     return new Client({ connectionString });
 }
 

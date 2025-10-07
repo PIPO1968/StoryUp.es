@@ -246,15 +246,11 @@ const NewsDetailPage: React.FC = () => {
 
                         <div className="flex items-center space-x-4">
                             <button
-                                onClick={() => navigator.share?.({
-                                    title: news.title,
-                                    text: news.summary,
-                                    url: window.location.href
-                                }) || navigator.clipboard?.writeText(window.location.href)}
+                                onClick={() => navigate(`/news/${news.id}/comments`)}
                                 className="flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-200 transition-colors"
                             >
-                                <span>📤</span>
-                                <span>Compartir</span>
+                                <span>�</span>
+                                <span>Comentar</span>
                             </button>
                         </div>
                     </div>

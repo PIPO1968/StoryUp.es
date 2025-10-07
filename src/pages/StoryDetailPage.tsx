@@ -181,19 +181,14 @@ const StoryDetailPage: React.FC = () => {
                 {/* Footer con acciones */}
                 <footer className="bg-gray-50 p-6 border-t">
                     <div className="flex items-center justify-between">
+
                         <div className="flex items-center space-x-4">
                             <button
-                                onClick={handleLike}
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${isLiked
-                                    ? 'bg-red-100 text-red-700 border border-red-200'
-                                    : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
-                                    }`}
+                                onClick={() => navigate(`/stories/${story.id}/comments`)}
+                                className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200 transition-colors"
                             >
-                                <span className={`text-xl ${isLiked ? '❤️' : '🤍'}`}>
-                                    {isLiked ? '❤️' : '🤍'}
-                                </span>
-                                <span className="font-semibold">{story.likes}</span>
-                                <span>{isLiked ? 'Te gusta' : 'Me gusta'}</span>
+                                <span className="text-xl">💬</span>
+                                <span>Comentar</span>
                             </button>
                         </div>
 

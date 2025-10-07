@@ -1,0 +1,8 @@
+# CODEOWNERS para StoryUp.es
+# El propietario PIPO1968 será responsable de todo el código
+* @PIPO1968
+
+# Ejemplo: para carpetas específicas puedes añadir otros usuarios o equipos
+# /src/ @PIPO1968
+# /api/ @PIPO1968
+# /docs/ @otroUsuario

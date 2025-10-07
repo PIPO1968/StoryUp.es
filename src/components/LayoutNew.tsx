@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { user, setUser } = useAuth();
 
     const handleLogout = () => {
-        // Eliminar referencia a localStorage. Usar API/DB.
+
         setUser(null);
         navigate('/');
     };
