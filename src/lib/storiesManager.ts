@@ -47,8 +47,41 @@ export const clearTestData = (): void => {
 
 // Obtener todas las historias ordenadas por fecha (más recientes primero)
 export const getAllStories = (): Story[] => {
-    // TODO: Reemplazar por llamada a la API/DB
-    return [];
+    // Historias de ejemplo para desarrollo local
+    return [
+        {
+            id: 'story_1',
+            title: 'La aventura del bosque',
+            content: 'Había una vez un bosque misterioso...\nDonde los sueños se hacían realidad.',
+            type: 'Real',
+            theme: 'Aventura',
+            author: {
+                id: 'user_1',
+                username: 'juan',
+                name: 'Juan Pérez'
+            },
+            likes: 5,
+            likedBy: ['user_2', 'user_3'],
+            createdAt: '2025-10-01T10:00:00Z',
+            updatedAt: '2025-10-01T10:00:00Z'
+        },
+        {
+            id: 'story_2',
+            title: 'El dragón y la princesa',
+            content: 'En un reino lejano vivía un dragón...\nY una princesa valiente.',
+            type: 'Ficticia',
+            theme: 'Fantasía',
+            author: {
+                id: 'user_2',
+                username: 'maria',
+                name: 'María López'
+            },
+            likes: 8,
+            likedBy: ['user_1', 'user_3'],
+            createdAt: '2025-10-02T12:00:00Z',
+            updatedAt: '2025-10-02T12:00:00Z'
+        }
+    ];
 };
 
 // Obtener vista previa de historias para la lista

@@ -26,12 +26,22 @@ export const markUserAsOnline = (userId: string, username: string): void => {
 };
 
 // Obtener estadísticas completas
-export const getUserStats = (): UserStats => {
-    // TODO: Reemplazar por llamada a la API/DB
-    return {
-        totalUsers: 0,
-        onlineUsers: 0
-    };
+export const getUserStats = async (): Promise<UserStats> => {
+    try {
+        const res = await fetch('/api/users');
+        if (!res.ok) throw new Error('No se pudo obtener el número de usuarios');
+        const data = await res.json();
+        return {
+            totalUsers: data.total || 0,
+            onlineUsers: 0 // Si tienes endpoint para online, aquí se puede consultar
+        };
+    } catch (error) {
+        console.error('Error obteniendo estadísticas de usuarios:', error);
+        return {
+            totalUsers: 0,
+            onlineUsers: 0
+        };
+    }
 };
 
 // Limpiar usuarios inactivos

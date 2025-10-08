@@ -99,17 +99,14 @@ const StoryDetailPage: React.FC = () => {
                     onClick={handleBackToStories}
                     className="flex items-center text-blue-600 hover:text-blue-800 transition-colors mb-4"
                 >
-                    <span className="mr-2">←</span>
-                    Volver a Historias
+                    ← Volver a Historias
                 </button>
             </div>
-
             {/* Contenido de la historia */}
             <article className="bg-white rounded-lg shadow-lg overflow-hidden">
                 {/* Encabezado de la historia */}
                 <header className="bg-gradient-to-r from-blue-50 to-purple-50 p-8 border-b">
                     <h1 className="text-3xl font-bold text-gray-900 mb-4">{story.title}</h1>
-
                     {/* Badges de tipo y tema */}
                     <div className="flex flex-wrap gap-3 mb-6">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${story.type === 'Real'
@@ -133,7 +130,6 @@ const StoryDetailPage: React.FC = () => {
                                                 '🏆'} {story.theme}
                         </span>
                     </div>
-
                     <div className="flex items-center justify-between flex-wrap gap-4">
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
@@ -150,7 +146,6 @@ const StoryDetailPage: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className="flex items-center space-x-4">
                             <div className="text-sm text-gray-600">
                                 <p>Creada: {formatDate(story.createdAt)}</p>
@@ -161,7 +156,6 @@ const StoryDetailPage: React.FC = () => {
                         </div>
                     </div>
                 </header>
-
                 {/* Cuerpo de la historia */}
                 <div className="p-8">
                     <div className="prose prose-lg max-w-none">
@@ -177,11 +171,9 @@ const StoryDetailPage: React.FC = () => {
                         })}
                     </div>
                 </div>
-
                 {/* Footer con acciones */}
                 <footer className="bg-gray-50 p-6 border-t">
                     <div className="flex items-center justify-between">
-
                         <div className="flex items-center space-x-4">
                             <button
                                 onClick={() => navigate(`/stories/${story.id}/comments`)}
@@ -191,7 +183,6 @@ const StoryDetailPage: React.FC = () => {
                                 <span>Comentar</span>
                             </button>
                         </div>
-
                         <div className="text-sm text-gray-500">
                             Historia #{story.id.split('_')[1]}
                         </div>
@@ -200,6 +191,6 @@ const StoryDetailPage: React.FC = () => {
             </article>
         </div>
     );
-};
+}
 
 export default StoryDetailPage;

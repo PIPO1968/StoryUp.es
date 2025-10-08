@@ -1,3 +1,4 @@
+require('dotenv').config();
 console.log('Iniciando server.js...');
 const express = require('express');
 const path = require('path');
@@ -11,6 +12,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Endpoint API de ejemplo
 app.use('/api/auth', require('./api/auth.js'));
+app.use('/api/users', require('./api/users.js'));
 
 // Para cualquier otra ruta, servir index.html (SPA)
 app.get(/^\/.*/, (req, res) => {

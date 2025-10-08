@@ -97,8 +97,32 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         setError('');
 
         try {
-            // Por ahora, deshabilitar registro - solo usuarios existentes
-            setError('El registro está deshabilitado. Use usuarios existentes: admin/admin123 o profesor/prof123');
+            // Registro local para desarrollo
+            const users = JSON.parse(localStorage.getItem('storyup_users') || '[]');
+            const exists = users.find((u: any) => u.username === registerData.username || u.email === registerData.email);
+            if (exists) {
+                setError('El usuario o email ya existe.');
+                setLoading(false);
+                return;
+            }
+            const roleValue: 'admin' | 'teacher' | 'student' =
+                registerData.role === 'teacher' ? 'teacher' : 'student';
+            const newUser = {
+                id: 'user_' + Date.now(),
+                username: registerData.username,
+                email: registerData.email,
+                password: registerData.password,
+                role: roleValue,
+                name: registerData.name,
+                nickname: '',
+                avatar: '',
+                likes: 0,
+                trophies: [],
+                friends: []
+            };
+            users.push(newUser);
+            localStorage.setItem('storyup_users', JSON.stringify(users));
+            onLogin(newUser);
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');
         } finally {

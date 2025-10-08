@@ -18,11 +18,7 @@ const NewsPage: React.FC = () => {
     const categories = ['Todas', 'StoryUp', 'Educación', 'Tecnología', 'Cultura', 'Deportes', 'Salud', 'Comunidad'];
 
     useEffect(() => {
-        // Primero migrar noticias existentes con los nuevos campos
-        migrateNewsWithNewFields();
-        // Luego limpiar solo datos inválidos
-        clearTestNewsData();
-        // Finalmente cargar noticias y estadísticas reales
+        // Cargar noticias y estadísticas reales
         loadNews();
     }, []);
 

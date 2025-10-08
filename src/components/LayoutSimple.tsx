@@ -24,11 +24,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
 
     // Efecto para cargar datos iniciales y actualizar el reloj
+
     useEffect(() => {
         // Cargar estadísticas reales iniciales
-        const stats = getUserStats();
-        setTotalUsers(stats.totalUsers);
-        setOnlineUsers(stats.onlineUsers);
+        const fetchStats = async () => {
+            const stats = await getUserStats();
+            setTotalUsers(stats.totalUsers);
+            setOnlineUsers(stats.onlineUsers);
+        };
+        fetchStats();
 
         // Marcar usuario actual como online
         if (user) {
@@ -45,11 +49,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
     // Efecto para actualizar contadores de usuarios reales cada 30 segundos
     useEffect(() => {
-        const userTimer = setInterval(() => {
+        const userTimer = setInterval(async () => {
             // Limpiar usuarios inactivos y obtener estadísticas actuales
             cleanupInactiveUsers();
-            const stats = getUserStats();
-
+            const stats = await getUserStats();
             setTotalUsers(stats.totalUsers);
             setOnlineUsers(stats.onlineUsers);
 
@@ -67,8 +70,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         if (user) {
             markUserAsOnline(user.id || user.username, user.username);
             // Actualizar contador inmediatamente
-            const stats = getUserStats();
-            setOnlineUsers(stats.onlineUsers);
+            const fetchStats = async () => {
+                const stats = await getUserStats();
+                setOnlineUsers(stats.onlineUsers);
+            };
+            fetchStats();
         }
     }, [user]);
 

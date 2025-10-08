@@ -51,7 +51,20 @@ export const useAuth = (): AuthContextType => {
 // ...eliminado USERS_DB, ahora la autenticación será vía API
 
 function App() {
-    const [user, setUser] = useState<User | null>(null);
+    // Usuario de prueba por defecto para desarrollo
+    const [user, setUser] = useState<User | null>({
+        id: 'user_1',
+        username: 'juan',
+        email: 'juan@prueba.com',
+        role: 'student',
+        name: 'Juan Pérez',
+        avatar: '',
+        likes: 0,
+        trophies: [],
+        friends: [],
+        theme: 'light',
+        language: 'es'
+    });
     const [loading, setLoading] = useState(false);
 
     if (loading) {

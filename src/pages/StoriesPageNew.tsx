@@ -14,11 +14,7 @@ const StoriesPage: React.FC = () => {
     const [stats, setStats] = useState({ totalStories: 0, totalLikes: 0, mostLikedStory: null });
 
     useEffect(() => {
-        // Primero migrar historias existentes con los nuevos campos
-        migrateStoriesWithNewFields();
-        // Luego limpiar solo datos inválidos
-        clearTestData();
-        // Finalmente cargar historias y estadísticas reales
+        // Cargar historias y estadísticas reales
         loadStories();
     }, []);
 

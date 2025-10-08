@@ -7,8 +7,6 @@ import './App.css';
 
 createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <AuthContext.Provider value={{ user: null, setUser: () => { } }}>
-            <App />
-        </AuthContext.Provider>
+        <App />
     </React.StrictMode>
 );
