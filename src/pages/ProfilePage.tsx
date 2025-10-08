@@ -40,24 +40,15 @@ export default function ProfilePage() {
         console.log('Valor de user:', user); // Depuración
         async function fetchUserData() {
             if (user) {
-                try {
-                    // Aquí iría la lógica para obtener los datos del usuario, por ahora se simula con un setTimeout
-                    setTimeout(() => {
-                        setFullUser(user);
-                        setAvatarUrl(user.avatar || '');
-                        setEditForm({
-                            name: user.name || '',
-                            bio: (user as any).bio || '',
-                            username: user.username || ''
-                        });
-                        // Simular lista de usuarios
-                        setUsersList([user, { id: '2', name: 'Usuario Ejemplo', username: 'usuario.ejemplo', bio: 'Este es un usuario de ejemplo.', avatar: '' }]);
-                    }, 1000);
-                } catch (err) {
-                    console.error('Error recargando datos de usuario:', err);
-                }
+                setFullUser(user);
+                setAvatarUrl(user.avatar || '');
+                setEditForm({
+                    name: user.name || '',
+                    bio: (user as any).bio || '',
+                    username: user.username || ''
+                });
+                setUsersList([user]); // Solo usuario real
             } else {
-                // Si no hay usuario en contexto, mostrar null o pedir login
                 setFullUser(null);
                 setAvatarUrl('');
                 setEditForm({ name: '', bio: '', username: '' });

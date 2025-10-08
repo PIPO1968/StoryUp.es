@@ -50,22 +50,50 @@ export const useAuth = (): AuthContextType => {
 
 // ...eliminado USERS_DB, ahora la autenticación será vía API
 
+import { getCurrentUser } from './lib/auth.ts';
+
 function App() {
-    // Usuario de prueba por defecto para desarrollo
-    const [user, setUser] = useState<User | null>({
-        id: 'user_1',
-        username: 'juan',
-        email: 'juan@prueba.com',
-        role: 'student',
-        name: 'Juan Pérez',
-        avatar: '',
-        likes: 0,
-        trophies: [],
-        friends: [],
-        theme: 'light',
-        language: 'es'
-    });
-    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Al montar, consulta el usuario actual usando JWT
+        (async () => {
+            const currentUser = await getCurrentUser();
+            setUser(currentUser);
+            setLoading(false);
+            // Si hay usuario, marcarlo como online
+            if (currentUser) {
+                await fetch('/api/online', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUser.id })
+                });
+                // Mantener online con ping cada 5 min y en cada interacción
+                const pingOnline = () => {
+                    fetch('/api/online', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUser.id })
+                    });
+                };
+                window.addEventListener('click', pingOnline);
+                window.addEventListener('keydown', pingOnline);
+                const interval = setInterval(pingOnline, 5 * 60 * 1000);
+                // Limpiar listeners y ping al desmontar
+                return () => {
+                    window.removeEventListener('click', pingOnline);
+                    window.removeEventListener('keydown', pingOnline);
+                    clearInterval(interval);
+                    fetch('/api/online', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: currentUser.id })
+                    });
+                };
+            }
+        })();
+    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center min-h-screen">Cargando...</div>;

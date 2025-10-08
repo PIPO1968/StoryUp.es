@@ -17,6 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
     const [totalUsers, setTotalUsers] = useState(0);
     const [onlineUsers, setOnlineUsers] = useState(0);
+    const [onlineList, setOnlineList] = useState<string[]>([]);
 
     // Manejador del cambio de idioma
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -26,17 +27,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Efecto para cargar datos iniciales y actualizar el reloj
 
     useEffect(() => {
-        // Cargar estadísticas reales iniciales
+        // Cargar estadísticas reales iniciales y lista online
         const fetchStats = async () => {
             const stats = await getUserStats();
             setTotalUsers(stats.totalUsers);
             setOnlineUsers(stats.onlineUsers);
+            // Obtener lista online
+            const resOnline = await fetch('/api/online');
+            if (resOnline.ok) {
+                const data = await resOnline.json();
+                setOnlineList(data.online || []);
+            }
         };
         fetchStats();
 
         // Marcar usuario actual como online
         if (user) {
-            markUserAsOnline(user.id || user.username, user.username);
+            markUserAsOnline(user.id);
+            console.log('[FRONTEND] Marcando online con userId:', user.id);
         }
 
         // Timer para actualizar el reloj cada segundo
@@ -58,7 +66,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             // Mantener usuario actual como activo
             if (user) {
-                markUserAsOnline(user.id || user.username, user.username);
+                markUserAsOnline(user.id);
             }
         }, 30000);
 
@@ -68,7 +76,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Efecto para marcar usuario como online cuando cambia
     useEffect(() => {
         if (user) {
-            markUserAsOnline(user.id || user.username, user.username);
+            markUserAsOnline(user.id);
             // Actualizar contador inmediatamente
             const fetchStats = async () => {
                 const stats = await getUserStats();
@@ -107,6 +115,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 <span className="font-medium">{t.online}: </span>
                                 <span className="text-green-600 font-semibold ml-1">{onlineUsers}</span>
                             </div>
+                            {/* Log visual eliminado para evitar duplicado */}
                             <div className="text-sm text-gray-600 flex items-center">
                                 <span className="mr-2">🗓️</span>
                                 <span>

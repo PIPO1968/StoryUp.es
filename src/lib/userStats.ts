@@ -21,19 +21,32 @@ const INACTIVE_THRESHOLD = 5 * 60 * 1000; // 5 minutos en milisegundos
 
 
 // Marcar usuario como online/activo
-export const markUserAsOnline = (userId: string, username: string): void => {
-    // TODO: Reemplazar por llamada a la API/DB
+export const markUserAsOnline = (userId: string): void => {
+    if (!userId) return;
+    fetch('/api/online', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId })
+    });
 };
 
 // Obtener estadísticas completas
 export const getUserStats = async (): Promise<UserStats> => {
     try {
-        const res = await fetch('/api/users');
-        if (!res.ok) throw new Error('No se pudo obtener el número de usuarios');
-        const data = await res.json();
+        const resUsers = await fetch('/api/users');
+        const resOnline = await fetch('/api/online');
+        let total = 0, online = 0;
+        if (resUsers.ok) {
+            const data = await resUsers.json();
+            total = data.total || 0;
+        }
+        if (resOnline.ok) {
+            const data = await resOnline.json();
+            online = data.onlineCount || 0;
+        }
         return {
-            totalUsers: data.total || 0,
-            onlineUsers: 0 // Si tienes endpoint para online, aquí se puede consultar
+            totalUsers: total,
+            onlineUsers: online
         };
     } catch (error) {
         console.error('Error obteniendo estadísticas de usuarios:', error);

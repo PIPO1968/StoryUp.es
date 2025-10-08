@@ -1,7 +1,21 @@
 // Stub temporal para evitar errores de importación
-export const getCurrentUser = () => {
-    // TODO: Implementar obtención de usuario actual vía API/DB
-    return null;
+// Lee el JWT de la cookie y consulta el usuario actual vía API
+export const getCurrentUser = async () => {
+    const token = getCookie('storyup_jwt');
+    if (!token) return null;
+    try {
+        const response = await fetch('/api/auth', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data.user || null;
+    } catch (error) {
+        return null;
+    }
 };
 
 export const getStoredUsers = async () => {
@@ -23,16 +37,28 @@ export const getStoredUsers = async () => {
 
 
 // Login de usuario StoryUp
+// Login: guarda el JWT en cookie tras autenticación
 export const loginUser = async (credentials: { email: string; password: string }) => {
-    // Implementar llamada a API/DB
-    // Ejemplo:
-    // const response = await fetch('/api/auth/login', { method: 'POST', body: JSON.stringify(credentials) });
-    // if (!response.ok) throw new Error('Credenciales incorrectas');
-    // return await response.json();
-    throw new Error('loginUser debe implementarse con API/DB');
+    const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Credenciales incorrectas');
+    }
+    const data = await response.json();
+    setCookie('storyup_jwt', data.token, 7);
+    // Normalizar el rol para el frontend
+    let role = 'user';
+    if (data.user.userType === 'Padre/Docente') role = 'teacher';
+    if (data.user.userType === 'Usuario') role = 'user';
+    return { ...data.user, role };
 }
 
 // Registro de usuario StoryUp (público y abierto)
+// Registro: guarda el JWT en cookie tras registro
 export const registerUser = async (userData: {
     username: string;
     email: string;
@@ -40,27 +66,29 @@ export const registerUser = async (userData: {
     name: string;
     role?: string;
 }) => {
-    try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        if (!userData.username || !userData.email || !userData.password || !userData.name) {
-            throw new Error('Todos los campos son requeridos');
-        }
-        // Implementar llamada a API/DB
-        // Ejemplo:
-        // const response = await fetch('/api/auth/register', { method: 'POST', body: JSON.stringify(userData) });
-        // if (!response.ok) throw new Error('Registro fallido');
-        // return await response.json();
-        throw new Error('registerUser debe implementarse con API/DB');
-    } catch (error) {
-        console.error('Error en registro:', error);
-        throw error;
+    // Mapear el valor del select a los valores esperados por el backend
+    let userType = 'Usuario';
+    if (userData.role === 'teacher') userType = 'Padre/Docente';
+    if (userData.role === 'user') userType = 'Usuario';
+    const payload = { ...userData, userType };
+    const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al registrarse');
     }
+    const data = await response.json();
+    setCookie('storyup_jwt', data.token, 7);
+    return data.user;
 }
 
 // Logout
+// Logout: elimina la cookie JWT y recarga
 export const logoutUser = () => {
-    // Implementar logout vía API/DB si aplica
+    deleteCookie('storyup_jwt');
     window.location.href = '/';
 };
 
@@ -79,10 +107,32 @@ export const updateUser = async (updates: Partial<any>) => {
     }
 };
 
-// Obtener token para requests autenticados
-export const getAuthToken = () => {
-    // Implementar obtención de token vía API/DB si aplica
-};
+
+// Helpers para cookies
+function setCookie(name: string, value: string, days: number) {
+    let expires = '';
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toUTCString();
+    }
+    document.cookie = name + '=' + (value || '') + expires + '; path=/';
+}
+
+function getCookie(name: string) {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function deleteCookie(name: string) {
+    document.cookie = name + '=; Max-Age=-99999999; path=/';
+}
 
 // Obtener estadísticas de usuarios StoryUp
 export const getUserStats = () => {

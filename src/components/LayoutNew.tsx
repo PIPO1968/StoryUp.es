@@ -24,8 +24,33 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const location = useLocation();
     const { user, setUser } = useAuth();
 
-    const handleLogout = () => {
+    const [onlineCount, setOnlineCount] = React.useState<number>(0);
+    const [onlineList, setOnlineList] = React.useState<string[]>([]);
 
+    React.useEffect(() => {
+        // Consultar contador y lista de usuarios online cada 10s
+        const fetchOnline = async () => {
+            const res = await fetch('/api/online');
+            if (res.ok) {
+                const data = await res.json();
+                setOnlineCount(data.onlineCount || 0);
+                setOnlineList(data.online || []);
+            }
+        };
+        fetchOnline();
+        const interval = setInterval(fetchOnline, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleLogout = async () => {
+        // Marcar usuario como offline
+        if (user) {
+            await fetch('/api/online', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id })
+            });
+        }
         setUser(null);
         navigate('/');
     };
@@ -57,7 +82,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             {/* Stats del usuario */}
                             <div className="hidden md:flex items-center space-x-4 text-sm text-gray-600">
                                 <span>👥 Usuarios: 1,247</span>
-                                <span>🟢 Online: 89</span>
+                                <span>🟢 Online: {onlineCount}</span>
+                                {/* Log visual eliminado para evitar duplicado, solo se muestra en LayoutSimple */}
                             </div>
 
                             {/* Avatar y nombre */}

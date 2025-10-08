@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { loginUser, registerUser } from '../lib/auth';
 
 interface UserDB {
     id: string;
@@ -63,26 +64,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-
         try {
-            // Autenticación contra la API real
-            const response = await fetch('/api/auth', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: loginData.email,
-                    password: loginData.password
-                })
+            const user = await loginUser({
+                email: loginData.email,
+                password: loginData.password
             });
-            if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message || 'Credenciales incorrectas');
-                setLoading(false);
-                return;
-            }
-            const user = await response.json();
             onLogin(user);
         } catch (err: any) {
             setError(err.message || 'Error al iniciar sesión');
@@ -95,21 +81,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         e.preventDefault();
         setLoading(true);
         setError('');
-
         try {
-            // Registro real vía API
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(registerData)
-            });
-            if (!response.ok) {
-                const errorData = await response.json();
-                setError(errorData.message || 'Error al registrarse');
-                setLoading(false);
-                return;
-            }
-            const user = await response.json();
+            const user = await registerUser(registerData);
             onLogin(user);
         } catch (err: any) {
             setError(err.message || 'Error al registrarse');
