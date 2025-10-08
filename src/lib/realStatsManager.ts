@@ -144,14 +144,14 @@ export interface PlatformStats {
 }
 
 // Obtener estadísticas de usuarios
-export const getUserStats = (): UserStats => {
+export const getUserStats = async (): Promise<UserStats> => {
     try {
-        const users = getStoredUsers();
+        const users = await getStoredUsers();
         const now = new Date();
         const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
         const usersByRole = {
-            teacher: users.filter(u => u.role === 'admin' || u.role === 'teacher').length, // Admin y Padre/Docente son lo mismo
+            teacher: users.filter(u => u.role === 'admin' || u.role === 'teacher').length,
             user: users.filter(u => u.role === 'user').length,
         };
 
@@ -323,11 +323,11 @@ export const getNewsStatsDetailed = (): NewsStats => {
 };
 
 // Obtener estadísticas de engagement
-export const getEngagementStats = (): EngagementStats => {
+export const getEngagementStats = async (): Promise<EngagementStats> => {
     try {
         const stories = getAllStories();
         const news = getAllNews();
-        const users = getStoredUsers();
+        const users = await getStoredUsers();
 
         const totalLikes = stories.reduce((sum, s) => sum + s.likes, 0) +
             news.reduce((sum, n) => sum + n.likes, 0);
@@ -379,9 +379,9 @@ export const getEngagementStats = (): EngagementStats => {
 };
 
 // Obtener estadísticas de centros educativos
-export const getEducationalCenterStats = (): EducationalCenterStats => {
+export const getEducationalCenterStats = async (): Promise<EducationalCenterStats> => {
     try {
-        const users = getStoredUsers();
+        const users = await getStoredUsers();
 
         // Contar usuarios por rol real
         const teacherCount = users.filter(u => u.role === 'admin' || u.role === 'teacher').length;
@@ -413,11 +413,11 @@ export const getEducationalCenterStats = (): EducationalCenterStats => {
 };
 
 // Obtener estadísticas generales de la plataforma
-export const getPlatformStats = (): PlatformStats => {
+export const getPlatformStats = async (): Promise<PlatformStats> => {
     try {
         const stories = getAllStories();
         const news = getAllNews();
-        const users = getStoredUsers();
+        const users = await getStoredUsers();
 
         const totalContent = stories.length + news.length;
         const totalLikes = stories.reduce((sum, s) => sum + s.likes, 0) +
@@ -460,13 +460,13 @@ export const getPlatformStats = (): PlatformStats => {
 };
 
 // Obtener todas las estadísticas de una vez
-export const getAllStats = () => {
+export const getAllStats = async () => {
     return {
-        users: getUserStats(),
+        users: await getUserStats(),
         stories: getStoryStats(),
         news: getNewsStatsDetailed(),
-        engagement: getEngagementStats(),
-        centers: getEducationalCenterStats(),
-        platform: getPlatformStats()
+        engagement: await getEngagementStats(),
+        centers: await getEducationalCenterStats(),
+        platform: await getPlatformStats()
     };
 };

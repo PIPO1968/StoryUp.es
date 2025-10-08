@@ -1,6 +1,6 @@
 const { neon } = require('@neondatabase/serverless');
 
-const sql = neon('postgresql://storyup_owner:HOZMa2WPGG67@ep-crimson-dawn-a5dz0brn.us-east-2.aws.neon.tech/storyup?sslmode=require');
+const sql = neon('postgresql://neondb_owner:npg_ZRu9fpSmzNL1@ep-shy-grass-ad01598r-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require');
 
 async function checkUsers() {
     try {

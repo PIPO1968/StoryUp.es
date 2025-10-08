@@ -4,9 +4,16 @@ export const getCurrentUser = () => {
     return null;
 };
 
-export const getStoredUsers = () => {
-    // TODO: Implementar obtención de usuarios vía API/DB
-    return [];
+export const getStoredUsers = async () => {
+    try {
+        const response = await fetch('/api/users');
+        if (!response.ok) throw new Error('No se pudo obtener la lista de usuarios');
+        const data = await response.json();
+        return data.users || [];
+    } catch (error) {
+        console.error('Error al obtener usuarios:', error);
+        return [];
+    }
 };
 // Sistema de autenticación StoryUp - Registro público abierto
 
