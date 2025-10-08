@@ -73,8 +73,8 @@ function App() {
 
     if (user) {
         return (
-            <LanguageProvider>
-                <AuthContext.Provider value={{ user, setUser }}>
+            <AuthContext.Provider value={{ user, setUser }}>
+                <LanguageProvider>
                     <Router>
                         <Layout>
                             <Routes>
@@ -93,18 +93,18 @@ function App() {
                             </Routes>
                         </Layout>
                     </Router>
-                </AuthContext.Provider>
-            </LanguageProvider>
+                </LanguageProvider>
+            </AuthContext.Provider>
         );
     }
 
     // No hay usuario logueado - mostrar login
     return (
-        <LanguageProvider>
-            <AuthContext.Provider value={{ user, setUser }}>
+        <AuthContext.Provider value={{ user, setUser }}>
+            <LanguageProvider>
                 <LoginPage onLogin={setUser} />
-            </AuthContext.Provider>
-        </LanguageProvider>
+            </LanguageProvider>
+        </AuthContext.Provider>
     );
 }
 

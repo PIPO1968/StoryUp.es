@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '@/App';
 import { ArrowLeft, Trophy, Star, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { Trophy as TrophyType } from '@/lib/types';
 
 export default function Trophies() {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<any | null>(null); // Eliminado: DatabaseUser
+    const { user: currentUser } = useContext(AuthContext);
     const [earnedTrophies] = useState<TrophyType[]>([]); // Eliminado: mockTrophies
 
     // Trofeos disponibles pero no ganados
@@ -41,10 +42,7 @@ export default function Trophies() {
         }
     ];
 
-    useEffect(() => {
-        // Simular usuario actual
-        setCurrentUser({ id: '1', name: 'Usuario Demo' });
-    }, []);
+
 
     if (!currentUser) return null;
 
