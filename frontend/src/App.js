@@ -103,6 +103,17 @@ function App() {
                             <p>Gana medallas por tu actividad.</p>
                         </div>
                     </div>
+                    {/* Sección de patrocinadores visible y destacada */}
+                    <div className="sponsors-section" style={{ marginTop: '2rem', textAlign: 'center', background: '#f8f8f8', padding: '1.5rem 0', borderRadius: '12px' }}>
+                        <h2 style={{ fontWeight: 'bold', fontSize: '1.7rem', marginBottom: '1rem', color: '#2c3e50' }}>PATROCINADORES:</h2>
+                        <div className="sponsors-list">
+                            {/* Ejemplo de patrocinador, puedes añadir más logos y nombres */}
+                            <div className="sponsor-item" style={{ display: 'inline-block', margin: '0 2rem' }}>
+                                <img src="/logo-grande.png" alt="Logo Patrocinador" style={{ width: '90px', height: '90px', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 2px 8px #ccc' }} />
+                                <div style={{ fontWeight: 'bold', marginTop: '0.7rem', fontSize: '1.1rem' }}>Nombre del Patrocinador</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {/* Login centrado sobre fondo gris */}
                 <div className="login-block">
