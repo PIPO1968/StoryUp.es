@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+const API_URL = '/api';
 
 function Register({ onRegister }) {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [userType, setUserType] = useState('Usuario');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -14,10 +15,10 @@ function Register({ onRegister }) {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`${API_URL}/register-or-login`, {
+            const res = await fetch(`/api/register-or-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, username })
+                body: JSON.stringify({ email, password, username, userType })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Error de registro');
@@ -53,12 +54,18 @@ function Register({ onRegister }) {
                 onChange={e => setPassword(e.target.value)}
                 required
             />
+            <select value={userType} onChange={e => setUserType(e.target.value)} required>
+                <option value="Usuario">Usuario</option>
+                <option value="Padre/Docente">Padre/Docente</option>
+            </select>
             <button type="submit" disabled={loading}>
                 {loading ? 'Registrando...' : 'Registrarse'}
             </button>
             {error && <div className="error">{error}</div>}
         </form>
     );
+
 }
 
-*** End Patch
+export default Register;
+

@@ -42,7 +42,13 @@ if (fs.existsSync(buildPath)) {
     });
 }
 
-const PORT = process.env.PORT || 5000;
+
+// Middleware de manejo de errores para rutas /api
+app.use('/api', (err, req, res, next) => {
+    res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor backend escuchando en puerto ${PORT}`);
 });

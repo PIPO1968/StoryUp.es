@@ -1,6 +1,7 @@
 services:
   - type: web
-    name: storyup-app
+    name: .StoryUp
+
     env: node
     buildCommand: |
       cd frontend && npm install && npm run build
