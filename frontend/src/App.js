@@ -48,7 +48,7 @@ function App() {
             fetchUsuariosOnline();
         }, 10000);
         return () => clearInterval(intervalUsuarios);
-    }, []);
+    }, [fetchTotalUsuarios, fetchUsuariosOnline]);
 
     useEffect(() => {
         actualizarHoraMadrid();

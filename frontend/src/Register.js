@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-const API_URL = '/api';
 
 function Register({ onRegister }) {
     const [username, setUsername] = useState('');
