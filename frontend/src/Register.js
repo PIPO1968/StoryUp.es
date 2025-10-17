@@ -22,8 +22,8 @@ function Register({ onRegister }) {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Error de registro');
-            onRegister(data.user);
-            localStorage.setItem('token', data.token);
+            // Guardar el token solo en memoria (en el estado superior)
+            onRegister({ ...data.user, token: data.token });
         } catch (err) {
             setError(err.message);
         } finally {
