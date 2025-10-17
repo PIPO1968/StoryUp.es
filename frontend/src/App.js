@@ -17,19 +17,19 @@ function App() {
 
     const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
 
-    const fetchTotalUsuarios = () => {
+    const fetchTotalUsuarios = React.useCallback(() => {
         fetch(`${API_URL}/usuarios/total`)
             .then(res => res.json())
             .then(data => setTotalUsuarios(data.total))
             .catch(() => setTotalUsuarios('—'));
-    };
+    }, [API_URL]);
 
-    const fetchUsuariosOnline = () => {
+    const fetchUsuariosOnline = React.useCallback(() => {
         fetch(`${API_URL}/usuarios/online`)
             .then(res => res.json())
             .then(data => setUsuariosOnline(data.online))
             .catch(() => setUsuariosOnline('—'));
-    };
+    }, [API_URL]);
 
     const actualizarHoraMadrid = () => {
         const ahora = new Date();
