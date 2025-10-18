@@ -1,3 +1,6 @@
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Data = require('../models/data');
@@ -40,9 +43,6 @@ router.get('/data', async (req, res) => {
     }
 });
 
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
 
 // Actualizar avatar del usuario autenticado
 router.post('/me/avatar', async (req, res) => {
