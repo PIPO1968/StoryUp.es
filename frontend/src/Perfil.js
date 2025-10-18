@@ -19,22 +19,7 @@ function Perfil({ usuario }) {
                 const base64 = ev.target.result;
                 setAvatar(base64);
                 setLoading(true);
-                return (
-                    <div style={{ width: '100%' }}>
-                        <div style={{ display: 'flex', gap: '2.5rem', margin: '2.5rem auto', maxWidth: 1200, width: '95vw', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            {/* ...datos personales y trofeos... */}
-                        </div>
-                        <div style={{ width: '95vw', maxWidth: 1200, margin: '2.5rem auto 0 auto', background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2rem 2.5rem', minHeight: 320, border: '3px solid #4db6ac' }}>
-                            {/* ...chat... */}
-                        </div>
-                        <div style={{ display: 'flex', gap: '2.5rem', margin: '2.5rem auto 0 auto', maxWidth: 1200, width: '95vw', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            {/* ...noticias y concursos... */}
-                        </div>
-                        <div style={{ width: '95vw', maxWidth: 1200, margin: '2.5rem auto 0 auto', background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #43a047', padding: '2rem 2.5rem', minHeight: 320, border: '3px solid #43a047', display: 'flex', gap: '2rem' }}>
-                            {/* ...panel de administrador... */}
-                        </div>
-                    </div>
-                );
+                // ...no renderizar nada aquí...
             }
         };
         reader.readAsDataURL(file);
@@ -132,66 +117,65 @@ return (
                 <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Crear concurso</button>
             </div>
         </div>
-    </div>
-        {/* Panel de Administrador */ }
-<div style={{ width: '95vw', maxWidth: 1200, margin: '2.5rem auto 0 auto', background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #43a047', padding: '2rem 2.5rem', minHeight: 320, border: '3px solid #43a047', display: 'flex', gap: '2rem' }}>
-    {/* Sidebar de búsqueda de usuario */}
-    <div style={{ width: 220, background: '#ffebee', borderRadius: 10, boxShadow: '0 2px 8px #e5737333', padding: '1rem', display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <input type="text" placeholder="Buscar usuario..." style={{ marginBottom: 10, padding: 6, borderRadius: 6, border: '1px solid #e57373', width: '100%' }} />
-        <div style={{ flex: 1, overflowY: 'auto', maxHeight: 220 }}>
-            {/* Aquí aparecerán los nicks encontrados para seleccionar */}
-            <div style={{ color: '#e57373', fontWeight: 'bold', cursor: 'pointer', marginBottom: 6 }}>EjemploNick1</div>
-            <div style={{ color: '#e57373', fontWeight: 'bold', cursor: 'pointer', marginBottom: 6 }}>EjemploNick2</div>
-        </div>
-    </div>
-    {/* Panel principal de administración */}
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 18 }}>
-        <h2 style={{ color: '#43a047', marginBottom: 8 }}>Panel de Administrador</h2>
-        {/* Lista de seleccionados */}
-        <div style={{ background: '#fffbe6', borderRadius: 10, boxShadow: '0 2px 8px #ffe06633', padding: '1rem', marginBottom: 8 }}>
-            <div style={{ fontWeight: 'bold', marginBottom: 6 }}>Usuarios seleccionados:</div>
-            <div style={{ minHeight: 32, marginBottom: 8 }}>
-                <span style={{ color: '#e6b800', fontWeight: 'bold', marginRight: 12 }}>EjemploNick1</span>
-                <span style={{ color: '#e6b800', fontWeight: 'bold', marginRight: 12 }}>EjemploNick2</span>
+        {/* Panel de Administrador */}
+        <div style={{ width: '95vw', maxWidth: 1200, margin: '2.5rem auto 0 auto', background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #43a047', padding: '2rem 2.5rem', minHeight: 320, border: '3px solid #43a047', display: 'flex', gap: '2rem' }}>
+            {/* Sidebar de búsqueda de usuario */}
+            <div style={{ width: 220, background: '#ffebee', borderRadius: 10, boxShadow: '0 2px 8px #e5737333', padding: '1rem', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <input type="text" placeholder="Buscar usuario..." style={{ marginBottom: 10, padding: 6, borderRadius: 6, border: '1px solid #e57373', width: '100%' }} />
+                <div style={{ flex: 1, overflowY: 'auto', maxHeight: 220 }}>
+                    {/* Aquí aparecerán los nicks encontrados para seleccionar */}
+                    <div style={{ color: '#e57373', fontWeight: 'bold', cursor: 'pointer', marginBottom: 6 }}>EjemploNick1</div>
+                    <div style={{ color: '#e57373', fontWeight: 'bold', cursor: 'pointer', marginBottom: 6 }}>EjemploNick2</div>
+                </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                <button style={{ background: '#e6b800', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Dar likes</button>
-                <select style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #e6b800', fontWeight: 'bold' }}>
-                    {Array.from({ length: 41 }, (_, i) => i - 20).map(num => (
-                        <option key={num} value={num}>{num}</option>
-                    ))}
-                </select>
+            {/* Panel principal de administración */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <h2 style={{ color: '#43a047', marginBottom: 8 }}>Panel de Administrador</h2>
+                {/* Lista de seleccionados */}
+                <div style={{ background: '#fffbe6', borderRadius: 10, boxShadow: '0 2px 8px #ffe06633', padding: '1rem', marginBottom: 8 }}>
+                    <div style={{ fontWeight: 'bold', marginBottom: 6 }}>Usuarios seleccionados:</div>
+                    <div style={{ minHeight: 32, marginBottom: 8 }}>
+                        <span style={{ color: '#e6b800', fontWeight: 'bold', marginRight: 12 }}>EjemploNick1</span>
+                        <span style={{ color: '#e6b800', fontWeight: 'bold', marginRight: 12 }}>EjemploNick2</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                        <button style={{ background: '#e6b800', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Dar likes</button>
+                        <select style={{ padding: '6px 12px', borderRadius: 6, border: '1px solid #e6b800', fontWeight: 'bold' }}>
+                            {Array.from({ length: 41 }, (_, i) => i - 20).map(num => (
+                                <option key={num} value={num}>{num}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                {/* Palabras prohibidas */}
+                <div style={{ background: '#ffebee', borderRadius: 10, boxShadow: '0 2px 8px #e5737333', padding: '1rem', marginBottom: 8 }}>
+                    <div style={{ fontWeight: 'bold', marginBottom: 6 }}>Palabras prohibidas:</div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        <input type="text" placeholder="Escribe palabras prohibidas..." style={{ flex: 1, padding: 8, borderRadius: 6, border: '1px solid #e57373' }} />
+                        <button style={{ background: '#e57373', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Enviar</button>
+                    </div>
+                </div>
+                {/* Pregunta y respuesta + selectores */}
+                <div style={{ background: '#fffbe6', borderRadius: 10, boxShadow: '0 2px 8px #ffe06633', padding: '1rem', marginBottom: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <input type="text" placeholder="Pregunta" style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6b800' }} />
+                    <input type="text" placeholder="Respuesta" style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6b800' }} />
+                    <select style={{ flex: 1, padding: '6px 12px', borderRadius: 6, border: '1px solid #e6b800' }}>
+                        <option>Asignatura 1</option>
+                        <option>Asignatura 2</option>
+                        <option>Asignatura 3</option>
+                    </select>
+                    <select style={{ flex: 1, padding: '6px 12px', borderRadius: 6, border: '1px solid #e6b800' }}>
+                        <option>Curso 1</option>
+                        <option>Curso 2</option>
+                        <option>Curso 3</option>
+                    </select>
+                    <button style={{ background: '#e6b800', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Enviar</button>
+                </div>
+                {/* Botón expulsar usuario */}
+                <button style={{ background: '#e57373', color: '#fff', border: 'none', borderRadius: 8, padding: '0 32px', fontWeight: 'bold', cursor: 'pointer', marginTop: 18, height: 48, fontSize: 18, letterSpacing: 1 }}>Expulsar usuario de StoryUp</button>
             </div>
         </div>
-        {/* Palabras prohibidas */}
-        <div style={{ background: '#ffebee', borderRadius: 10, boxShadow: '0 2px 8px #e5737333', padding: '1rem', marginBottom: 8 }}>
-            <div style={{ fontWeight: 'bold', marginBottom: 6 }}>Palabras prohibidas:</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-                <input type="text" placeholder="Escribe palabras prohibidas..." style={{ flex: 1, padding: 8, borderRadius: 6, border: '1px solid #e57373' }} />
-                <button style={{ background: '#e57373', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Enviar</button>
-            </div>
-        </div>
-        {/* Pregunta y respuesta + selectores */}
-        <div style={{ background: '#fffbe6', borderRadius: 10, boxShadow: '0 2px 8px #ffe06633', padding: '1rem', marginBottom: 8, display: 'flex', gap: 8, alignItems: 'center' }}>
-            <input type="text" placeholder="Pregunta" style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6b800' }} />
-            <input type="text" placeholder="Respuesta" style={{ flex: 2, padding: 8, borderRadius: 6, border: '1px solid #e6b800' }} />
-            <select style={{ flex: 1, padding: '6px 12px', borderRadius: 6, border: '1px solid #e6b800' }}>
-                <option>Asignatura 1</option>
-                <option>Asignatura 2</option>
-                <option>Asignatura 3</option>
-            </select>
-            <select style={{ flex: 1, padding: '6px 12px', borderRadius: 6, border: '1px solid #e6b800' }}>
-                <option>Curso 1</option>
-                <option>Curso 2</option>
-                <option>Curso 3</option>
-            </select>
-            <button style={{ background: '#e6b800', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Enviar</button>
-        </div>
-        {/* Botón expulsar usuario */}
-        <button style={{ background: '#e57373', color: '#fff', border: 'none', borderRadius: 8, padding: '0 32px', fontWeight: 'bold', cursor: 'pointer', marginTop: 18, height: 48, fontSize: 18, letterSpacing: 1 }}>Expulsar usuario de StoryUp</button>
     </div>
-</div>
-    );
+);
 }
-
 export default Perfil;
