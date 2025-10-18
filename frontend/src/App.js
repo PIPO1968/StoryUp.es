@@ -64,7 +64,6 @@ function App() {
     useEffect(() => {
         const token = getCookie('token');
         if (token && !usuario) {
-            // Pedir datos del usuario con el token
             fetch(`${API_URL}/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -73,7 +72,7 @@ function App() {
                     if (data && data.user) setUsuario({ ...data.user, token });
                 });
         }
-    }, []);
+    }, [API_URL, usuario]);
 
     // Guardar token en cookie tras login/registro
     const handleLogin = (user) => {
@@ -81,10 +80,7 @@ function App() {
         setUsuario(user);
     };
 
-    const handleLogout = () => {
-        deleteCookie('token');
-        setUsuario(null);
-    };
+
 
     return (
         <>
