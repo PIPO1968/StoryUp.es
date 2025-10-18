@@ -8,7 +8,11 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors({
-    origin: 'https://www.storyup.es',
+    origin: [
+        'https://www.storyup.es',
+        'https://storyup.es',
+        'https://www.story-up.vercel.app'
+    ],
     credentials: true
 }));
 app.use(express.json());
