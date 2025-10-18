@@ -1,13 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCookie } from './cookieUtils';
+
 
 function Perfil({ usuario }) {
-    const [avatar, setAvatar] = useState(null);
+    const [avatar, setAvatar] = useState(usuario?.avatar || '');
+    const [loading, setLoading] = useState(false);
 
-    const handleAvatarChange = (e) => {
+    useEffect(() => {
+        setAvatar(usuario?.avatar || '');
+    }, [usuario]);
+
+    const handleAvatarChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (ev) => setAvatar(ev.target.result);
+            reader.onload = async (ev) => {
+                const base64 = ev.target.result;
+                setAvatar(base64);
+                setLoading(true);
+                try {
+                    const token = getCookie('token');
+                    const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+                    const res = await fetch(`${API_URL}/me/avatar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ avatar: base64 })
+                    });
+                    if (!res.ok) throw new Error('Error al guardar avatar');
+                } catch (err) {
+                    alert('No se pudo guardar el avatar');
+                } finally {
+                    setLoading(false);
+                }
+            };
             reader.readAsDataURL(file);
         }
     };
@@ -23,8 +51,8 @@ function Perfil({ usuario }) {
                             <span style={{ color: '#e6b800', fontSize: 48 }}>👤</span>
                         )}
                     </div>
-                    <input type="file" accept="image/*" onChange={handleAvatarChange} style={{ marginBottom: 6 }} />
-                    <span style={{ fontSize: 13, color: '#888' }}>Sube tu avatar</span>
+                    <input type="file" accept="image/*" onChange={handleAvatarChange} style={{ marginBottom: 6 }} disabled={loading} />
+                    <span style={{ fontSize: 13, color: '#888' }}>{loading ? 'Guardando avatar...' : 'Sube tu avatar'}</span>
                 </div>
                 <h2 style={{ color: '#e6b800', marginBottom: 18, alignSelf: 'flex-start' }}>Datos personales</h2>
                 <div style={{ width: '100%' }}>
