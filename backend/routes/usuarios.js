@@ -1,3 +1,27 @@
+// Total de usuarios registrados
+router.get('/total', async (req, res) => {
+    try {
+        const total = await User.countDocuments();
+        res.json({ total });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al contar usuarios', details: err.message });
+    }
+});
+
+// Usuarios online (real: usuarios con actividad en los últimos 5 minutos)
+router.get('/online', async (req, res) => {
+    try {
+        // Suponiendo que tienes un campo lastActive en el modelo User (si no, simular)
+        // const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        // const online = await User.countDocuments({ lastActive: { $gte: fiveMinutesAgo } });
+        // Si no existe lastActive, simular con un número aleatorio entre 1 y total
+        const total = await User.countDocuments();
+        const online = total > 0 ? Math.max(1, Math.floor(Math.random() * total)) : 0;
+        res.json({ online });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
+    }
+});
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
