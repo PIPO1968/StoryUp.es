@@ -94,6 +94,41 @@ function Perfil({ usuario }) {
                     </div>
                 </div>
             </div>
+            {/* Bloques de noticias y concursos */}
+            <div style={{ display: 'flex', gap: '2.5rem', margin: '2.5rem auto 0 auto', maxWidth: 1200, width: '95vw', alignItems: 'flex-start', justifyContent: 'center' }}>
+                {/* Bloque de crear noticias */}
+                <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #4db6ac33', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h2 style={{ color: '#4db6ac', marginBottom: 18 }}>Crear noticia</h2>
+                    <input type="text" placeholder="Título de la noticia" style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                    <textarea placeholder="Escribe la noticia..." style={{ width: '100%', minHeight: 80, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                    <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Enviar noticia</button>
+                </div>
+                {/* Bloque de crear concursos */}
+                <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #4db6ac33', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <h2 style={{ color: '#4db6ac', marginBottom: 8 }}>Crear concurso</h2>
+                    <div style={{ marginBottom: 12, fontWeight: 'bold', color: '#e6b800' }}>ID del concurso: <span style={{ background: '#ffe066', borderRadius: 4, padding: '2px 8px' }}>#12345</span></div>
+                    <textarea placeholder="Descripción del concurso..." style={{ width: '100%', minHeight: 80, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                    <div style={{ display: 'flex', gap: 12, marginBottom: 12, width: '100%' }}>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Fecha inicio</label>
+                            <input type="date" style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Fecha final</label>
+                            <input type="date" style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                        </div>
+                    </div>
+                    {/* Campo de ganador, solo visible una semana después de la fecha final (lógica visual, no funcional aún) */}
+                    <div style={{ width: '100%', marginBottom: 12 }}>
+                        <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4, display: 'block' }}>Nombre del ganador</label>
+                        <input type="text" placeholder="Nombre del ganador" style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', background: '#f5f5f5' }} disabled />
+                        <div style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>
+                            Este campo estará disponible una semana después de la fecha final del concurso.
+                        </div>
+                    </div>
+                    <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Crear concurso</button>
+                </div>
+            </div>
         </div>
     );
 }
