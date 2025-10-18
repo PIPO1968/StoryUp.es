@@ -1,5 +1,7 @@
+
 import Login from './Login';
 import Register from './Register';
+import { setCookie, getCookie, deleteCookie } from './cookieUtils';
 
 
 import React, { useState, useEffect } from 'react';
@@ -10,7 +12,6 @@ import './App.css';
 
 
 function App() {
-    // Eliminada la declaración duplicada de usuario
     const [usuario, setUsuario] = useState(null);
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
@@ -59,6 +60,32 @@ function App() {
         return () => clearInterval(intervalHora);
     }, []);
 
+    // Restaurar sesión desde cookie al cargar la app
+    useEffect(() => {
+        const token = getCookie('token');
+        if (token && !usuario) {
+            // Pedir datos del usuario con el token
+            fetch(`${API_URL}/me`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(res => res.ok ? res.json() : null)
+                .then(data => {
+                    if (data && data.user) setUsuario({ ...data.user, token });
+                });
+        }
+    }, []);
+
+    // Guardar token en cookie tras login/registro
+    const handleLogin = (user) => {
+        if (user.token) setCookie('token', user.token, 7);
+        setUsuario(user);
+    };
+
+    const handleLogout = () => {
+        deleteCookie('token');
+        setUsuario(null);
+    };
+
     return (
         <>
             <header className="top-bar">
@@ -85,9 +112,9 @@ function App() {
                             <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
                         </div>
                         {mostrarRegistro ? (
-                            <Register onRegister={setUsuario} />
+                            <Register onRegister={handleLogin} />
                         ) : (
-                            <Login onLogin={setUsuario} />
+                            <Login onLogin={handleLogin} />
                         )}
                         <button style={{ marginTop: 18, width: '100%' }} onClick={() => setMostrarRegistro(!mostrarRegistro)}>
                             {mostrarRegistro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}

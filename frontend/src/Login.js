@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { setCookie } from './cookieUtils';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
 
@@ -22,6 +23,7 @@ function Login({ onLogin }) {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Error de login');
             // Guardar el token solo en memoria (en el estado superior)
+            if (data.token) setCookie('token', data.token, 7);
             onLogin({ ...data.user, token: data.token });
         } catch (err) {
             setError(err.message);

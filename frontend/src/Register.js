@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import { setCookie } from './cookieUtils';
+import { useNavigate } from 'react-router-dom';
 
 
 function Register({ onRegister }) {
-    const [username, setUsername] = useState('');
+    const navigate = useNavigate();
+    const [realName, setRealName] = useState('');
+    const [nick, setNick] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [userType, setUserType] = useState('Usuario');
@@ -13,16 +17,22 @@ function Register({ onRegister }) {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        if (!realName || !nick || !email || !password || !userType) {
+            setError('Todos los campos son obligatorios');
+            setLoading(false);
+            return;
+        }
         try {
             const res = await fetch(`/api/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, username, userType })
+                body: JSON.stringify({ realName, nick, email, password, userType })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Error de registro');
-            // Guardar el token solo en memoria (en el estado superior)
+            if (data.token) setCookie('token', data.token, 7);
             onRegister({ ...data.user, token: data.token });
+            navigate('/perfil');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -34,9 +44,16 @@ function Register({ onRegister }) {
         <form className="register-form" onSubmit={handleSubmit}>
             <input
                 type="text"
-                placeholder="Nombre de usuario"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
+                placeholder="Nombre real"
+                value={realName}
+                onChange={e => setRealName(e.target.value)}
+                required
+            />
+            <input
+                type="text"
+                placeholder="Nick"
+                value={nick}
+                onChange={e => setNick(e.target.value)}
                 required
             />
             <input
@@ -55,7 +72,7 @@ function Register({ onRegister }) {
             />
             <select value={userType} onChange={e => setUserType(e.target.value)} required>
                 <option value="Usuario">Usuario</option>
-                <option value="Padre/Docente">Padre/Docente</option>
+                <option value="Docente">Docente</option>
             </select>
             <button type="submit" disabled={loading}>
                 {loading ? 'Registrando...' : 'Registrarse'}
