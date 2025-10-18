@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: .StoryUp
+  name: StoryUp
 
     env: node
     buildCommand: |
@@ -11,10 +11,10 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
+        value: 3000
       - key: MONGO_URI
-        sync: false
+        value: "<TU_MONGO_URI_AQUI>"
       - key: JWT_SECRET
-        sync: false
+        value: "<TU_JWT_SECRET_AQUI>"
     plan: free
     autoDeploy: true
