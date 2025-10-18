@@ -1,6 +1,9 @@
 
+
 import Register from './Register';
+import Perfil from './Perfil';
 import { setCookie, getCookie } from './cookieUtils';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 
 import React, { useState, useEffect } from 'react';
@@ -97,18 +100,22 @@ function App() {
                 </div>
             </header>
             {usuario && <Sidebar />}
-            {/* Contenido principal vacío, solo sidebar y header si está logueado */}
-            <main style={{ marginLeft: usuario ? 200 : 0, marginTop: '2rem', minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                {!usuario && (
-                    <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380 }}>
-                        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                            <img src="/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
-                            <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
-                        </div>
-                        <Register onRegister={handleLogin} />
-                    </div>
-                )}
-            </main>
+            <Routes>
+                <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
+                <Route path="/" element={
+                    !usuario ? (
+                        <main style={{ marginLeft: 0, marginTop: '2rem', minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+                            <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380 }}>
+                                <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                                    <img src="/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
+                                    <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
+                                </div>
+                                <Register onRegister={handleLogin} />
+                            </div>
+                        </main>
+                    ) : <Navigate to="/perfil" />
+                } />
+            </Routes>
             <footer className="footer" style={{ marginTop: '3rem', marginLeft: usuario ? '200px' : 0 }}>
                 <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
             </footer>
