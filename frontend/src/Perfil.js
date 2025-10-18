@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ChatSidebar from './ChatSidebar';
 import { getCookie } from './cookieUtils';
 
 
