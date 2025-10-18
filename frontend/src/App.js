@@ -1,8 +1,6 @@
 
 
 import React, { useState, useEffect } from 'react';
-import Login from './Login';
-import Register from './Register';
 import LanguageSelector from './LanguageSelector';
 
 import Sidebar from './Sidebar';
@@ -10,6 +8,7 @@ import './App.css';
 
 
 function App() {
+    // Eliminada la declaración duplicada de usuario
     const [usuario, setUsuario] = useState(null);
     const [mostrarRegistro, setMostrarRegistro] = useState(false);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
@@ -76,6 +75,24 @@ function App() {
             </header>
             {usuario && <Sidebar />}
             {/* Contenido principal vacío, solo sidebar y header si está logueado */}
+            <main style={{ marginLeft: usuario ? 200 : 0, marginTop: '2rem', minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+                {!usuario && (
+                    <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380 }}>
+                        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                            <img src="/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
+                            <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
+                        </div>
+                        {mostrarRegistro ? (
+                            <Register onRegister={setUsuario} />
+                        ) : (
+                            <Login onLogin={setUsuario} />
+                        )}
+                        <button style={{ marginTop: 18, width: '100%' }} onClick={() => setMostrarRegistro(!mostrarRegistro)}>
+                            {mostrarRegistro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
+                        </button>
+                    </div>
+                )}
+            </main>
             <footer className="footer" style={{ marginTop: '3rem', marginLeft: usuario ? '200px' : 0 }}>
                 <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
             </footer>
