@@ -27,20 +27,12 @@ const usuariosRouter = require('./routes/usuarios');
 app.use('/api', usuariosRouter);
 
 // Servir frontend estático (React build)
-const buildPath = path.join(__dirname, '../frontend/build');
-const fs = require('fs');
-if (fs.existsSync(buildPath)) {
-    app.use(express.static(buildPath));
-    // SPA fallback: cualquier ruta que no sea API devuelve index.html
-    app.get('*', (req, res) => {
-        if (req.path.startsWith('/api')) return res.status(404).send('API not found');
-        res.sendFile(path.join(buildPath, 'index.html'));
-    });
-} else {
-    app.get('*', (req, res) => {
-        res.status(500).send('El frontend no está compilado. Por favor, ejecuta npm run build en frontend.');
-    });
-}
+
+// El backend solo debe manejar rutas /api. No servir el frontend ni SPA fallback aquí.
+app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) return res.status(404).send('API not found');
+    res.status(404).send('Not found');
+});
 
 
 // Middleware de manejo de errores para rutas /api
