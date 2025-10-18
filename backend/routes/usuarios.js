@@ -1,12 +1,4 @@
 
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
-const auth = require('../middleware/auth');
-
 // Total de usuarios registrados
 router.get('/total', async (req, res) => {
     try {
