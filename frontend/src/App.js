@@ -120,6 +120,7 @@ function App() {
                     <Routes>
                         <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
                         <Route path="/crear-historia" element={<CrearHistoria />} />
+                        <Route path="/aprende-con-pipo" element={<AprendeConPipo />} />
                         <Route path="/" element={
                             !usuario ? (
                                 <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
