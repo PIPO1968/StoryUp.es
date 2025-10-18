@@ -29,3 +29,32 @@ router.post('/register-or-login', async (req, res) => {
 });
 
 module.exports = router;
+
+
+// Endpoint para devolver el usuario autenticado a partir del token
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
+router.get('/me', async (req, res) => {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+    const token = auth.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        res.json({
+            user: {
+                email: user.email,
+                username: user.username,
+                realName: user.realName,
+                userType: user.userType,
+                _id: user._id
+            }
+        });
+    } catch (err) {
+        res.status(401).json({ error: 'Token inválido', details: err.message });
+    }
+});
