@@ -41,8 +41,8 @@ function Perfil({ usuario }) {
     };
 
     return (
-        <div style={{ display: 'flex', gap: '3vw', margin: '2.5rem auto', maxWidth: '98vw', width: '98vw', alignItems: 'flex-start', justifyContent: 'center' }}>
-            <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: '44vw', height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', gap: '2.5rem', margin: '2.5rem auto', maxWidth: 1200, width: '95vw', alignItems: 'flex-start', justifyContent: 'center' }}>
+            <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 18 }}>
                     <div style={{ width: 110, height: 110, borderRadius: '50%', background: '#ffe066', overflow: 'hidden', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {avatar ? (
@@ -62,7 +62,7 @@ function Perfil({ usuario }) {
                     <p><strong>Tipo:</strong> {usuario?.userType || 'Usuario'}</p>
                 </div>
             </div>
-            <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: '44vw', height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <h2 style={{ color: '#e6b800', marginBottom: 18 }}>TROFEOS</h2>
                 {/* Aquí irán los trofeos del usuario */}
             </div>
