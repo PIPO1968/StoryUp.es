@@ -62,9 +62,11 @@ function Perfil({ usuario }) {
                     <p><strong>Tipo:</strong> {usuario?.userType || 'Usuario'}</p>
                     <p><strong>Centro Escolar:</strong> {usuario?.school || '—'}</p>
                     <p><strong>Curso:</strong> {usuario?.course || '—'}</p>
-                    <p><strong>Likes:</strong> {usuario?.likes ?? '0'}</p>
-                    <p><strong>Comentarios:</strong> {usuario?.comments ?? '0'}</p>
-                    <p><strong>Amigos:</strong> {usuario?.friends ?? '0'}</p>
+                    <div style={{ display: 'flex', gap: '2.5rem', marginTop: 12 }}>
+                        <span><strong>Likes:</strong> {usuario?.likes ?? '0'}</span>
+                        <span><strong>Comentarios:</strong> {usuario?.comments ?? '0'}</span>
+                        <span><strong>Amigos:</strong> {usuario?.friends ?? '0'}</span>
+                    </div>
                 </div>
             </div>
             <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
