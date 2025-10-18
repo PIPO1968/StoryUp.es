@@ -119,12 +119,15 @@ function Perfil({ usuario }) {
                         </div>
                     </div>
                     {/* Campo de ganador, solo visible una semana después de la fecha final (lógica visual, no funcional aún) */}
-                    <div style={{ width: '100%', marginBottom: 12 }}>
-                        <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4, display: 'block' }}>Nombre del ganador</label>
-                        <input type="text" placeholder="Nombre del ganador" style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', background: '#f5f5f5' }} disabled />
-                        <div style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>
-                            Este campo estará disponible una semana después de la fecha final del concurso.
+                    <div style={{ width: '100%', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ flex: 1 }}>
+                            <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4, display: 'block' }}>Nombre del ganador</label>
+                            <input type="text" placeholder="Nombre del ganador" style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', background: '#f5f5f5' }} disabled />
+                            <div style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>
+                                Este campo estará disponible una semana después de la fecha final del concurso.
+                            </div>
                         </div>
+                        <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer', height: 40 }} disabled>Enviar</button>
                     </div>
                     <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Crear concurso</button>
                 </div>
