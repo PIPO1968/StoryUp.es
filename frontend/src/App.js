@@ -65,7 +65,7 @@ function App() {
                         <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
                     </span>
                 </div>
-                <div className="topbar-center-absolute">
+                <div className="topbar-center">
                     <span className="topbar-clock">{horaMadrid}</span>
                 </div>
                 <div className="topbar-right">
