@@ -60,7 +60,7 @@ function App() {
         <>
             <header className="top-bar">
                 <div className="topbar-left">
-                    <img src="/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
+                    <img src="/assets/favicon.ico" alt="Logo StoryUp.es" className="topbar-logo" />
                     <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
                         <span className="topbar-sep">&nbsp;-&nbsp;</span>
                         <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
