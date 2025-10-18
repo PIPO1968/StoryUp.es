@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     realName: { type: String },
     userType: { type: String, default: 'Usuario' },
+    avatar: { type: String, default: '' }, // base64 o URL
     createdAt: { type: Date, default: Date.now }
 });
 
