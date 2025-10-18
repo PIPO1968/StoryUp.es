@@ -1,3 +1,10 @@
+
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
 // Actualizar avatar del usuario autenticado
 router.post('/me/avatar', async (req, res) => {
     const auth = req.headers.authorization;
@@ -22,9 +29,6 @@ router.post('/me/avatar', async (req, res) => {
         res.status(401).json({ error: 'Token inválido', details: err.message });
     }
 });
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
 
 
 // Registro o login
