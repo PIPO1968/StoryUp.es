@@ -1,3 +1,4 @@
+const { updateLastActiveFromRequest } = require('./updateLastActive');
 const { Client } = require('pg');
 import jwt from 'jsonwebtoken';
 
@@ -21,6 +22,7 @@ function verifyToken(req) {
 }
 
 module.exports = async function handler(req, res) {
+    await updateLastActiveFromRequest(req);
     const client = getClient();
     await client.connect();
 

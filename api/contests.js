@@ -1,3 +1,4 @@
+import { updateLastActiveFromRequest } from './updateLastActive';
 
 const { Client } = require('pg');
 
@@ -9,6 +10,7 @@ function getClient() {
 }
 
 export default async function handler(req, res) {
+    await updateLastActiveFromRequest(req);
     if (req.method === 'POST') {
         const { title, description, startDate, endDate, winner, creatorUsername } = req.body;
         if (!title || !description || !startDate || !endDate || !creatorUsername) {

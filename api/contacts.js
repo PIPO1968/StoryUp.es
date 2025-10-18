@@ -1,3 +1,4 @@
+const { updateLastActiveFromRequest } = require('./updateLastActive');
 const { Client } = require('pg');
 
 function getClient() {
@@ -18,6 +19,7 @@ async function ensureTable(client) {
 }
 
 module.exports = async function handler(req, res) {
+    await updateLastActiveFromRequest(req);
     const client = getClient();
     await client.connect();
     await ensureTable(client);

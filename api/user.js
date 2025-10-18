@@ -1,3 +1,4 @@
+const { updateLastActiveFromRequest } = require('./updateLastActive');
 const { Client } = require('pg');
 
 function getClient() {
@@ -7,6 +8,7 @@ function getClient() {
 }
 
 module.exports = async function handler(req, res) {
+    await updateLastActiveFromRequest(req);
     // Endpoint para obtener los trofeos del usuario
     if (req.method === 'GET' && req.url.includes('/trophies')) {
         const client = getClient();
