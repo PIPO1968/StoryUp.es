@@ -75,7 +75,7 @@ function AprendeConPipo() {
             <Sidebar />
             {/* Imagen de Pipo FIJA a la izquierda de la página */}
             <div style={{ width: 200, minWidth: 200, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 60 }}>
-                <img src="/assets/Premio1.png" alt="" style={{ width: 160, height: 'auto', borderRadius: 18, boxShadow: '0 4px 16px #ffd54f88', background: '#fff' }} />
+                <img src="/assets/Premio1.png.webp" alt="" style={{ width: 160, height: 'auto', borderRadius: 18, boxShadow: '0 4px 16px #ffd54f88', background: '#fff' }} />
             </div>
             {/* Bloque generador centrado */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
