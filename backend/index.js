@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors({
-    origin: false, // No es necesario CORS si frontend y backend van juntos
+    origin: 'https://www.storyup.es',
     credentials: true
 }));
 app.use(express.json());
