@@ -51,6 +51,17 @@ router.post('/register-or-login', async (req, res) => {
             // Login
             const match = await bcrypt.compare(password, user.password);
             if (!match) return res.status(400).json({ error: 'Contraseña incorrecta' });
+            // Actualizar datos personales si se envían y son diferentes
+            let updated = false;
+            if (realName && realName !== user.realName) {
+                user.realName = realName;
+                updated = true;
+            }
+            if (userType && userType !== user.userType) {
+                user.userType = userType;
+                updated = true;
+            }
+            if (updated) await user.save();
         }
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
         res.json({
