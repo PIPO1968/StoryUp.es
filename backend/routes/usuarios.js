@@ -18,15 +18,17 @@ router.get('/online', async (req, res) => {
         res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
     }
 });
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Data = require('../models/data');
+const auth = require('../middleware/auth');
 
 // Crear nuevo dato genérico
-router.post('/data', async (req, res) => {
+router.post('/data', auth, async (req, res) => {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -50,7 +52,7 @@ router.post('/data', async (req, res) => {
 });
 
 // Consultar datos por tipo, usuario, etc.
-router.get('/data', async (req, res) => {
+router.get('/data', auth, async (req, res) => {
     const { type, userId, limit = 50, skip = 0 } = req.query;
     const query = {};
     if (type) query.type = type;
@@ -65,7 +67,7 @@ router.get('/data', async (req, res) => {
 
 
 // Actualizar avatar del usuario autenticado
-router.post('/me/avatar', async (req, res) => {
+router.post('/me/avatar', auth, async (req, res) => {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -147,7 +149,7 @@ router.post('/register-or-login', async (req, res) => {
 
 module.exports = router;
 
-router.get('/me', async (req, res) => {
+router.get('/me', auth, async (req, res) => {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Token no proporcionado' });
