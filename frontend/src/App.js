@@ -107,7 +107,7 @@ function App() {
                         <main style={{ marginLeft: 0, marginTop: '2rem', minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
                             <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380 }}>
                                 <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                                    <img src="/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
+                                    <img src="/assets/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
                                     <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
                                 </div>
                                 <Register onRegister={handleLogin} />
