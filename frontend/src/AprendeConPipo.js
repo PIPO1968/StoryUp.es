@@ -73,48 +73,45 @@ function AprendeConPipo() {
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>
             <Sidebar />
-            <div style={{ flex: 1, marginLeft: 210, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                <div style={{ maxWidth: 1100, margin: '40px auto', background: '#fffbe7', borderRadius: 24, boxShadow: '0 8px 24px #ffd54f', padding: 36, border: '3px dashed #ff4081', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 32 }}>
-                    {/* Imagen de Pipo a la izquierda */}
-                    <div style={{ minWidth: 180, maxWidth: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', marginRight: 24 }}>
-                        <img src="/assets/logo-pipo.JPG" alt="Pipo" style={{ width: '100%', maxWidth: 180, borderRadius: 16, boxShadow: '0 2px 12px #ffd54f', marginBottom: 16, background: '#fff' }} />
+            {/* Imagen de Pipo a la izquierda de la página */}
+            <div style={{ minWidth: 200, maxWidth: 220, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', marginTop: 60, marginLeft: 10 }}>
+                <img src="/assets/logo-pipo.jpg" alt="Pipo" style={{ width: '100%', maxWidth: 180, borderRadius: 16, boxShadow: '0 2px 12px #ffd54f', marginBottom: 16, background: '#fff' }} />
+            </div>
+            {/* Contenido principal */}
+            <div style={{ flex: 1, marginLeft: 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                {/* Título fuera del bloque */}
+                <h1 style={{ textAlign: 'center', color: '#ff4081', fontFamily: 'Comic Sans MS, cursive', letterSpacing: 2, marginTop: 40, marginBottom: 24 }}>Aprende con Pipo</h1>
+                <div style={{ maxWidth: 900, margin: '0 auto', background: '#fffbe7', borderRadius: 24, boxShadow: '0 8px 24px #ffd54f', padding: 36, border: '3px dashed #ff4081', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 32 }}>
+                    {/* Sidebar opciones */}
+                    <div style={{ width: 220, background: '#fffbe6', borderRadius: 12, boxShadow: '0 2px 8px #ffe06633', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'flex-start' }}>
+                        <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Asignatura</label>
+                        <select value={asignatura} onChange={e => setAsignatura(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}>
+                            <option value="">Todas</option>
+                            {ASIGNATURAS.map(a => <option key={a} value={a}>{a}</option>)}
+                        </select>
+                        <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Curso</label>
+                        <select value={curso} onChange={e => setCurso(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}>
+                            {CURSOS.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                        <div style={{ fontWeight: 'bold', color: '#ff4081', marginTop: 18 }}>Likes: <span style={{ color: '#28a745' }}>{likes}</span></div>
                     </div>
-                    {/* Bloque central: título y generador */}
+                    {/* Bloque principal */}
                     <div style={{ flex: 1 }}>
-                        <h1 style={{ textAlign: 'center', color: '#ff4081', fontFamily: 'Comic Sans MS, cursive', letterSpacing: 2 }}>Aprende con Pipo</h1>
-                        <div style={{ display: 'flex', gap: 32 }}>
-                            {/* Sidebar opciones */}
-                            <div style={{ width: 220, background: '#fffbe6', borderRadius: 12, boxShadow: '0 2px 8px #ffe06633', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: 18, alignItems: 'flex-start' }}>
-                                <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Asignatura</label>
-                                <select value={asignatura} onChange={e => setAsignatura(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}>
-                                    <option value="">Todas</option>
-                                    {ASIGNATURAS.map(a => <option key={a} value={a}>{a}</option>)}
-                                </select>
-                                <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Curso</label>
-                                <select value={curso} onChange={e => setCurso(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}>
-                                    {CURSOS.map(c => <option key={c} value={c}>{c}</option>)}
-                                </select>
-                                <div style={{ fontWeight: 'bold', color: '#ff4081', marginTop: 18 }}>Likes: <span style={{ color: '#28a745' }}>{likes}</span></div>
-                            </div>
-                            {/* Bloque principal */}
-                            <div style={{ flex: 1 }}>
-                                <div className="timer" style={{ fontSize: '2em', color: '#ff4081', textAlign: 'center', marginBottom: 18, background: '#fffde7', borderRadius: 12, boxShadow: '0 2px 8px #ffd54f', padding: '10px 0', border: '2px solid #ff4081', cursor: timerActivo ? 'default' : 'pointer' }} onClick={() => !timerActivo && iniciarPregunta()}>
-                                    {timerActivo ? `Tiempo restante: ${Math.floor(tiempo / 60)}:${(tiempo % 60).toString().padStart(2, '0')}` : 'Mostrar pregunta y empezar cuenta atrás'}
-                                </div>
-                                {pregunta && (
-                                    <div className="question-block" style={{ background: '#b3e5fc', borderRadius: 16, padding: 18, boxShadow: '0 2px 8px #4fc3f7', border: '2px dashed #0077cc', marginBottom: 18 }}>
-                                        <div style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>{pregunta.texto}</div>
-                                        {timerActivo && (
-                                            <>
-                                                <input type="text" value={respuesta} onChange={e => setRespuesta(e.target.value)} placeholder="Escribe tu respuesta..." style={{ border: '2px solid #ff4081', borderRadius: 6, padding: 8, fontSize: '1em', marginTop: 10, width: '100%' }} autoFocus />
-                                                <button onClick={comprobarRespuesta} style={{ background: '#ff4081', marginTop: 10 }}>Responder</button>
-                                            </>
-                                        )}
-                                        <div className="result" style={{ fontSize: '1.2em', marginTop: 20, color: '#0077cc', background: '#fffde7', borderRadius: 10, padding: 10, boxShadow: '0 2px 8px #ffd54f' }}>{resultado}</div>
-                                    </div>
-                                )}
-                            </div>
+                        <div className="timer" style={{ fontSize: '2em', color: '#ff4081', textAlign: 'center', marginBottom: 18, background: '#fffde7', borderRadius: 12, boxShadow: '0 2px 8px #ffd54f', padding: '10px 0', border: '2px solid #ff4081', cursor: timerActivo ? 'default' : 'pointer' }} onClick={() => !timerActivo && iniciarPregunta()}>
+                            {timerActivo ? `Tiempo restante: ${Math.floor(tiempo / 60)}:${(tiempo % 60).toString().padStart(2, '0')}` : 'Mostrar pregunta y empezar cuenta atrás'}
                         </div>
+                        {pregunta && (
+                            <div className="question-block" style={{ background: '#b3e5fc', borderRadius: 16, padding: 18, boxShadow: '0 2px 8px #4fc3f7', border: '2px dashed #0077cc', marginBottom: 18 }}>
+                                <div style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>{pregunta.texto}</div>
+                                {timerActivo && (
+                                    <>
+                                        <input type="text" value={respuesta} onChange={e => setRespuesta(e.target.value)} placeholder="Escribe tu respuesta..." style={{ border: '2px solid #ff4081', borderRadius: 6, padding: 8, fontSize: '1em', marginTop: 10, width: '100%' }} autoFocus />
+                                        <button onClick={comprobarRespuesta} style={{ background: '#ff4081', marginTop: 10 }}>Responder</button>
+                                    </>
+                                )}
+                                <div className="result" style={{ fontSize: '1.2em', marginTop: 20, color: '#0077cc', background: '#fffde7', borderRadius: 10, padding: 10, boxShadow: '0 2px 8px #ffd54f' }}>{resultado}</div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
