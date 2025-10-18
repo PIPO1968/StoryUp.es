@@ -1,7 +1,7 @@
 
 import Login from './Login';
 import Register from './Register';
-import { setCookie, getCookie, deleteCookie } from './cookieUtils';
+import { setCookie, getCookie } from './cookieUtils';
 
 
 import React, { useState, useEffect } from 'react';
