@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
+import AprendeConPipo from './AprendeConPipo';
 import { setCookie, getCookie } from './cookieUtils';
 import LanguageSelector from './LanguageSelector';
 import Sidebar from './Sidebar';
