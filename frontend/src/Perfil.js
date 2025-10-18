@@ -41,7 +41,7 @@ function Perfil({ usuario }) {
     };
 
     return (
-    <div style={{ display: 'flex', gap: '2.5rem', margin: '2.5rem auto', maxWidth: 1200, width: '95vw', alignItems: 'flex-start', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', gap: '2.5rem', margin: '2.5rem auto', maxWidth: 1200, width: '95vw', alignItems: 'flex-start', justifyContent: 'center' }}>
             <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 18 }}>
                     <div style={{ width: 110, height: 110, borderRadius: '50%', background: '#ffe066', overflow: 'hidden', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -60,6 +60,11 @@ function Perfil({ usuario }) {
                     <p><strong>Nick:</strong> {usuario?.nick || usuario?.username}</p>
                     <p><strong>Email:</strong> {usuario?.email}</p>
                     <p><strong>Tipo:</strong> {usuario?.userType || 'Usuario'}</p>
+                    <p><strong>Centro Escolar:</strong> {usuario?.school || '—'}</p>
+                    <p><strong>Curso:</strong> {usuario?.course || '—'}</p>
+                    <p><strong>Likes:</strong> {usuario?.likes ?? '0'}</p>
+                    <p><strong>Comentarios:</strong> {usuario?.comments ?? '0'}</p>
+                    <p><strong>Amigos:</strong> {usuario?.friends ?? '0'}</p>
                 </div>
             </div>
             <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
