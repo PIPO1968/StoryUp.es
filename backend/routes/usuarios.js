@@ -89,6 +89,7 @@ router.get('/me', async (req, res) => {
                 username: user.username,
                 realName: user.realName,
                 userType: user.userType,
+                avatar: user.avatar,
                 _id: user._id
             }
         });
