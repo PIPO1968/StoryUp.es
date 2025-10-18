@@ -107,14 +107,7 @@ function App() {
                             <img src="/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
                             <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
                         </div>
-                        {mostrarRegistro ? (
-                            <Register onRegister={handleLogin} />
-                        ) : (
-                            <Login onLogin={handleLogin} />
-                        )}
-                        <button style={{ marginTop: 18, width: '100%' }} onClick={() => setMostrarRegistro(!mostrarRegistro)}>
-                            {mostrarRegistro ? '¿Ya tienes cuenta? Inicia sesión' : '¿No tienes cuenta? Regístrate'}
-                        </button>
+                        <Register onRegister={handleLogin} />
                     </div>
                 )}
             </main>
