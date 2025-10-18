@@ -84,42 +84,44 @@ function App() {
 
 
     return (
-        <>
-            <header className="top-bar">
-                <div className="topbar-left">
-                    <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
-                        <span className="topbar-sep">&nbsp;-&nbsp;</span>
-                        <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
-                    </span>
-                </div>
-                <div className="topbar-center">
-                    <span className="topbar-clock">{horaMadrid}</span>
-                </div>
-                <div className="topbar-right">
-                    <LanguageSelector lang={lang} setLang={setLang} />
-                </div>
-            </header>
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
             {usuario && <Sidebar />}
-            <Routes>
-                <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
-                <Route path="/" element={
-                    !usuario ? (
-                        <main style={{ marginLeft: 0, marginTop: '2rem', minHeight: '60vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                            <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380 }}>
-                                <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                                    <img src="/assets/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
-                                    <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
+            <div style={{ flex: 1, marginLeft: usuario ? 210 : 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                <header className="top-bar">
+                    <div className="topbar-left">
+                        <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
+                            <span className="topbar-sep">&nbsp;-&nbsp;</span>
+                            <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
+                        </span>
+                    </div>
+                    <div className="topbar-center">
+                        <span className="topbar-clock">{horaMadrid}</span>
+                    </div>
+                    <div className="topbar-right">
+                        <LanguageSelector lang={lang} setLang={setLang} />
+                    </div>
+                </header>
+                <main style={{ flex: 1, marginTop: '2rem', display: 'flex', flexDirection: 'column' }}>
+                    <Routes>
+                        <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
+                        <Route path="/" element={
+                            !usuario ? (
+                                <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
+                                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                                        <img src="/assets/login-icon.png" alt="Icono login StoryUp.es" style={{ width: 60, height: 60, marginBottom: 12 }} />
+                                        <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
+                                    </div>
+                                    <Register onRegister={handleLogin} />
                                 </div>
-                                <Register onRegister={handleLogin} />
-                            </div>
-                        </main>
-                    ) : <Navigate to="/perfil" />
-                } />
-            </Routes>
-            <footer className="footer" style={{ marginTop: '3rem', marginLeft: usuario ? '200px' : 0 }}>
-                <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
-            </footer>
-        </>
+                            ) : <Navigate to="/perfil" />
+                        } />
+                    </Routes>
+                </main>
+                <footer className="footer" style={{ marginTop: '3rem' }}>
+                    <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
+                </footer>
+            </div>
+        </div>
     );
 }
 
