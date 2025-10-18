@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Register({ onRegister }) {
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL || '/api';
     const [realName, setRealName] = useState('');
     const [nick, setNick] = useState('');
     const [email, setEmail] = useState('');
@@ -23,10 +24,10 @@ function Register({ onRegister }) {
             return;
         }
         try {
-            const res = await fetch(`/api/register-or-login`, {
+            const res = await fetch(`${API_URL}/register-or-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ realName, nick, email, password, userType })
+                body: JSON.stringify({ realName, username: nick, email, password, userType })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Error de registro');
