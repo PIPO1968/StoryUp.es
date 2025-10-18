@@ -20,9 +20,9 @@ function Perfil({ usuario }) {
                 setAvatar(base64);
                 setLoading(true);
                 // ...no renderizar nada aquí...
-            }
-        };
-        reader.readAsDataURL(file);
+            };
+            reader.readAsDataURL(file);
+        }
     }
     return (
         <div style={{ width: '100%' }}>
