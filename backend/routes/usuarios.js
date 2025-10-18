@@ -120,10 +120,8 @@ router.post('/register-or-login', async (req, res) => {
     }
 });
 
-module.exports = router;
 
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+module.exports = router;
 
 router.get('/me', async (req, res) => {
     const auth = req.headers.authorization;
