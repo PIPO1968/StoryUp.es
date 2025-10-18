@@ -1,37 +1,12 @@
-
-// ...existing code...
-
-// Total de usuarios registrados
-router.get('/total', async (req, res) => {
-    try {
-        const total = await User.countDocuments();
-        res.json({ total });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al contar usuarios', details: err.message });
-    }
-});
-
-// Usuarios online (real: usuarios con actividad en los últimos 5 minutos)
-router.get('/online', async (req, res) => {
-    try {
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-        const online = await User.countDocuments({ lastActive: { $gte: fiveMinutesAgo } });
-        res.json({ online });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
-    }
-});
-
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Data = require('../models/data');
-const auth = require('../middleware/auth');
 
 // Crear nuevo dato genérico
-router.post('/data', auth, async (req, res) => {
+router.post('/data', async (req, res) => {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -55,7 +30,7 @@ router.post('/data', auth, async (req, res) => {
 });
 
 // Consultar datos por tipo, usuario, etc.
-router.get('/data', auth, async (req, res) => {
+router.get('/data', async (req, res) => {
     const { type, userId, limit = 50, skip = 0 } = req.query;
     const query = {};
     if (type) query.type = type;
@@ -70,7 +45,7 @@ router.get('/data', auth, async (req, res) => {
 
 
 // Actualizar avatar del usuario autenticado
-router.post('/me/avatar', auth, async (req, res) => {
+router.post('/me/avatar', async (req, res) => {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -110,8 +85,7 @@ router.post('/register-or-login', async (req, res) => {
                 password: hashed,
                 username,
                 realName: realName || '',
-                userType: userType || 'Usuario',
-                lastActive: new Date()
+                userType: userType || 'Usuario'
             });
             await user.save();
         } else {
@@ -128,9 +102,6 @@ router.post('/register-or-login', async (req, res) => {
                 user.userType = userType;
                 updated = true;
             }
-            // Actualizar lastActive siempre que haga login
-            user.lastActive = new Date();
-            updated = true;
             if (updated) await user.save();
         }
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
@@ -150,9 +121,7 @@ router.post('/register-or-login', async (req, res) => {
 });
 
 
-module.exports = router;
-
-router.get('/me', auth, async (req, res) => {
+router.get('/me', async (req, res) => {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith('Bearer ')) {
         return res.status(401).json({ error: 'Token no proporcionado' });
@@ -162,9 +131,6 @@ router.get('/me', auth, async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
         const user = await User.findById(decoded.userId);
         if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-        // Actualizar lastActive a ahora
-        user.lastActive = new Date();
-        await user.save();
         res.json({
             user: {
                 email: user.email,
@@ -179,3 +145,5 @@ router.get('/me', auth, async (req, res) => {
         res.status(401).json({ error: 'Token inválido', details: err.message });
     }
 });
+
+module.exports = router;
