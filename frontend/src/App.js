@@ -3,6 +3,8 @@
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
+import AprendeConPipo from './AprendeConPipo';
+                        <Route path="/aprende-con-pipo" element={<AprendeConPipo />} />
 import { setCookie, getCookie } from './cookieUtils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Routes, Route, Navigate } from 'react-router-dom';
