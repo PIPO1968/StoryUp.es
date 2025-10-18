@@ -1,4 +1,6 @@
 
+// ...existing code...
+
 // Total de usuarios registrados
 router.get('/total', async (req, res) => {
     try {
