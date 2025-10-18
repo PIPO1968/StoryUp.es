@@ -1,3 +1,42 @@
+const Data = require('../models/data');
+
+// Crear nuevo dato genérico
+router.post('/data', async (req, res) => {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+    const token = auth.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const { type, content, meta } = req.body;
+        if (!type || !content) return res.status(400).json({ error: 'Tipo y contenido requeridos' });
+        const data = new Data({
+            type,
+            userId: decoded.userId,
+            content,
+            meta: meta || {}
+        });
+        await data.save();
+        res.json({ success: true, data });
+    } catch (err) {
+        res.status(401).json({ error: 'Token inválido', details: err.message });
+    }
+});
+
+// Consultar datos por tipo, usuario, etc.
+router.get('/data', async (req, res) => {
+    const { type, userId, limit = 50, skip = 0 } = req.query;
+    const query = {};
+    if (type) query.type = type;
+    if (userId) query.userId = userId;
+    try {
+        const items = await Data.find(query).sort({ createdAt: -1 }).skip(Number(skip)).limit(Number(limit));
+        res.json({ items });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al consultar datos', details: err.message });
+    }
+});
 
 const express = require('express');
 const router = express.Router();
