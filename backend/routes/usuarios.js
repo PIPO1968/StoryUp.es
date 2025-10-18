@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+
 
 // Registro o login
 router.post('/register-or-login', async (req, res) => {
@@ -30,8 +29,6 @@ router.post('/register-or-login', async (req, res) => {
 
 module.exports = router;
 
-
-// Endpoint para devolver el usuario autenticado a partir del token
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
