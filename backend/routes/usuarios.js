@@ -157,6 +157,9 @@ router.get('/me', async (req, res) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
         const user = await User.findById(decoded.userId);
         if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        // Actualizar lastActive a ahora
+        user.lastActive = new Date();
+        await user.save();
         res.json({
             user: {
                 email: user.email,
