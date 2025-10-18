@@ -1,5 +1,4 @@
 
-import Login from './Login';
 import Register from './Register';
 import { setCookie, getCookie } from './cookieUtils';
 
@@ -13,7 +12,6 @@ import './App.css';
 
 function App() {
     const [usuario, setUsuario] = useState(null);
-    const [mostrarRegistro, setMostrarRegistro] = useState(false);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
     const [usuariosOnline, setUsuariosOnline] = useState(null);
     const [horaMadrid, setHoraMadrid] = useState("");
