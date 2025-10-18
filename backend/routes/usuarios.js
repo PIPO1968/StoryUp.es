@@ -11,12 +11,8 @@ router.get('/total', async (req, res) => {
 // Usuarios online (real: usuarios con actividad en los últimos 5 minutos)
 router.get('/online', async (req, res) => {
     try {
-        // Suponiendo que tienes un campo lastActive en el modelo User (si no, simular)
-        // const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-        // const online = await User.countDocuments({ lastActive: { $gte: fiveMinutesAgo } });
-        // Si no existe lastActive, simular con un número aleatorio entre 1 y total
-        const total = await User.countDocuments();
-        const online = total > 0 ? Math.max(1, Math.floor(Math.random() * total)) : 0;
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const online = await User.countDocuments({ lastActive: { $gte: fiveMinutesAgo } });
         res.json({ online });
     } catch (err) {
         res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
@@ -109,7 +105,8 @@ router.post('/register-or-login', async (req, res) => {
                 password: hashed,
                 username,
                 realName: realName || '',
-                userType: userType || 'Usuario'
+                userType: userType || 'Usuario',
+                lastActive: new Date()
             });
             await user.save();
         } else {
@@ -126,6 +123,9 @@ router.post('/register-or-login', async (req, res) => {
                 user.userType = userType;
                 updated = true;
             }
+            // Actualizar lastActive siempre que haga login
+            user.lastActive = new Date();
+            updated = true;
             if (updated) await user.save();
         }
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
