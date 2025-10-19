@@ -1,3 +1,30 @@
+// Solo login
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ error: 'Usuario no encontrado' });
+        const match = await bcrypt.compare(password, user.password);
+        if (!match) return res.status(400).json({ error: 'Contraseña incorrecta' });
+        const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
+        res.json({
+            token,
+            user: {
+                email: user.email,
+                username: user.username,
+                realName: user.realName,
+                userType: user.userType,
+                centroTipo: user.centroTipo,
+                centroNombre: user.centroNombre,
+                _id: user._id
+            }
+        });
+    } catch (err) {
+        console.error('Error interno en /login:', err);
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message, stack: err.stack });
+    }
+});
 
 const express = require('express');
 const router = express.Router();
