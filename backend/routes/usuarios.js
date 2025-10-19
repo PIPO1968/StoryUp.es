@@ -20,12 +20,7 @@ router.get('/usuarios/online', async (req, res) => {
         res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
     }
 });
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
+
 
 // Crear nuevo dato genérico
 router.post('/data', async (req, res) => {
@@ -93,12 +88,7 @@ router.post('/me/avatar', async (req, res) => {
 
 
 // Registro o login
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
+
 
 // Total de usuarios registrados
 router.get('/usuarios/total', async (req, res) => {
