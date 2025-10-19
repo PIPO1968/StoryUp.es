@@ -1,25 +1,19 @@
-// Cerrar sesión
-const handleLogout = () => {
-    deleteCookie('token');
-    setUsuario(null);
-    navigate('/', { replace: true });
-};
-
-
+import React, { useState, useEffect } from 'react';
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
-import { setCookie, getCookie } from './cookieUtils';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Routes, Route, Navigate } from 'react-router-dom';
-
-
-import React, { useState, useEffect } from 'react';
+import { setCookie, getCookie, deleteCookie } from './cookieUtils';
+import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import LanguageSelector from './LanguageSelector';
-
 import Sidebar from './Sidebar';
 import './App.css';
 function App() {
+    // Cerrar sesión
+    const handleLogout = () => {
+        deleteCookie('token');
+        setUsuario(null);
+        navigate('/', { replace: true });
+    };
     const [usuario, setUsuario] = useState(null);
     const [checkingSession, setCheckingSession] = useState(true);
     const [horaMadrid, setHoraMadrid] = useState("");
