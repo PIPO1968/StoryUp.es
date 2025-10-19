@@ -8,6 +8,21 @@ import LanguageSelector from './LanguageSelector';
 import Sidebar from './Sidebar';
 import './App.css';
 function App() {
+    const [usuariosStats, setUsuariosStats] = useState({ total: 0, online: 0 });
+
+    useEffect(() => {
+        fetch('https://storyup-backend.onrender.com/api/estadisticas')
+            .then(res => res.json())
+            .then(data => setUsuariosStats(data))
+            .catch(() => setUsuariosStats({ total: 0, online: 0 }));
+        const interval = setInterval(() => {
+            fetch('https://storyup-backend.onrender.com/api/estadisticas')
+                .then(res => res.json())
+                .then(data => setUsuariosStats(data))
+                .catch(() => setUsuariosStats({ total: 0, online: 0 }));
+        }, 20000); // refresca cada 20s
+        return () => clearInterval(interval);
+    }, []);
     const [showLogin, setShowLogin] = useState(false);
     // Importar Login dinámicamente para evitar problemas de ciclo
     const Login = React.lazy(() => import('./Login'));
@@ -102,8 +117,11 @@ function App() {
                     <div className="topbar-left">
                         <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
                     </div>
-                    <div className="topbar-center">
+                    <div className="topbar-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <span className="topbar-clock">{horaMadrid}</span>
+                        <span style={{ fontSize: 13, color: '#888', marginTop: 2 }}>
+                            Usuarios: <b>{usuariosStats.total}</b> · Online: <b>{usuariosStats.online}</b>
+                        </span>
                     </div>
                     <div className="topbar-right">
                         <LanguageSelector lang={lang} setLang={setLang} />
