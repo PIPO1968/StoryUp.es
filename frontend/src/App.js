@@ -147,6 +147,5 @@ function App() {
 
 
 export default App;
-import Trofeos from './Trofeos';
 
 
