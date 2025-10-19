@@ -344,9 +344,13 @@ textarea {
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
 }
 
-display: flex;
-align-items: center;
-margin-left: auto;
+/* Las siguientes reglas estaban fuera de un bloque, se agregan a .logo-img para evitar errores de sintaxis */
+.logo-img {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
 @media (max-width: 1200px) {
     .main-layout {
         flex-direction: column;

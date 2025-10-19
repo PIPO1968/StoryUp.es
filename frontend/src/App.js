@@ -8,6 +8,9 @@ import LanguageSelector from './LanguageSelector';
 import Sidebar from './Sidebar';
 import './App.css';
 function App() {
+    const [showLogin, setShowLogin] = useState(false);
+    // Importar Login dinámicamente para evitar problemas de ciclo
+    const Login = React.lazy(() => import('./Login'));
     // Cerrar sesión
     const handleLogout = () => {
         deleteCookie('token');
@@ -112,10 +115,29 @@ function App() {
                             !usuario ? (
                                 <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
                                     <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                                        {/* Imagen de login eliminada para evitar error 404 */}
                                         <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
                                     </div>
-                                    <Register onRegister={handleLogin} />
+                                    <React.Suspense fallback={<div>Cargando...</div>}>
+                                        {showLogin ? (
+                                            <>
+                                                <Login onLogin={handleLogin} />
+                                                <div style={{ marginTop: 16, textAlign: 'center' }}>
+                                                    <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(false)}>
+                                                        ¿No tienes cuenta? Regístrate
+                                                    </button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Register onRegister={handleLogin} />
+                                                <div style={{ marginTop: 16, textAlign: 'center' }}>
+                                                    <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(true)}>
+                                                        ¿Ya tienes cuenta? Inicia sesión
+                                                    </button>
+                                                </div>
+                                            </>
+                                        )}
+                                    </React.Suspense>
                                 </div>
                             ) : <Navigate to="/perfil" />
                         } />
