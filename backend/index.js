@@ -30,12 +30,16 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/storyup')
     .then(() => console.log('MongoDB conectado'))
     .catch(err => console.error('Error MongoDB:', err));
 
+
 // Modelos
 require('./models/user');
+require('./models/story');
 
 // Rutas API
 const usuariosRouter = require('./routes/usuarios');
+const storiesRouter = require('./routes/stories');
 app.use('/api', usuariosRouter);
+app.use('/api/stories', storiesRouter);
 
 
 // Servir archivos estáticos del frontend (React build)

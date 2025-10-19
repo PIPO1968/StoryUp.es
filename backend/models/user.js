@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
     centroTipo: { type: String, default: '' },
     centroNombre: { type: String, default: '' },
     avatar: { type: String, default: '' }, // base64 o URL
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    lastActive: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('User', userSchema);
