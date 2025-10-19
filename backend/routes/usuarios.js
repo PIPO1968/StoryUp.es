@@ -74,7 +74,8 @@ router.post('/me/avatar', async (req, res) => {
 // Registro o login
 router.post('/register-or-login', async (req, res) => {
     try {
-        const { email, password, username, realName, userType } = req.body;
+        const { email, password, username, realName, userType, centroTipo, centroNombre } = req.body;
+        console.log('Datos recibidos en registro:', req.body);
         if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
         let user = await User.findOne({ email });
         if (!user) {
@@ -86,9 +87,16 @@ router.post('/register-or-login', async (req, res) => {
                 password: hashed,
                 username,
                 realName: realName || '',
-                userType: userType || 'Usuario'
+                userType: userType || 'Usuario',
+                centroTipo: centroTipo || '',
+                centroNombre: centroNombre || ''
             });
-            await user.save();
+            try {
+                await user.save();
+            } catch (saveErr) {
+                console.error('Error al guardar usuario:', saveErr);
+                return res.status(500).json({ error: 'Error al guardar usuario', details: saveErr.message });
+            }
         } else {
             // Login
             const match = await bcrypt.compare(password, user.password);
@@ -103,6 +111,14 @@ router.post('/register-or-login', async (req, res) => {
                 user.userType = userType;
                 updated = true;
             }
+            if (centroTipo && centroTipo !== user.centroTipo) {
+                user.centroTipo = centroTipo;
+                updated = true;
+            }
+            if (centroNombre && centroNombre !== user.centroNombre) {
+                user.centroNombre = centroNombre;
+                updated = true;
+            }
             if (updated) await user.save();
         }
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
@@ -113,11 +129,14 @@ router.post('/register-or-login', async (req, res) => {
                 username: user.username,
                 realName: user.realName,
                 userType: user.userType,
+                centroTipo: user.centroTipo,
+                centroNombre: user.centroNombre,
                 _id: user._id
             }
         });
     } catch (err) {
-        res.status(500).json({ error: 'Error interno del servidor', details: err.message });
+        console.error('Error interno en /register-or-login:', err);
+        res.status(500).json({ error: 'Error interno del servidor', details: err.message, stack: err.stack });
     }
 });
 
@@ -140,6 +159,8 @@ router.get('/me', async (req, res) => {
                 username: user.username,
                 realName: user.realName,
                 userType: user.userType,
+                centroTipo: user.centroTipo,
+                centroNombre: user.centroNombre,
                 avatar: user.avatar,
                 _id: user._id
             }
