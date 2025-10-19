@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
-import Trofeos from './Trofeos';
 import AprendeConPipo from './AprendeConPipo';
 import { setCookie, getCookie } from './cookieUtils';
 import LanguageSelector from './LanguageSelector';
@@ -123,7 +122,7 @@ function App() {
                         <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
                         <Route path="/crear-historia" element={<CrearHistoria />} />
                         <Route path="/aprende-con-pipo" element={<AprendeConPipo />} />
-                        <Route path="/trofeos" element={<Trofeos trofeosConseguidos={usuario?.trofeos || []} />} />
+                        <Route path="/trofeos" element={<Trofeos />} />
                         <Route path="/" element={
                             !usuario ? (
                                 <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
@@ -145,6 +144,7 @@ function App() {
     );
 }
 
+import Trofeos from './Trofeos';
 export default App;
 
 
