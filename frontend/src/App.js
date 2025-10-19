@@ -99,7 +99,9 @@ function App() {
             {usuario && <Sidebar onLogout={handleLogout} />}
             <div style={{ flex: 1, marginLeft: usuario ? 210 : 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 <header className="top-bar">
-                    <div className="topbar-left"></div>
+                    <div className="topbar-left">
+                        <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
+                    </div>
                     <div className="topbar-center">
                         <span className="topbar-clock">{horaMadrid}</span>
                     </div>
