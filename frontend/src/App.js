@@ -11,7 +11,7 @@ function App() {
     const [usuariosStats, setUsuariosStats] = useState({ total: 0, online: 0 });
 
     useEffect(() => {
-    fetch('https://storyup-backend.onrender.com/api/usuarios/contador')
+        fetch('https://storyup-backend.onrender.com/api/usuarios/contador')
             .then(res => res.json())
             .then(data => setUsuariosStats(data))
             .catch(() => setUsuariosStats({ total: 0, online: 0 }));
@@ -114,14 +114,14 @@ function App() {
             {usuario && <Sidebar onLogout={handleLogout} />}
             <div style={{ flex: 1, marginLeft: usuario ? 210 : 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 <header className="top-bar">
-                    <div className="topbar-left">
+                    <div className="topbar-left" style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
+                        <span style={{ fontSize: 13, color: '#888', marginLeft: 4 }}>
+                            Usuarios: <b>{usuariosStats.total}</b> · Online: <b>{usuariosStats.online}</b>
+                        </span>
                     </div>
                     <div className="topbar-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         <span className="topbar-clock">{horaMadrid}</span>
-                        <span style={{ fontSize: 13, color: '#888', marginTop: 2 }}>
-                            Usuarios: <b>{usuariosStats.total}</b> · Online: <b>{usuariosStats.online}</b>
-                        </span>
                     </div>
                     <div className="topbar-right">
                         <LanguageSelector lang={lang} setLang={setLang} />
