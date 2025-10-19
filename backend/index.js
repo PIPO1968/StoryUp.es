@@ -11,18 +11,16 @@ app.use(cors({
     origin: [
         'https://www.storyup.es',
         'https://storyup.es',
-        'https://www.story-up.vercel.app',
-        'https://story-up.vercel.app'
+        'https://www.story-up.vercel.app'
     ],
     credentials: true
 }));
 app.use(express.json());
 
 // Conexión a MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/storyup', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('MongoDB conectado')).catch(err => console.error('Error MongoDB:', err));
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/storyup')
+    .then(() => console.log('MongoDB conectado'))
+    .catch(err => console.error('Error MongoDB:', err));
 
 // Modelos
 require('./models/user');
