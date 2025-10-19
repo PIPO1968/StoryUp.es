@@ -1,3 +1,9 @@
+// Cerrar sesión
+const handleLogout = () => {
+    deleteCookie('token');
+    setUsuario(null);
+    navigate('/', { replace: true });
+};
 
 
 import Register from './Register';
