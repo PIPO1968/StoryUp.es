@@ -1,3 +1,11 @@
+
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const Data = require('../models/data');
+
 // Estadísticas de usuarios: total y online (simulado)
 router.get('/usuarios/contador', async (req, res) => {
     try {
@@ -10,13 +18,6 @@ router.get('/usuarios/contador', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener estadísticas', details: err.message });
     }
 });
-
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
 
 // Solo login
 router.post('/login', async (req, res) => {
