@@ -8,6 +8,7 @@ import { setCookie, getCookie } from './cookieUtils';
 import LanguageSelector from './LanguageSelector';
 import Sidebar from './Sidebar';
 import './App.css';
+import Trofeos from './Trofeos';
 function App() {
     const [usuario, setUsuario] = useState(null);
     const [totalUsuarios, setTotalUsuarios] = useState(null);
@@ -144,7 +145,8 @@ function App() {
     );
 }
 
-import Trofeos from './Trofeos';
+
 export default App;
+import Trofeos from './Trofeos';
 
 
