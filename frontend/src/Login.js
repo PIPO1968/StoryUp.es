@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { setCookie } from './cookieUtils';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://storyup-backend.onrender.com/api';
 
 function Login({ onLogin }) {
     const [email, setEmail] = useState('');

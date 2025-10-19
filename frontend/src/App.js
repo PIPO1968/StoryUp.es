@@ -24,7 +24,7 @@ function App() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+    const API_URL = process.env.REACT_APP_API_URL || 'https://storyup-backend.onrender.com/api';
 
 
     const actualizarHoraMadrid = () => {

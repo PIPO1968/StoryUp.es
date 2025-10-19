@@ -2,7 +2,7 @@
 import { getCookie } from './cookieUtils';
 
 export async function crearDato({ type, content, meta }) {
-    const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+    const API_URL = process.env.REACT_APP_API_URL || 'https://storyup-backend.onrender.com/api';
     const token = getCookie('token');
     const res = await fetch(`${API_URL}/data`, {
         method: 'POST',
@@ -17,7 +17,7 @@ export async function crearDato({ type, content, meta }) {
 }
 
 export async function consultarDatos({ type, userId, limit = 50, skip = 0 }) {
-    const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
+    const API_URL = process.env.REACT_APP_API_URL || 'https://storyup-backend.onrender.com/api';
     const params = new URLSearchParams();
     if (type) params.append('type', type);
     if (userId) params.append('userId', userId);
