@@ -11,10 +11,18 @@ app.use(cors({
     origin: [
         'https://www.storyup.es',
         'https://storyup.es',
-        'https://www.story-up.vercel.app'
+        'https://www.story-up.vercel.app',
+        'https://story-up.vercel.app'
     ],
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
+
+// Responder a preflight OPTIONS para todas las rutas
+app.options('*', cors());
 app.use(express.json());
 
 // Conexión a MongoDB
