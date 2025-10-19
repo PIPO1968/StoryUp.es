@@ -117,7 +117,7 @@ function App() {
                     <div className="topbar-left" style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
                         <span style={{ fontSize: 13, color: '#888', marginLeft: 4 }}>
-                            Usuarios: <b>{usuariosStats.total}</b> · Online: <b>{usuariosStats.online}</b>
+                            Online: <b>{usuariosStats.online}</b> · Inscritos: <b>{usuariosStats.total}</b>
                         </span>
                     </div>
                     <div className="topbar-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
