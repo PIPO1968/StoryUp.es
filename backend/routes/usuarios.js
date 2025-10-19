@@ -1,5 +1,5 @@
 // Estadísticas de usuarios: total y online (simulado)
-router.get('/estadisticas', async (req, res) => {
+router.get('/usuarios/contador', async (req, res) => {
     try {
         const total = await User.countDocuments();
         // Simulación: usuarios online = usuarios que han iniciado sesión en los últimos 10 minutos (requiere campo updatedAt)

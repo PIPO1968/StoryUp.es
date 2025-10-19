@@ -11,12 +11,12 @@ function App() {
     const [usuariosStats, setUsuariosStats] = useState({ total: 0, online: 0 });
 
     useEffect(() => {
-        fetch('https://storyup-backend.onrender.com/api/estadisticas')
+    fetch('https://storyup-backend.onrender.com/api/usuarios/contador')
             .then(res => res.json())
             .then(data => setUsuariosStats(data))
             .catch(() => setUsuariosStats({ total: 0, online: 0 }));
         const interval = setInterval(() => {
-            fetch('https://storyup-backend.onrender.com/api/estadisticas')
+            fetch('https://storyup-backend.onrender.com/api/usuarios/contador')
                 .then(res => res.json())
                 .then(data => setUsuariosStats(data))
                 .catch(() => setUsuariosStats({ total: 0, online: 0 }));
