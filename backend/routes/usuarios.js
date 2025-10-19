@@ -56,13 +56,15 @@ router.post('/me/avatar', async (req, res) => {
             decoded.userId,
             { avatar },
             { new: true }
-        );
-        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
-        res.json({
-            avatar: user.avatar
-        });
-    } catch (err) {
-        res.status(401).json({ error: 'Token inválido', details: err.message });
+        const express = require('express');
+        const router = express.Router();
+        const bcrypt = require('bcryptjs');
+        const jwt = require('jsonwebtoken');
+        const User = require('../models/user');
+        const Data = require('../models/data');
+
+        // Crear nuevo dato genérico
+        router.post('/data', async (req, res) => {
     }
 });
 
