@@ -1,3 +1,15 @@
+// Estadísticas de usuarios: total y online (simulado)
+router.get('/estadisticas', async (req, res) => {
+    try {
+        const total = await User.countDocuments();
+        // Simulación: usuarios online = usuarios que han iniciado sesión en los últimos 10 minutos (requiere campo updatedAt)
+        // Por ahora, devolvemos un número aleatorio entre 1 y total
+        const online = Math.max(1, Math.floor(Math.random() * total));
+        res.json({ total, online });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al obtener estadísticas', details: err.message });
+    }
+});
 
 const express = require('express');
 const router = express.Router();
