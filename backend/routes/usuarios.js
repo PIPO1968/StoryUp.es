@@ -1,3 +1,23 @@
+// Total de usuarios registrados
+router.get('/usuarios/total', async (req, res) => {
+    try {
+        const total = await User.countDocuments();
+        res.json({ total });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al contar usuarios', details: err.message });
+    }
+});
+
+// Usuarios online (simulado: usuarios que han actualizado su avatar en los últimos 10 minutos)
+router.get('/usuarios/online', async (req, res) => {
+    try {
+        const diezMin = new Date(Date.now() - 10 * 60 * 1000);
+        const online = await User.countDocuments({ updatedAt: { $gte: diezMin } });
+        res.json({ online });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
+    }
+});
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
