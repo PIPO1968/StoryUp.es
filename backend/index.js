@@ -29,12 +29,17 @@ require('./models/user');
 const usuariosRouter = require('./routes/usuarios');
 app.use('/api', usuariosRouter);
 
-// Servir frontend estático (React build)
 
-// El backend solo debe manejar rutas /api. No servir el frontend ni SPA fallback aquí.
-app.get('*', (req, res) => {
+// Servir archivos estáticos del frontend (React build)
+const buildPath = path.join(__dirname, '../frontend/build');
+app.use(express.static(buildPath));
+
+// SPA fallback: servir index.html para rutas que no sean /api ni archivos estáticos
+app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return res.status(404).send('API not found');
-    res.status(404).send('Not found');
+    // Si la ruta es un archivo existente, dejar que express.static lo maneje
+    if (req.path.includes('.')) return next();
+    res.sendFile(path.join(buildPath, 'index.html'));
 });
 
 
