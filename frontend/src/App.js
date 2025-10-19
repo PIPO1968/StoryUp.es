@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+
+
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
-import AprendeConPipo from './AprendeConPipo';
 import { setCookie, getCookie } from './cookieUtils';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+
+import React, { useState, useEffect } from 'react';
 import LanguageSelector from './LanguageSelector';
+
 import Sidebar from './Sidebar';
 import './App.css';
-import Trofeos from './Trofeos';
 function App() {
     const [usuario, setUsuario] = useState(null);
-    const [totalUsuarios, setTotalUsuarios] = useState(null);
-    const [usuariosOnline, setUsuariosOnline] = useState(null);
     const [horaMadrid, setHoraMadrid] = useState("");
     const [lang, setLang] = useState('es');
     const location = useLocation();
@@ -20,19 +22,6 @@ function App() {
 
     const API_URL = process.env.REACT_APP_API_URL || 'https://www.storyup.es/api';
 
-    const fetchTotalUsuarios = React.useCallback(() => {
-        fetch(`${API_URL}/usuarios/total`)
-            .then(res => res.json())
-            .then(data => setTotalUsuarios(data.total))
-            .catch(() => setTotalUsuarios('—'));
-    }, [API_URL]);
-
-    const fetchUsuariosOnline = React.useCallback(() => {
-        fetch(`${API_URL}/usuarios/online`)
-            .then(res => res.json())
-            .then(data => setUsuariosOnline(data.online))
-            .catch(() => setUsuariosOnline('—'));
-    }, [API_URL]);
 
     const actualizarHoraMadrid = () => {
         const ahora = new Date();
@@ -43,15 +32,6 @@ function App() {
         setHoraMadrid(`${fecha} ${hora}`);
     };
 
-    useEffect(() => {
-        fetchTotalUsuarios();
-        fetchUsuariosOnline();
-        const intervalUsuarios = setInterval(() => {
-            fetchTotalUsuarios();
-            fetchUsuariosOnline();
-        }, 10000);
-        return () => clearInterval(intervalUsuarios);
-    }, [fetchTotalUsuarios, fetchUsuariosOnline]);
 
     useEffect(() => {
         actualizarHoraMadrid();
@@ -105,12 +85,7 @@ function App() {
             {usuario && <Sidebar />}
             <div style={{ flex: 1, marginLeft: usuario ? 210 : 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 <header className="top-bar">
-                    <div className="topbar-left">
-                        <span className="topbar-users">👥 Usuarios: {totalUsuarios !== null ? totalUsuarios : '—'}
-                            <span className="topbar-sep">&nbsp;-&nbsp;</span>
-                            <span className="topbar-online">🟢 Online: {usuariosOnline !== null ? usuariosOnline : '—'}</span>
-                        </span>
-                    </div>
+                    <div className="topbar-left"></div>
                     <div className="topbar-center">
                         <span className="topbar-clock">{horaMadrid}</span>
                     </div>
@@ -122,8 +97,6 @@ function App() {
                     <Routes>
                         <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
                         <Route path="/crear-historia" element={<CrearHistoria />} />
-                        <Route path="/aprende-con-pipo" element={<AprendeConPipo />} />
-                        <Route path="/trofeos" element={<Trofeos />} />
                         <Route path="/" element={
                             !usuario ? (
                                 <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
@@ -144,7 +117,6 @@ function App() {
         </div>
     );
 }
-
 
 export default App;
 

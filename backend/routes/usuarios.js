@@ -1,27 +1,10 @@
-// Total de usuarios
-router.get('/total', async (req, res) => {
-    try {
-        const total = await User.countDocuments();
-        res.json({ total });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al contar usuarios', details: err.message });
-    }
-});
 
-// Usuarios online (simulado: usuarios con campo online=true)
-router.get('/online', async (req, res) => {
-    try {
-        const online = await User.countDocuments({ online: true });
-        res.json({ online });
-    } catch (err) {
-        res.status(500).json({ error: 'Error al contar usuarios online', details: err.message });
-    }
-});
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const Data = require('../models/data');
+
 
 // Crear nuevo dato genérico
 router.post('/data', async (req, res) => {
