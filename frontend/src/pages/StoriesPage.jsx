@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BookOpen, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
 
 export default function StoriesPage() {
@@ -42,63 +40,47 @@ export default function StoriesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-                        <BookOpen className="mr-3 text-blue-600" />
-                        Historias de la Comunidad
-                    </h1>
-                    <p className="text-gray-600 mt-2">
-                        Las últimas 25 historias creadas por nuestra comunidad StoryUp
-                    </p>
-                </div>
-            </div>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl text-blue-600">
-                        📖 Lista de Historias (1-25)
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-3">
-                        {loading ? (
-                            <p className="text-center text-gray-500 py-8">Cargando historias...</p>
-                        ) : stories.length === 0 ? (
-                            <>
-                                <p className="text-center text-gray-500 py-8">
-                                    ¡Aún no hay historias creadas! Sé el primero en compartir tu historia.
-                                </p>
-                                {renderEmptyStories()}
-                            </>
-                        ) : (
-                            stories.map((story, index) => (
-                                <div key={story._id} className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
-                                    <span className="text-2xl font-bold text-blue-600 mr-4">{index + 1}</span>
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold text-gray-900 hover:text-blue-600 cursor-pointer">
-                                            <Link to={`/stories/${story._id}`} className="hover:underline">
-                                                {story.title}
-                                            </Link>
-                                        </h3>
-                                        <div className="flex items-center text-sm text-gray-600 mt-1">
-                                            <User className="w-4 h-4 mr-1" />
-                                            <span>{story.author?.username || story.author?.name || "Autor desconocido"}</span>
-                                            <span className="mx-2">•</span>
-                                            <span>{new Date(story.createdAt).toLocaleDateString()}</span>
-                                        </div>
+            <div style={{ width: '100%', minHeight: '100vh', background: '#f9f9f9', padding: '2.5rem 0' }}>
+                <h1 style={{ textAlign: 'center', color: '#e6b800', fontSize: 36, marginBottom: 32, letterSpacing: 1 }}>
+                    <span style={{ marginRight: 12 }}>📖</span>
+                    Historias de la Comunidad
+                </h1>
+                <div style={{ maxWidth: 900, margin: '0 auto', background: '#fff', borderRadius: 18, boxShadow: '0 2px 16px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340 }}>
+                    <h2 style={{ color: '#4db6ac', marginBottom: 18, textAlign: 'left', fontSize: 24 }}>Últimas 25 historias</h2>
+                    {loading ? (
+                        <p style={{ textAlign: 'center', color: '#888', padding: '2rem 0' }}>Cargando historias...</p>
+                    ) : stories.length === 0 ? (
+                        <>
+                            <p style={{ textAlign: 'center', color: '#888', padding: '2rem 0' }}>
+                                ¡Aún no hay historias creadas! Sé el primero en compartir tu historia.
+                            </p>
+                            {renderEmptyStories()}
+                        </>
+                    ) : (
+                        stories.map((story, index) => (
+                            <div key={story._id} style={{ display: 'flex', alignItems: 'center', padding: 16, border: '1px solid #eee', borderRadius: 12, marginBottom: 12, background: '#fafafa' }}>
+                                <span style={{ fontSize: 22, fontWeight: 'bold', color: '#4db6ac', marginRight: 18 }}>{index + 1}</span>
+                                <div style={{ flex: 1 }}>
+                                    <h3 style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 4 }}>
+                                        <Link to={`/stories/${story._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
+                                            {story.title}
+                                        </Link>
+                                    </h3>
+                                    <div style={{ fontSize: 15, color: '#888' }}>
+                                        <span style={{ marginRight: 8 }}>👤 {story.author?.username || story.author?.name || "Autor desconocido"}</span>
+                                        <span style={{ marginRight: 8 }}>•</span>
+                                        <span>{new Date(story.createdAt).toLocaleDateString()}</span>
                                     </div>
                                 </div>
-                            ))
-                        )}
+                            </div>
+                        ))
+                    )}
+                    <div style={{ textAlign: 'center', marginTop: 32 }}>
+                        <button style={{ background: '#e6b800', color: '#fff', border: 'none', borderRadius: 8, padding: '0 32px', fontWeight: 'bold', fontSize: 18, cursor: 'pointer', marginTop: 8 }}>
+                            Crear Nueva Historia
+                        </button>
                     </div>
-                </CardContent>
-            </Card>
-
-            <div className="text-center">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                    Crear Nueva Historia
-                </Button>
+                </div>
             </div>
         </div>
     );
