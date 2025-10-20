@@ -45,17 +45,7 @@ app.use('/api/stories', storiesRouter);
 app.use('/api/news', newsRouter);
 
 
-// Servir archivos estáticos del frontend (React build)
-const buildPath = path.join(__dirname, '../frontend/build');
-app.use(express.static(buildPath));
-
-// SPA fallback: servir index.html para rutas que no sean /api ni archivos estáticos
-app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return res.status(404).send('API not found');
-    // Si la ruta es un archivo existente, dejar que express.static lo maneje
-    if (req.path.includes('.')) return next();
-    res.sendFile(path.join(buildPath, 'index.html'));
-});
+// --- Eliminado el servido de archivos estáticos del frontend para despliegue en Render ---
 
 
 // Middleware de manejo de errores para rutas /api
