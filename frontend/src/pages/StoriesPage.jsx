@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { BookOpen, User } from "lucide-react";
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../App';
-import { useLanguage } from '../lib/LanguageContext';
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Link } from 'react-router-dom';
 
 export default function StoriesPage() {
     const [stories, setStories] = useState([]);
