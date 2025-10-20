@@ -26,7 +26,7 @@ app.options('*', cors());
 app.use(express.json());
 
 // Conexión a MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/storyup')
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB conectado'))
     .catch(err => console.error('Error MongoDB:', err));
 
