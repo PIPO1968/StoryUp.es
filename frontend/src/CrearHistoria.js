@@ -23,7 +23,8 @@ function CrearHistoria() {
         }
         setLoading(true);
         try {
-            const res = await fetch("/api/stories", {
+            const API_URL = 'https://storyup-backend.onrender.com/api';
+            const res = await fetch(`${API_URL}/stories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title, content, type, theme, anonimo, authorId: window.usuario?.id })
@@ -44,14 +45,14 @@ function CrearHistoria() {
         <div style={{ width: '100%', minHeight: '100vh', background: '#f9f9f9', padding: '2.5rem 0' }}>
             <h1 style={{ textAlign: 'center', color: '#e6b800', fontSize: 36, marginBottom: 32, letterSpacing: 1 }}>Crea tu Historia</h1>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '2.5rem', maxWidth: 1200, margin: '0 auto' }}>
-                    <SidebarHistoria
-                        type={type}
-                        setType={setType}
-                        theme={theme}
-                        setTheme={setTheme}
-                        anonimo={anonimo}
-                        setAnonimo={setAnonimo}
-                    />
+                <SidebarHistoria
+                    type={type}
+                    setType={setType}
+                    theme={theme}
+                    setTheme={setTheme}
+                    anonimo={anonimo}
+                    setAnonimo={setAnonimo}
+                />
                 <form onSubmit={handleSubmit} style={{ flex: 1, background: '#fff', borderRadius: 18, boxShadow: '0 2px 16px #ffe06633', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 700, position: 'relative', overflow: 'visible' }}>
                     {/* Adornos alrededor */}
                     <div style={{ position: 'absolute', left: -28, top: -28, fontSize: 32 }}>⭐</div>

@@ -12,11 +12,12 @@ function SidebarHistoria({ type, setType, theme, setTheme, anonimo, setAnonimo }
             <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4 }}>Tipo de historia</label>
             <select value={theme} onChange={e => setTheme(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', marginBottom: 12 }}>
                 <option value="Aventura">Aventura</option>
-                <option value="Corazón">Corazón</option>
                 <option value="Fantasía">Fantasía</option>
+                <option value="Corazón">Corazón</option>
                 <option value="Terror">Terror</option>
-                <option value="Familiar">Familiar</option>
                 <option value="Educativa">Educativa</option>
+                <option value="CONCURSO">CONCURSO</option>
+                <option value="Familiar">Familiar</option>
             </select>
             <button
                 type="button"
