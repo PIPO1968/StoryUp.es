@@ -34,12 +34,15 @@ mongoose.connect(process.env.MONGO_URI)
 // Modelos
 require('./models/user');
 require('./models/story');
+require('./models/news');
 
 // Rutas API
 const usuariosRouter = require('./routes/usuarios');
 const storiesRouter = require('./routes/stories');
+const newsRouter = require('./routes/news');
 app.use('/api', usuariosRouter);
 app.use('/api/stories', storiesRouter);
+app.use('/api/news', newsRouter);
 
 
 // Servir archivos estáticos del frontend (React build)
