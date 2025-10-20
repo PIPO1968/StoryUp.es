@@ -13,7 +13,7 @@ const CommentSchema = new mongoose.Schema({
 const StorySchema = new mongoose.Schema({
     title: { type: String, required: true },
     content: { type: String, required: true },
-    type: { type: String, enum: ['Real', 'Ficticia', 'Ficción'], required: true },
+    type: { type: String, enum: ['Real', 'Ficticia'], required: true },
     theme: { type: String, enum: ['Aventura', 'Fantasía', 'Corazón', 'Terror', 'Educativa', 'CONCURSO', 'Familiar'], required: true },
     anonimo: { type: Boolean, default: false },
     author: {
