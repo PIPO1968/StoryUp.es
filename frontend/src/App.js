@@ -3,6 +3,7 @@ import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
 import StoriesPage from './pages/StoriesPage';
+import StoryDetailPage from './pages/StoryDetailPage';
 import { setCookie, getCookie, deleteCookie } from './cookieUtils';
 import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import LanguageSelector from './LanguageSelector';
@@ -133,6 +134,7 @@ function App() {
                         <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
                         <Route path="/crear-historia" element={<CrearHistoria usuario={usuario} />} />
                         <Route path="/historias" element={<StoriesPage />} />
+                        <Route path="/stories/:id" element={<StoryDetailPage usuario={usuario} />} />
                         <Route path="/" element={
                             !usuario ? (
                                 <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
