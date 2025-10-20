@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
-import StoriesPage from '../../src/pages/StoriesPage';
+import StoriesPage from './pages/StoriesPage';
 import { setCookie, getCookie, deleteCookie } from './cookieUtils';
 import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import LanguageSelector from './LanguageSelector';
