@@ -34,35 +34,6 @@ function Perfil({ usuario }) {
             setEnviandoNoticia(false);
         }
     };
-    // --- Estado para crear noticia ---
-    const [tituloNoticia, setTituloNoticia] = useState('');
-    const [contenidoNoticia, setContenidoNoticia] = useState('');
-    const [enviandoNoticia, setEnviandoNoticia] = useState(false);
-    const [mensajeNoticia, setMensajeNoticia] = useState(null);
-
-    const handleEnviarNoticia = async () => {
-        setEnviandoNoticia(true);
-        setMensajeNoticia(null);
-        try {
-            const API_URL = 'https://storyup-backend.onrender.com/api';
-            const res = await fetch(`${API_URL}/news`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Si usas autenticación, añade aquí el token
-                },
-                body: JSON.stringify({ title: tituloNoticia, content: contenidoNoticia })
-            });
-            if (!res.ok) throw new Error('Error al crear noticia');
-            setTituloNoticia('');
-            setContenidoNoticia('');
-            setMensajeNoticia({ tipo: 'ok', texto: '¡Noticia creada con éxito!' });
-        } catch (err) {
-            setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
-        } finally {
-            setEnviandoNoticia(false);
-        }
-    };
 
     useEffect(() => {
         setAvatar(usuario?.avatar || '');
