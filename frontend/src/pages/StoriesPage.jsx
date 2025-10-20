@@ -67,7 +67,7 @@ export default function StoriesPage() {
                                         </Link>
                                     </h3>
                                     <div style={{ fontSize: 15, color: '#888' }}>
-                                        <span style={{ marginRight: 8 }}>👤 {story.author?.username || story.author?.name || "Autor desconocido"}</span>
+                                        <span style={{ marginRight: 8 }}>👤 {story.anonimo ? "Anonimo" : (story.author?.username || story.author?.name || "Autor desconocido")}</span>
                                         <span style={{ marginRight: 8 }}>•</span>
                                         <span>{new Date(story.createdAt).toLocaleDateString()}</span>
                                     </div>
