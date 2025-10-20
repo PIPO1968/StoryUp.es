@@ -8,7 +8,8 @@ export default function StoriesPage() {
     useEffect(() => {
         const fetchStories = async () => {
             try {
-                const res = await fetch("/api/stories");
+                const API_URL = 'https://storyup-backend.onrender.com/api';
+                const res = await fetch(`${API_URL}/stories`);
                 if (!res.ok) throw new Error("Error al obtener historias");
                 const data = await res.json();
                 setStories(data);
