@@ -33,7 +33,7 @@ router.get('/:id', async (req, res) => {
 // Crear una nueva historia
 router.post('/', async (req, res) => {
     try {
-        const { title, content, type, theme, authorId } = req.body;
+        const { title, content, type, theme, authorId, anonimo } = req.body;
         if (!title || !content || !type || !theme || !authorId) {
             return res.status(400).json({ error: 'Faltan campos obligatorios' });
         }
@@ -44,6 +44,7 @@ router.post('/', async (req, res) => {
             content,
             type,
             theme,
+            anonimo: !!anonimo,
             author: author._id
         });
         await story.save();
