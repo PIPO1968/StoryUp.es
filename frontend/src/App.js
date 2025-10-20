@@ -131,7 +131,7 @@ function App() {
                 <main style={{ flex: 1, marginTop: '2rem', display: 'flex', flexDirection: 'column' }}>
                     <Routes>
                         <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
-                        <Route path="/crear-historia" element={<CrearHistoria />} />
+                        <Route path="/crear-historia" element={<CrearHistoria usuario={usuario} />} />
                         <Route path="/historias" element={<StoriesPage />} />
                         <Route path="/" element={
                             !usuario ? (

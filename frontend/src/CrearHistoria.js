@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarHistoria from './SidebarHistoria';
 
-function CrearHistoria() {
+function CrearHistoria({ usuario }) {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [type, setType] = useState("Real");
@@ -27,7 +27,7 @@ function CrearHistoria() {
             const res = await fetch(`${API_URL}/stories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, content, type, theme, anonimo, authorId: window.usuario?.id })
+                body: JSON.stringify({ title, content, type, theme, anonimo, authorId: usuario?._id })
             });
             if (!res.ok) throw new Error("Error al crear la historia");
             setSuccess("¡Historia creada correctamente!");
