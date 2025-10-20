@@ -7,7 +7,7 @@ function SidebarHistoria({ type, setType, theme, setTheme, anonimo, setAnonimo }
             <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4 }}>Modo de historia</label>
             <select value={type} onChange={e => setType(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', marginBottom: 12 }}>
                 <option value="Real">Real</option>
-                <option value="Ficción">Ficción</option>
+                <option value="Ficticia">Ficticia</option>
             </select>
             <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4 }}>Tipo de historia</label>
             <select value={theme} onChange={e => setTheme(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', marginBottom: 12 }}>
