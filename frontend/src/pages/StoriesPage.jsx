@@ -66,10 +66,12 @@ export default function StoriesPage() {
                                             {story.title}
                                         </Link>
                                     </h3>
-                                    <div style={{ fontSize: 15, color: '#888' }}>
-                                        <span style={{ marginRight: 8 }}>👤 {story.anonimo ? "Anonimo" : (story.author?.username || story.author?.name || "Autor desconocido")}</span>
-                                        <span style={{ marginRight: 8 }}>•</span>
+                                    <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <span>👤 {story.anonimo ? "Anonimo" : (story.author?.username || story.author?.name || "Autor desconocido")}</span>
+                                        <span>•</span>
                                         <span>{new Date(story.createdAt).toLocaleDateString()}</span>
+                                        <span>❤️ {story.likes || 0}</span>
+                                        <span>💬 {(story.comments?.length || 0)}</span>
                                     </div>
                                 </div>
                             </div>
