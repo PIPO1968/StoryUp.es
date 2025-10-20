@@ -1,3 +1,4 @@
+// Forzar nuevo deploy: cambio menor
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
