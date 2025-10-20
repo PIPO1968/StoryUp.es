@@ -5,6 +5,35 @@ import ChatSidebar from './ChatSidebar';
 function Perfil({ usuario }) {
     const [avatar, setAvatar] = useState(usuario?.avatar || '');
     const [loading, setLoading] = useState(false);
+    // --- Estado para crear noticia ---
+    const [tituloNoticia, setTituloNoticia] = useState('');
+    const [contenidoNoticia, setContenidoNoticia] = useState('');
+    const [enviandoNoticia, setEnviandoNoticia] = useState(false);
+    const [mensajeNoticia, setMensajeNoticia] = useState(null);
+
+    const handleEnviarNoticia = async () => {
+        setEnviandoNoticia(true);
+        setMensajeNoticia(null);
+        try {
+            const API_URL = 'https://storyup-backend.onrender.com/api';
+            const res = await fetch(`${API_URL}/news`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Si usas autenticación, añade aquí el token
+                },
+                body: JSON.stringify({ title: tituloNoticia, content: contenidoNoticia })
+            });
+            if (!res.ok) throw new Error('Error al crear noticia');
+            setTituloNoticia('');
+            setContenidoNoticia('');
+            setMensajeNoticia({ tipo: 'ok', texto: '¡Noticia creada con éxito!' });
+        } catch (err) {
+            setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
+        } finally {
+            setEnviandoNoticia(false);
+        }
+    };
 
     useEffect(() => {
         setAvatar(usuario?.avatar || '');
@@ -81,10 +110,63 @@ function Perfil({ usuario }) {
                 {/* Bloque de crear noticias */}
                 <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #4db6ac33', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h2 style={{ color: '#4db6ac', marginBottom: 18 }}>Crear noticia</h2>
-                    <input type="text" placeholder="Título de la noticia" style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }} />
-                    <textarea placeholder="Escribe la noticia..." style={{ width: '100%', minHeight: 80, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }} />
-                    <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Enviar noticia</button>
+                    <input
+                        type="text"
+                        placeholder="Título de la noticia"
+                        style={{ width: '100%', marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}
+                        value={tituloNoticia || ''}
+                        onChange={e => setTituloNoticia(e.target.value)}
+                        disabled={enviandoNoticia}
+                    />
+                    <textarea
+                        placeholder="Escribe la noticia..."
+                        style={{ width: '100%', minHeight: 80, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}
+                        value={contenidoNoticia || ''}
+                        onChange={e => setContenidoNoticia(e.target.value)}
+                        disabled={enviandoNoticia}
+                    />
+                    <button
+                        style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}
+                        onClick={handleEnviarNoticia}
+                        disabled={enviandoNoticia || !tituloNoticia || !contenidoNoticia}
+                    >
+                        {enviandoNoticia ? 'Enviando...' : 'Enviar noticia'}
+                    </button>
+                    {mensajeNoticia && (
+                        <div style={{ marginTop: 10, color: mensajeNoticia.tipo === 'error' ? 'red' : 'green', fontWeight: 'bold' }}>
+                            {mensajeNoticia.texto}
+                        </div>
+                    )}
                 </div>
+// --- Lógica para crear noticia ---
+                const [tituloNoticia, setTituloNoticia] = useState('');
+                const [contenidoNoticia, setContenidoNoticia] = useState('');
+                const [enviandoNoticia, setEnviandoNoticia] = useState(false);
+                const [mensajeNoticia, setMensajeNoticia] = useState(null);
+
+const handleEnviarNoticia = async () => {
+                    setEnviandoNoticia(true);
+                setMensajeNoticia(null);
+                try {
+        const API_URL = 'https://storyup-backend.onrender.com/api';
+                const res = await fetch(`${API_URL}/news`, {
+                    method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                // Si usas autenticación, añade aquí el token
+            },
+                body: JSON.stringify({title: tituloNoticia, content: contenidoNoticia })
+        });
+                if (!res.ok) throw new Error('Error al crear noticia');
+                setTituloNoticia('');
+                setContenidoNoticia('');
+                setMensajeNoticia({tipo: 'ok', texto: '¡Noticia creada con éxito!' });
+    } catch (err) {
+                    setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
+    } finally {
+                    setEnviandoNoticia(false);
+    }
+};
                 {/* Bloque de crear concursos */}
                 <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #4db6ac33', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h2 style={{ color: '#4db6ac', marginBottom: 8 }}>Crear concurso</h2>
