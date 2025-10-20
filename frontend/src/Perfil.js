@@ -34,6 +34,35 @@ function Perfil({ usuario }) {
             setEnviandoNoticia(false);
         }
     };
+    // --- Estado para crear noticia ---
+    const [tituloNoticia, setTituloNoticia] = useState('');
+    const [contenidoNoticia, setContenidoNoticia] = useState('');
+    const [enviandoNoticia, setEnviandoNoticia] = useState(false);
+    const [mensajeNoticia, setMensajeNoticia] = useState(null);
+
+    const handleEnviarNoticia = async () => {
+        setEnviandoNoticia(true);
+        setMensajeNoticia(null);
+        try {
+            const API_URL = 'https://storyup-backend.onrender.com/api';
+            const res = await fetch(`${API_URL}/news`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Si usas autenticación, añade aquí el token
+                },
+                body: JSON.stringify({ title: tituloNoticia, content: contenidoNoticia })
+            });
+            if (!res.ok) throw new Error('Error al crear noticia');
+            setTituloNoticia('');
+            setContenidoNoticia('');
+            setMensajeNoticia({ tipo: 'ok', texto: '¡Noticia creada con éxito!' });
+        } catch (err) {
+            setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
+        } finally {
+            setEnviandoNoticia(false);
+        }
+    };
 
     useEffect(() => {
         setAvatar(usuario?.avatar || '');
@@ -138,35 +167,6 @@ function Perfil({ usuario }) {
                         </div>
                     )}
                 </div>
-// --- Lógica para crear noticia ---
-                const [tituloNoticia, setTituloNoticia] = useState('');
-                const [contenidoNoticia, setContenidoNoticia] = useState('');
-                const [enviandoNoticia, setEnviandoNoticia] = useState(false);
-                const [mensajeNoticia, setMensajeNoticia] = useState(null);
-
-const handleEnviarNoticia = async () => {
-                    setEnviandoNoticia(true);
-                setMensajeNoticia(null);
-                try {
-        const API_URL = 'https://storyup-backend.onrender.com/api';
-                const res = await fetch(`${API_URL}/news`, {
-                    method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                // Si usas autenticación, añade aquí el token
-            },
-                body: JSON.stringify({title: tituloNoticia, content: contenidoNoticia })
-        });
-                if (!res.ok) throw new Error('Error al crear noticia');
-                setTituloNoticia('');
-                setContenidoNoticia('');
-                setMensajeNoticia({tipo: 'ok', texto: '¡Noticia creada con éxito!' });
-    } catch (err) {
-                    setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
-    } finally {
-                    setEnviandoNoticia(false);
-    }
-};
                 {/* Bloque de crear concursos */}
                 <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #4db6ac33', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h2 style={{ color: '#4db6ac', marginBottom: 8 }}>Crear concurso</h2>
