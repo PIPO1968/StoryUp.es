@@ -1,9 +1,11 @@
+// Forzar redeploy Vercel 21/10/2025
 import React, { useState, useEffect } from 'react';
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
 import StoriesPage from './pages/StoriesPage';
 import NoticiasPage from './pages/NoticiasPage';
+import ConcursosPage from './pages/ConcursosPage';
 import StoryDetailPage from './pages/StoryDetailPage';
 import { setCookie, getCookie, deleteCookie } from './cookieUtils';
 import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-dom';
@@ -136,6 +138,7 @@ function App() {
                         <Route path="/crear-historia" element={<CrearHistoria usuario={usuario} />} />
                         <Route path="/historias" element={<StoriesPage />} />
                         <Route path="/noticias" element={<NoticiasPage />} />
+                        <Route path="/concursos" element={<ConcursosPage />} />
                         <Route path="/stories/:id" element={<StoryDetailPage usuario={usuario} />} />
                         <Route path="/" element={
                             !usuario ? (
