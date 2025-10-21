@@ -1,5 +1,6 @@
 // Forzar redeploy Vercel 21/10/2025
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { GlobalProvider, useGlobal } from './context/GlobalContext';
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
@@ -12,7 +13,7 @@ import { useLocation, useNavigate, Routes, Route, Navigate } from 'react-router-
 import LanguageSelector from './LanguageSelector';
 import Sidebar from './Sidebar';
 import './App.css';
-function App() {
+function AppContent() {
     const [usuariosStats, setUsuariosStats] = useState({ total: 0, online: 0 });
 
     useEffect(() => {
@@ -115,72 +116,46 @@ function App() {
     }
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-            {usuario && <Sidebar onLogout={handleLogout} />}
-            <div style={{ flex: 1, marginLeft: usuario ? 210 : 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                <header className="top-bar">
-                    <div className="topbar-left" style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
-                        <span style={{ fontSize: 13, color: '#888', marginLeft: 4 }}>
-                            Online: <b>{usuariosStats.online}</b> · Inscritos: <b>{usuariosStats.total}</b>
-                        </span>
-                    </div>
-                    <div className="topbar-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <span className="topbar-clock">{horaMadrid}</span>
-                    </div>
-                    <div className="topbar-right">
-                        <LanguageSelector lang={lang} setLang={setLang} />
-                    </div>
-                </header>
-                <main style={{ flex: 1, marginTop: '2rem', display: 'flex', flexDirection: 'column' }}>
-                    <Routes>
-                        <Route path="/perfil" element={usuario ? <Perfil usuario={usuario} /> : <Navigate to="/" />} />
-                        <Route path="/crear-historia" element={<CrearHistoria usuario={usuario} />} />
-                        <Route path="/historias" element={<StoriesPage />} />
-                        <Route path="/noticias" element={<NoticiasPage />} />
-                        <Route path="/concursos" element={<ConcursosPage />} />
-                        <Route path="/stories/:id" element={<StoryDetailPage usuario={usuario} />} />
-                        <Route path="/" element={
-                            !usuario ? (
-                                <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 320, maxWidth: 380, margin: '0 auto' }}>
-                                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                                        <div style={{ fontWeight: 'bold', fontSize: '1.5rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
-                                    </div>
-                                    <React.Suspense fallback={<div>Cargando...</div>}>
-                                        {showLogin ? (
-                                            <>
-                                                <Login onLogin={handleLogin} />
-                                                <div style={{ marginTop: 16, textAlign: 'center' }}>
-                                                    <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(false)}>
-                                                        ¿No tienes cuenta? Regístrate
-                                                    </button>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Register onRegister={handleLogin} />
-                                                <div style={{ marginTop: 16, textAlign: 'center' }}>
-                                                    <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(true)}>
-                                                        ¿Ya tienes cuenta? Inicia sesión
-                                                    </button>
-                                                </div>
-                                            </>
-                                        )}
-                                    </React.Suspense>
+        import { useGlobal } from './context/GlobalContext';
+    function AppContent() {
+        const { usuario } = useGlobal();
+        // ...aquí puedes añadir lógica global si lo necesitas...
+        return (
+            function AppContent() {
+                const { usuario, usuariosStats, horaMadrid, lang } = useGlobal();
+                return (
+                    <div style={{ display: 'flex', minHeight: '100vh' }}>
+                        {usuario && <Sidebar />}
+                        <div style={{ flex: 1, marginLeft: usuario ? 210 : 0, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                            <header className="top-bar">
+                                <div className="topbar-left" style={{ display: 'flex', alignItems: 'center' }}>
+                                    <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
+                                    <span style={{ fontSize: 13, color: '#888', marginLeft: 4 }}>
+                                        Online: <b>{usuariosStats?.online ?? 0}</b> · Inscritos: <b>{usuariosStats?.total ?? 0}</b>
+                                    </span>
                                 </div>
-                            ) : <Navigate to="/perfil" />
-                        } />
-                    </Routes>
-                </main>
-                <footer className="footer" style={{ marginTop: '3rem' }}>
-                    <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
-                </footer>
-            </div>
-        </div>
-    );
-
-}
-
-export default App;
-
-
+                                <div className="topbar-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <span className="topbar-clock">{horaMadrid}</span>
+                                </div>
+                                <div className="topbar-right">
+                                    <LanguageSelector lang={lang} setLang={() => { }} />
+                                </div>
+                            </header>
+                            <main style={{ flex: 1, marginTop: '2rem', display: 'flex', flexDirection: 'column' }}>
+                                <Routes>
+                                    <Route path="/perfil" element={<Perfil />} />
+                                    <Route path="/crear-historia" element={<CrearHistoria />} />
+                                    <Route path="/historias" element={<StoriesPage />} />
+                                    <Route path="/noticias" element={<NoticiasPage />} />
+                                    <Route path="/concursos" element={<ConcursosPage />} />
+                                    <Route path="/stories/:id" element={<StoryDetailPage />} />
+                                    <Route path="/" element={<Register />} />
+                                </Routes>
+                            </main>
+                            <footer className="footer" style={{ marginTop: '3rem' }}>
+                                <span>© 2025 StoryUp.es · <a href="mailto:contacto@storyup.es">Contacto</a></span>
+                            </footer>
+                        </div>
+                    </div>
+                );
+            }
