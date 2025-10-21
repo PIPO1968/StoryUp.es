@@ -10,6 +10,7 @@ import ConcursosPage from './pages/ConcursosPage';
 import StoryDetailPage from './pages/StoryDetailPage';
 import LanguageSelector from './LanguageSelector';
 import Sidebar from './Sidebar';
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 
 function AppContent() {
