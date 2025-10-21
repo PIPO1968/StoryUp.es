@@ -40,8 +40,9 @@ function AppContent() {
     };
     const [usuario, setUsuario] = useState(null);
     const [checkingSession, setCheckingSession] = useState(true);
+    // Forzar redeploy Vercel 21/10/2025
     import React from 'react';
-    import { useGlobal } from './context/GlobalContext';
+    import { GlobalProvider, useGlobal } from './context/GlobalContext';
     import Register from './Register';
     import Perfil from './Perfil';
     import CrearHistoria from './CrearHistoria';
@@ -65,14 +66,6 @@ function AppContent() {
                         <style>{`@keyframes spin { 0% { transform: rotate(0deg);} 100% {transform: rotate(360deg);} }`}</style>
                     </div>
                 </div>
-            );
-        }
-
-        export default function App() {
-            return (
-                <GlobalProvider>
-                    <AppContent />
-                </GlobalProvider>
             );
         }
         return (
@@ -109,5 +102,13 @@ function AppContent() {
                     </footer>
                 </div>
             </div>
+        );
+    }
+
+    export default function App() {
+        return (
+            <GlobalProvider>
+                <AppContent />
+            </GlobalProvider>
         );
     }
