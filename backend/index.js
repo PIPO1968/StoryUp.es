@@ -40,9 +40,11 @@ require('./models/news');
 const usuariosRouter = require('./routes/usuarios');
 const storiesRouter = require('./routes/stories');
 const newsRouter = require('./routes/news');
+const concursosRouter = require('./routes/concursos');
 app.use('/api', usuariosRouter);
 app.use('/api/stories', storiesRouter);
 app.use('/api/news', newsRouter);
+app.use('/api/concursos', concursosRouter);
 // Endpoint de Health Check para Render
 app.get('/healthz', (req, res) => {
     res.status(200).json({ status: "ok" });
