@@ -68,7 +68,13 @@ export default function StoriesPage() {
                                     </h3>
                                     {/* ID eliminado */}
                                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
-                                        <span>👤 {story.anonimo ? "Anonimo" : (story.author?.username || story.author?.name || "Autor desconocido")}</span>
+                                                                                <span>👤 {story.anonimo ? "Anonimo" : (
+                                                                                    story.author && story.author._id ?
+                                                                                        <Link to={`/perfil/${story.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
+                                                                                            {story.author.username || story.author.name || "Autor desconocido"}
+                                                                                        </Link>
+                                                                                    : (story.author?.username || story.author?.name || "Autor desconocido")
+                                                                                )}</span>
                                         <span>•</span>
                                         <span>{new Date(story.createdAt).toLocaleDateString()}</span>
                                         <span>❤️ {story.likes || 0}</span>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function NoticiasPage() {
     const [noticias, setNoticias] = useState([]);
@@ -110,7 +111,13 @@ function NoticiaConComentarios({ noticia, index }) {
                     </h3>
                     {/* ID eliminado */}
                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span>👤 {noticia.anonimo ? "Anonimo" : (noticia.author?.username || noticia.author?.name || "Autor desconocido")}</span>
+                                                <span>👤 {noticia.anonimo ? "Anonimo" : (
+                                                    noticia.author && noticia.author._id ?
+                                                        <Link to={`/perfil/${noticia.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
+                                                            {noticia.author.username || noticia.author.name || "Autor desconocido"}
+                                                        </Link>
+                                                    : (noticia.author?.username || noticia.author?.name || "Autor desconocido")
+                                                )}</span>
                         <span>•</span>
                         <span>{new Date(noticia.createdAt).toLocaleDateString()}</span>
                         <span>💬 {comentarios.length}</span>
@@ -127,12 +134,16 @@ function NoticiaConComentarios({ noticia, index }) {
                     <div style={{ color: '#aaa', fontStyle: 'italic' }}>Sin comentarios aún.</div>
                 ) : (
                     comentarios.map((c, i) => {
-                        const nick = c.author?.username || c.author?.name || c.nick || 'Usuario';
-                        return (
-                            <div key={i} style={{ borderBottom: '1px solid #eee', padding: '6px 0', fontSize: 15 }}>
-                                <span style={{ color: '#e6b800', fontWeight: 'bold' }}>{nick}:</span> {c.text}
-                            </div>
-                        );
+                                                const nick = c.author?.username || c.author?.name || c.nick || 'Usuario';
+                                                return (
+                                                        <div key={i} style={{ borderBottom: '1px solid #eee', padding: '6px 0', fontSize: 15 }}>
+                                                                <span style={{ color: '#e6b800', fontWeight: 'bold' }}>
+                                                                    {c.author && c.author._id ? (
+                                                                        <Link to={`/perfil/${c.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>{nick}</Link>
+                                                                    ) : nick}
+                                                                </span>: {c.text}
+                                                        </div>
+                                                );
                     })
                 )}
                 <div style={{ display: 'flex', marginTop: 10, gap: 8 }}>
