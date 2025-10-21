@@ -106,17 +106,17 @@ function NoticiaConComentarios({ noticia, index }) {
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ fontSize: 22, fontWeight: 'bold', color: '#4db6ac', marginRight: 18 }}>{index + 1}</span>
                 <div style={{ flex: 1 }}>
-                    <h3 style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 4 }}>
-                        <Link to={`/noticias/${noticia._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
-                            {noticia.title}
-                        </Link>
+                    <h3 style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 4, color: '#e6b800' }}>
+                        {noticia.title}
                     </h3>
                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
                         <span>👤 {noticia.anonimo ? "Anonimo" : (noticia.author?.username || noticia.author?.name || "Autor desconocido")}</span>
                         <span>•</span>
                         <span>{new Date(noticia.createdAt).toLocaleDateString()}</span>
-                        <span>❤️ {noticia.likes || 0}</span>
                         <span>💬 {comentarios.length}</span>
+                    </div>
+                    <div style={{ marginTop: 10, fontSize: 16, color: '#444', whiteSpace: 'pre-line' }}>
+                        {noticia.content}
                     </div>
                 </div>
             </div>
