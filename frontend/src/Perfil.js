@@ -3,6 +3,73 @@ import ChatSidebar from './ChatSidebar';
 
 
 function Perfil({ usuario }) {
+    // --- Estado para crear concurso ---
+    const [resumenConcurso, setResumenConcurso] = useState("");
+    const [fechaInicioConcurso, setFechaInicioConcurso] = useState("");
+    const [fechaFinalConcurso, setFechaFinalConcurso] = useState("");
+    const [enviandoConcurso, setEnviandoConcurso] = useState(false);
+    const [mensajeConcurso, setMensajeConcurso] = useState(null);
+    const [ganadorConcurso, setGanadorConcurso] = useState("");
+    const [idUltimoConcurso, setIdUltimoConcurso] = useState(null);
+    const [fechaFinalUltimoConcurso, setFechaFinalUltimoConcurso] = useState(null);
+
+    // Lógica para habilitar el campo ganador solo una semana después de la fecha final
+    const puedeEditarGanador = () => {
+        if (!fechaFinalUltimoConcurso) return false;
+        const fechaFinal = new Date(fechaFinalUltimoConcurso);
+        const ahora = new Date();
+        return ahora - fechaFinal > 7 * 24 * 60 * 60 * 1000; // 7 días
+    };
+
+    const handleCrearConcurso = async () => {
+        setEnviandoConcurso(true);
+        setMensajeConcurso(null);
+        try {
+            const API_URL = 'https://storyup-backend.onrender.com/api';
+            const res = await fetch(`${API_URL}/concursos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    resumen: resumenConcurso,
+                    fechaInicio: fechaInicioConcurso,
+                    fechaFinal: fechaFinalConcurso,
+                    autorId: usuario?._id,
+                })
+            });
+            if (!res.ok) throw new Error('Error al crear concurso');
+            const data = await res.json();
+            setResumenConcurso("");
+            setFechaInicioConcurso("");
+            setFechaFinalConcurso("");
+            setIdUltimoConcurso(data._id);
+            setFechaFinalUltimoConcurso(data.fechaFinal);
+            setMensajeConcurso({ tipo: 'ok', texto: '¡Concurso creado con éxito!' });
+        } catch (err) {
+            setMensajeConcurso({ tipo: 'error', texto: err.message || 'Error al crear concurso' });
+        } finally {
+            setEnviandoConcurso(false);
+        }
+    };
+
+    // Guardar ganador (solo si permitido)
+    const handleGuardarGanador = async () => {
+        if (!idUltimoConcurso) return;
+        setMensajeConcurso(null);
+        try {
+            const API_URL = 'https://storyup-backend.onrender.com/api';
+            const res = await fetch(`${API_URL}/concursos/${idUltimoConcurso}/ganador`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ganador: ganadorConcurso })
+            });
+            if (!res.ok) throw new Error('Error al guardar ganador');
+            setMensajeConcurso({ tipo: 'ok', texto: '¡Ganador guardado!' });
+        } catch (err) {
+            setMensajeConcurso({ tipo: 'error', texto: err.message || 'Error al guardar ganador' });
+        }
+    };
     const [avatar, setAvatar] = useState(usuario?.avatar || '');
     const [loading, setLoading] = useState(false);
     // --- Estado para crear noticia ---
@@ -156,30 +223,70 @@ function Perfil({ usuario }) {
                 {/* Bloque de crear concursos */}
                 <div style={{ flex: 1, background: '#fff', borderRadius: 14, boxShadow: '0 2px 12px #4db6ac33', padding: '2.5rem 2.5rem', minWidth: 340, maxWidth: 540, height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <h2 style={{ color: '#4db6ac', marginBottom: 8 }}>Crear concurso</h2>
-                    <div style={{ marginBottom: 12, fontWeight: 'bold', color: '#e6b800' }}>ID del concurso: <span style={{ background: '#ffe066', borderRadius: 4, padding: '2px 8px' }}>#12345</span></div>
-                    <textarea placeholder="Descripción del concurso..." style={{ width: '100%', minHeight: 80, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                    <div style={{ marginBottom: 12, fontWeight: 'bold', color: '#e6b800' }}>ID del concurso: <span style={{ background: '#ffe066', borderRadius: 4, padding: '2px 8px' }}>{idUltimoConcurso ? `#${idUltimoConcurso}` : '—'}</span></div>
+                    <textarea
+                        placeholder="Descripción del concurso..."
+                        style={{ width: '100%', minHeight: 80, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #4db6ac' }}
+                        value={resumenConcurso}
+                        onChange={e => setResumenConcurso(e.target.value)}
+                        disabled={enviandoConcurso}
+                    />
                     <div style={{ display: 'flex', gap: 12, marginBottom: 12, width: '100%' }}>
                         <div style={{ flex: 1 }}>
                             <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Fecha inicio</label>
-                            <input type="date" style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                            <input
+                                type="date"
+                                style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid #4db6ac' }}
+                                value={fechaInicioConcurso}
+                                onChange={e => setFechaInicioConcurso(e.target.value)}
+                                disabled={enviandoConcurso}
+                            />
                         </div>
                         <div style={{ flex: 1 }}>
                             <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Fecha final</label>
-                            <input type="date" style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid #4db6ac' }} />
+                            <input
+                                type="date"
+                                style={{ width: '100%', padding: 6, borderRadius: 6, border: '1px solid #4db6ac' }}
+                                value={fechaFinalConcurso}
+                                onChange={e => setFechaFinalConcurso(e.target.value)}
+                                disabled={enviandoConcurso}
+                            />
                         </div>
                     </div>
-                    {/* Campo de ganador, solo visible una semana después de la fecha final (lógica visual, no funcional aún) */}
+                    {/* Campo de ganador, solo editable una semana después de la fecha final */}
                     <div style={{ width: '100%', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                         <div style={{ flex: 1 }}>
                             <label style={{ fontWeight: 'bold', color: '#4db6ac', marginBottom: 4, display: 'block' }}>Nombre del ganador</label>
-                            <input type="text" placeholder="Nombre del ganador" style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', background: '#f5f5f5' }} disabled />
+                            <input
+                                type="text"
+                                placeholder="Nombre del ganador"
+                                style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #4db6ac', background: puedeEditarGanador() ? '#fff' : '#f5f5f5' }}
+                                value={ganadorConcurso}
+                                onChange={e => setGanadorConcurso(e.target.value)}
+                                disabled={!puedeEditarGanador()}
+                            />
                             <div style={{ fontSize: 12, color: '#aaa', marginTop: 4 }}>
-                                Este campo estará disponible una semana después de la fecha final del concurso.
+                                {puedeEditarGanador() ? 'Puedes definir el ganador.' : 'Este campo estará disponible una semana después de la fecha final del concurso.'}
                             </div>
                         </div>
-                        <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer', height: 40 }} disabled>Enviar</button>
+                        <button
+                            style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: puedeEditarGanador() ? 'pointer' : 'not-allowed', height: 40 }}
+                            onClick={handleGuardarGanador}
+                            disabled={!puedeEditarGanador() || !ganadorConcurso.trim()}
+                        >Guardar</button>
                     </div>
-                    <button style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}>Crear concurso</button>
+                    <button
+                        style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}
+                        onClick={handleCrearConcurso}
+                        disabled={enviandoConcurso || !resumenConcurso || !fechaInicioConcurso || !fechaFinalConcurso}
+                    >
+                        {enviandoConcurso ? 'Enviando...' : 'Crear concurso'}
+                    </button>
+                    {mensajeConcurso && (
+                        <div style={{ marginTop: 10, color: mensajeConcurso.tipo === 'error' ? 'red' : 'green', fontWeight: 'bold' }}>
+                            {mensajeConcurso.texto}
+                        </div>
+                    )}
                 </div>
             </div>
             {/* Panel de Administrador */}
