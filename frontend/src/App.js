@@ -14,7 +14,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 
 function AppContent() {
-    const { usuario, usuariosStats, horaMadrid, lang, checkingSession } = useGlobal();
+    const { usuario, estadisticas, horaMadrid, lang, checkingSession } = useGlobal();
     if (checkingSession) {
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#fffbe6' }}>
@@ -35,7 +35,7 @@ function AppContent() {
                     <div className="topbar-left" style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={process.env.PUBLIC_URL + '/assets/favicon.ico'} alt="favicon" className="topbar-logo" style={{ height: 40, width: 40, marginRight: 8 }} />
                         <span style={{ fontSize: 13, color: '#888', marginLeft: 4 }}>
-                            Online: <b>{usuariosStats?.online ?? 0}</b> · Inscritos: <b>{usuariosStats?.total ?? 0}</b>
+                            Online: <b>{estadisticas?.online ?? 0}</b> · Inscritos: <b>{estadisticas?.totalUsuarios ?? 0}</b>
                         </span>
                     </div>
                     <div className="topbar-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
