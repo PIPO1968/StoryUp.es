@@ -39,6 +39,7 @@ export default function ConcursosPage() {
                     {loading ? <p>Cargando...</p> : activos.length === 0 ? <p>No hay concursos activos.</p> : activos.map((c, i) => (
                         <div key={c._id || i} style={{ marginBottom: 24, borderBottom: '1px solid #eee', paddingBottom: 16 }}>
                             <h3 style={{ color: '#e6b800', fontWeight: 'bold', fontSize: 20 }}>{c.titulo}</h3>
+                            <div style={{ fontSize: 13, color: '#e6b800', marginBottom: 2 }}><strong>ID:</strong> <a href={`/concursos/${c._id}`} style={{ color: '#4db6ac', textDecoration: 'underline', cursor: 'pointer' }}>{c._id}</a></div>
                             <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Autor: {c.autor?.username || c.autor?.name || 'Desconocido'}</div>
                             <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Inicio: {new Date(c.fechaInicio).toLocaleDateString()} | Fin: {new Date(c.fechaFinal).toLocaleDateString()}</div>
                             <div style={{ color: '#444', fontSize: 16, marginBottom: 6 }}>{c.resumen}</div>
@@ -51,6 +52,7 @@ export default function ConcursosPage() {
                     {loading ? <p>Cargando...</p> : finalizados.length === 0 ? <p>No hay concursos finalizados.</p> : finalizados.map((c, i) => (
                         <div key={c._id || i} style={{ marginBottom: 24, borderBottom: '1px solid #eee', paddingBottom: 16 }}>
                             <h3 style={{ color: '#e6b800', fontWeight: 'bold', fontSize: 20 }}>{c.titulo}</h3>
+                            <div style={{ fontSize: 13, color: '#e6b800', marginBottom: 2 }}><strong>ID:</strong> <a href={`/concursos/${c._id}`} style={{ color: '#4db6ac', textDecoration: 'underline', cursor: 'pointer' }}>{c._id}</a></div>
                             <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Autor: {c.autor?.username || c.autor?.name || 'Desconocido'}</div>
                             <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Inicio: {new Date(c.fechaInicio).toLocaleDateString()} | Fin: {new Date(c.fechaFinal).toLocaleDateString()}</div>
                             <div style={{ color: '#444', fontSize: 16, marginBottom: 6 }}>{c.resumen}</div>

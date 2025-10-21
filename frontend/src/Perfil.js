@@ -141,7 +141,7 @@ function Perfil({ usuario }) {
                     </div>
                     <h2 style={{ color: '#e6b800', marginBottom: 18, alignSelf: 'flex-start' }}>Datos personales</h2>
                     <div style={{ width: '100%' }}>
-                        <p><strong>ID:</strong> {usuario?._id}</p>
+                        <p><strong>ID:</strong> <a href={`/perfil/${usuario?._id}`} style={{ color: '#4db6ac', textDecoration: 'underline', cursor: 'pointer' }}>{usuario?._id}</a></p>
                         <p><strong>Nombre:</strong> {usuario?.realName || ''}</p>
                         <p><strong>Nick:</strong> {usuario?.nick || usuario?.username}</p>
                         <p><strong>Email:</strong> {usuario?.email}</p>
