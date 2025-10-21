@@ -108,9 +108,7 @@ function NoticiaConComentarios({ noticia, index }) {
                     <h3 style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 4, color: '#e6b800' }}>
                         {noticia.title}
                     </h3>
-                    <div style={{ fontSize: 13, color: '#e6b800', marginBottom: 2 }}>
-                        <strong>ID:</strong> <a href={`/noticias/${noticia._id}`} style={{ color: '#4db6ac', textDecoration: 'underline', cursor: 'pointer' }}>{noticia._id}</a>
-                    </div>
+                    {/* ID eliminado */}
                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
                         <span>👤 {noticia.anonimo ? "Anonimo" : (noticia.author?.username || noticia.author?.name || "Autor desconocido")}</span>
                         <span>•</span>

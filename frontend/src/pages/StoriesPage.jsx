@@ -66,9 +66,7 @@ export default function StoriesPage() {
                                             {story.title}
                                         </Link>
                                     </h3>
-                                    <div style={{ fontSize: 13, color: '#e6b800', marginBottom: 2 }}>
-                                        <strong>ID:</strong> <Link to={`/stories/${story._id}`} style={{ color: '#4db6ac', textDecoration: 'underline', cursor: 'pointer' }}>{story._id}</Link>
-                                    </div>
+                                    {/* ID eliminado */}
                                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
                                         <span>👤 {story.anonimo ? "Anonimo" : (story.author?.username || story.author?.name || "Autor desconocido")}</span>
                                         <span>•</span>
