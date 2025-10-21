@@ -11,6 +11,7 @@ function Perfil({ usuario }) {
     const [enviandoNoticia, setEnviandoNoticia] = useState(false);
     const [mensajeNoticia, setMensajeNoticia] = useState(null);
 
+    const [anonimoNoticia, setAnonimoNoticia] = useState(false);
     const handleEnviarNoticia = async () => {
         setEnviandoNoticia(true);
         setMensajeNoticia(null);
@@ -22,11 +23,12 @@ function Perfil({ usuario }) {
                     'Content-Type': 'application/json',
                     // Si usas autenticación, añade aquí el token
                 },
-                body: JSON.stringify({ title: tituloNoticia, content: contenidoNoticia })
+                body: JSON.stringify({ title: tituloNoticia, content: contenidoNoticia, authorId: usuario?._id, anonimo: anonimoNoticia })
             });
             if (!res.ok) throw new Error('Error al crear noticia');
             setTituloNoticia('');
             setContenidoNoticia('');
+            setAnonimoNoticia(false);
             setMensajeNoticia({ tipo: 'ok', texto: '¡Noticia creada con éxito!' });
         } catch (err) {
             setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
@@ -125,6 +127,19 @@ function Perfil({ usuario }) {
                         onChange={e => setContenidoNoticia(e.target.value)}
                         disabled={enviandoNoticia}
                     />
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+                        <input
+                            type="checkbox"
+                            id="anonimoNoticia"
+                            checked={anonimoNoticia}
+                            onChange={e => setAnonimoNoticia(e.target.checked)}
+                            disabled={enviandoNoticia}
+                            style={{ marginRight: 8 }}
+                        />
+                        <label htmlFor="anonimoNoticia" style={{ color: '#4db6ac', fontWeight: 'bold', cursor: 'pointer' }}>
+                            Publicar como anónimo
+                        </label>
+                    </div>
                     <button
                         style={{ background: '#4db6ac', color: '#fff', border: 'none', borderRadius: 6, padding: '0 18px', fontWeight: 'bold', cursor: 'pointer' }}
                         onClick={handleEnviarNoticia}

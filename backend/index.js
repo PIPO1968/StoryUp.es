@@ -43,7 +43,10 @@ const newsRouter = require('./routes/news');
 app.use('/api', usuariosRouter);
 app.use('/api/stories', storiesRouter);
 app.use('/api/news', newsRouter);
-
+// Endpoint de Health Check para Render
+app.get('/healthz', (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
 
 // --- Eliminado el servido de archivos estáticos del frontend para despliegue en Render ---
 

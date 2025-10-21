@@ -1,4 +1,3 @@
-const { updateLastActiveFromRequest } = require('./updateLastActive');
 // Endpoint fusionado para perfil, likes, comentarios, mensajes, historias y contactos
 const { Client } = require('pg');
 const jwt = require('jsonwebtoken');
@@ -22,7 +21,6 @@ function verifyToken(req) {
 }
 
 module.exports = async function handler(req, res) {
-    await updateLastActiveFromRequest(req);
     const client = getClient();
     await client.connect();
     try {

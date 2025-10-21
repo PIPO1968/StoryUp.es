@@ -1,5 +1,3 @@
-
-import { updateLastActiveFromRequest } from './updateLastActive';
 const { Client } = require('pg');
 
 function getClient() {
@@ -8,7 +6,6 @@ function getClient() {
 }
 
 export default async function handler(req, res) {
-    await updateLastActiveFromRequest(req);
     if (req.method === 'POST') {
         const { title, content, author, createdAt } = req.body;
         if (!title || !content || !author) {
