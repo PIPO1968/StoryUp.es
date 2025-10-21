@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function ConcursosPage() {
     const [concursos, setConcursos] = useState([]);
@@ -40,9 +41,9 @@ export default function ConcursosPage() {
                         <div key={c._id || i} style={{ marginBottom: 24, borderBottom: '1px solid #eee', paddingBottom: 16 }}>
                             <h3 style={{ color: '#e6b800', fontWeight: 'bold', fontSize: 20 }}>{c.titulo}</h3>
                             {/* ID eliminado */}
-                                                        <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Autor: {c.autor && c.autor._id ? (
-                                                            <Link to={`/perfil/${c.autor._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>{c.autor.username || c.autor.name || 'Desconocido'}</Link>
-                                                        ) : (c.autor?.username || c.autor?.name || 'Desconocido')}</div>
+                            <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Autor: {c.autor && c.autor._id ? (
+                                <Link to={`/perfil/${c.autor._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>{c.autor.username || c.autor.name || 'Desconocido'}</Link>
+                            ) : (c.autor?.username || c.autor?.name || 'Desconocido')}</div>
                             <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>Inicio: {new Date(c.fechaInicio).toLocaleDateString()} | Fin: {new Date(c.fechaFinal).toLocaleDateString()}</div>
                             <div style={{ color: '#444', fontSize: 16, marginBottom: 6 }}>{c.resumen}</div>
                         </div>
