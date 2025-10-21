@@ -13,7 +13,7 @@ const Concurso = mongoose.model('Concurso', new mongoose.Schema({
 }, { timestamps: true }));
 
 // Crear concurso
-router.post('/concursos', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { titulo, resumen, fechaInicio, fechaFinal, autorId } = req.body;
         if (!titulo || !resumen || !fechaInicio || !fechaFinal || !autorId) {
@@ -28,7 +28,7 @@ router.post('/concursos', async (req, res) => {
 });
 
 // Obtener concursos (últimos 10)
-router.get('/concursos', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const concursos = await Concurso.find().sort({ createdAt: -1 }).limit(10).populate('autorId', 'username name');
         res.json(concursos);
@@ -38,7 +38,7 @@ router.get('/concursos', async (req, res) => {
 });
 
 // Definir ganador
-router.post('/concursos/:id/ganador', async (req, res) => {
+router.post('/:id/ganador', async (req, res) => {
     try {
         const { ganador } = req.body;
         const concurso = await Concurso.findByIdAndUpdate(req.params.id, { ganador }, { new: true });
