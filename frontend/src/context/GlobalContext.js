@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { getCookie } from '../cookieUtils';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://storyup-backend.onrender.com/api';
 
@@ -20,12 +21,14 @@ export function GlobalProvider({ children }) {
     });
     const [loading, setLoading] = useState(true);
 
-    // Cargar todos los datos principales al iniciar
+    // Cargar todos los datos principales al iniciar, restaurando sesión con token si existe
     const fetchAll = useCallback(async () => {
         setLoading(true);
         try {
+            const token = getCookie('token');
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const [me, news, stories, contests, stats] = await Promise.all([
-                fetch(`${API_URL}/me`, { credentials: 'include' }).then(r => r.ok ? r.json() : null),
+                fetch(`${API_URL}/me`, { headers, credentials: 'include' }).then(r => r.ok ? r.json() : null),
                 fetch(`${API_URL}/news`).then(r => r.ok ? r.json() : []),
                 fetch(`${API_URL}/stories`).then(r => r.ok ? r.json() : []),
                 fetch(`${API_URL}/concursos`).then(r => r.ok ? r.json() : []),
