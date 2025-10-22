@@ -11,7 +11,6 @@ app.use(cors({
     origin: [
         'https://www.storyup.es',
         'https://storyup.es',
-        'https://www.story-up.vercel.app',
         'https://story-up.vercel.app'
     ],
     credentials: true,
@@ -40,11 +39,9 @@ require('./models/news');
 const usuariosRouter = require('./routes/usuarios');
 const storiesRouter = require('./routes/stories');
 const newsRouter = require('./routes/news');
-const concursosRouter = require('./routes/concursos');
 app.use('/api', usuariosRouter);
 app.use('/api/stories', storiesRouter);
 app.use('/api/news', newsRouter);
-app.use('/api/concursos', concursosRouter);
 // Endpoint de Health Check para Render
 app.get('/healthz', (req, res) => {
     res.status(200).json({ status: "ok" });
