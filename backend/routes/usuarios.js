@@ -1,3 +1,14 @@
+// Endpoint /estadisticas para compatibilidad con frontend antiguo
+router.get('/estadisticas', async (req, res) => {
+    try {
+        const totalUsuarios = await User.countDocuments();
+        // Simulación: usuarios online aleatorio
+        const online = Math.max(1, Math.floor(Math.random() * totalUsuarios));
+        res.json({ totalUsuarios, online });
+    } catch (err) {
+        res.status(500).json({ error: 'Error al obtener estadísticas', details: err.message });
+    }
+});
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
