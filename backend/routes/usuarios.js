@@ -1,3 +1,4 @@
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
@@ -7,13 +8,6 @@ const Data = require('../models/data');
 
 // Eliminar todos los usuarios al iniciar para empezar desde cero
 User.deleteMany({}).then(() => console.log('Todos los usuarios eliminados (reset inicial)')).catch(console.error);
-
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
 
 // Estadísticas de usuarios: total y online (simulado)
 router.get('/usuarios/contador', async (req, res) => {
