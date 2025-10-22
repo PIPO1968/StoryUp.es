@@ -1,3 +1,5 @@
+// ...otros endpoints...
+
 // Endpoint para actualizar lastActive del usuario autenticado
 router.post('/me/active', async (req, res) => {
     const auth = req.headers.authorization;
