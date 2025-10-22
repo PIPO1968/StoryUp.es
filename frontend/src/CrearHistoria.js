@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { EditorState, convertToRaw } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useNavigate } from 'react-router-dom';
 import SidebarHistoria from './SidebarHistoria';
 
 function CrearHistoria({ usuario }) {
     const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
     const [image, setImage] = useState(null);
     const [type, setType] = useState("Real");
     const [theme, setTheme] = useState("Aventura");
@@ -26,7 +27,8 @@ function CrearHistoria({ usuario }) {
         e.preventDefault();
         setError("");
         setSuccess("");
-        if (!title.trim() || !content.trim()) {
+        const rawContent = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
+        if (!title.trim() || !editorState.getCurrentContent().hasText()) {
             setError("Debes completar el título y el contenido.");
             return;
         }
@@ -54,7 +56,7 @@ function CrearHistoria({ usuario }) {
             const res = await fetch(`${API_URL}/stories`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, content, type, theme, anonimo, authorId: usuario?._id, image: imageUrl })
+                body: JSON.stringify({ title, content: rawContent, type, theme, anonimo, authorId: usuario?._id, image: imageUrl })
             });
             if (!res.ok) throw new Error("Error al crear la historia");
             setSuccess("¡Historia creada correctamente!");
@@ -88,21 +90,16 @@ function CrearHistoria({ usuario }) {
                     <div style={{ position: 'absolute', right: -28, bottom: -28, fontSize: 32 }}>📚</div>
                     <h2 style={{ color: '#4db6ac', marginBottom: 18, textAlign: 'left', fontSize: 28 }}>Nueva historia</h2>
                     <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Título de la historia" style={{ width: '100%', marginBottom: 18, padding: 10, borderRadius: 8, border: '1px solid #4db6ac', fontSize: 18 }} />
-                    <ReactQuill
-                        value={content}
-                        onChange={setContent}
-                        placeholder="Escribe tu historia aquí..."
-                        style={{ width: '100%', marginBottom: 18, background: '#fff' }}
-                        modules={{
-                            toolbar: [
-                                [{ 'header': [1, 2, false] }],
-                                ['bold', 'underline'],
-                                ['image'],
-                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                ['clean']
-                            ]
+                    <Editor
+                        editorState={editorState}
+                        onEditorStateChange={setEditorState}
+                        toolbar={{
+                            options: ['inline', 'list', 'image', 'history'],
+                            inline: { options: ['bold', 'underline'] },
+                            image: { uploadEnabled: false },
                         }}
-                        formats={['header', 'bold', 'underline', 'image', 'list', 'bullet']}
+                        editorStyle={{ minHeight: 180, borderRadius: 8, border: '1px solid #4db6ac', padding: 12, marginBottom: 18, background: '#fff' }}
+                        placeholder="Escribe tu historia aquí..."
                     />
                     <div style={{ marginBottom: 18 }}>
                         <label style={{ fontWeight: 'bold', color: '#4db6ac' }}>Imagen (opcional): </label>
