@@ -1,0 +1,64 @@
+/* Migrado desde frontend/src/App.css */
+.topbar-left {
+    display: flex;
+    align-items: center;
+    min-width: 220px;
+}
+
+.topbar-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    min-width: 180px;
+    justify-content: flex-end;
+}
+
+body {
+    background: linear-gradient(135deg, #fffbe6 0%, #fff 100%);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.top-bar {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    padding: 0 24px;
+    z-index: 100;
+}
+
+.App {
+    background: #fff;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.App-logo {
+    position: fixed;
+    height: 40vmin;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+/* ...continúa el resto del CSS según el archivo original... */

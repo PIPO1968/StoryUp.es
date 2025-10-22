@@ -1,12 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import SidebarHistoria from './SidebarHistoria';
-import CrearHistoria from './CrearHistoria';
-import Perfil from './Perfil';
-import Register from './Register';
-import Login from './Login';
-import LanguageSelector from './LanguageSelector';
+import Sidebar from './Sidebar.jsx';
+import SidebarHistoria from './SidebarHistoria.jsx';
+import CrearHistoria from './CrearHistoria.jsx';
+import Perfil from './Perfil.jsx';
+import Register from './Register.jsx';
+import Login from './Login.jsx';
+import LanguageSelector from './LanguageSelector.jsx';
 
 function App() {
     return (
