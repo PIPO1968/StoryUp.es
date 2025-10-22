@@ -38,10 +38,15 @@ const usuariosRouter = require('./routes/usuarios');
 const storiesRouter = require('./routes/stories');
 const newsRouter = require('./routes/news');
 const eventRouter = require('./routes/event');
+const uploadRouter = require('./routes/upload');
 app.use('/api', usuariosRouter);
 app.use('/api/stories', storiesRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/event', eventRouter);
+app.use('/api/upload', uploadRouter);
+
+// Servir archivos estáticos de la carpeta uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Endpoint de Health Check para Render
 app.get('/healthz', (req, res) => {
     res.status(200).json({ status: "ok" });
