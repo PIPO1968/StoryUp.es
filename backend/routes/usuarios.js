@@ -1,4 +1,10 @@
-// ...otros endpoints...
+
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const Data = require('../models/data');
 
 // Endpoint para actualizar lastActive del usuario autenticado
 router.post('/me/active', async (req, res) => {
@@ -20,13 +26,6 @@ router.post('/me/active', async (req, res) => {
         res.status(401).json({ error: 'Token inválido', details: err.message });
     }
 });
-
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
 
 // Eliminar todos los usuarios al iniciar para empezar desde cero
 User.deleteMany({}).then(() => console.log('Todos los usuarios eliminados (reset inicial)')).catch(console.error);
