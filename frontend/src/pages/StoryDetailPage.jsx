@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { getCookie } from '../cookieUtils';
 
 export default function StoryDetailPage({ usuario }) {
     const { id } = useParams();
