@@ -139,42 +139,55 @@ function App() {
                         <Route path="/stories/:id" element={<StoryDetailPage usuario={usuario} />} />
                         <Route path="/" element={
                             !usuario ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#f9f9f9' }}>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 32, marginBottom: 32 }}>
-                                        {/* Bloques explicativos */}
-                                        <InfoBlock title="Historias" icon="📖" desc="Crea, lee y comparte historias educativas con la comunidad." />
-                                        <InfoBlock title="Noticias" icon="📰" desc="Infórmate de las novedades y comparte noticias relevantes." />
-                                        <InfoBlock title="Estadísticas" icon="📊" desc="Consulta tu progreso y el de la comunidad en tiempo real." />
-                                        <InfoBlock title="Concursos" icon="🏆" desc="Participa en concursos y reta a otros usuarios." />
-                                        <InfoBlock title="Trofeos" icon="🥇" desc="Gana trofeos por tus logros y actividades en la plataforma." />
-                                        <InfoBlock title="Aprende con Pipo" icon="🎓" desc="Resuelve preguntas y mejora tus conocimientos jugando." />
-                                        <InfoBlock title="Perfil" icon="👤" desc="Gestiona tu información personal y preferencias." />
-                                    </div>
-                                    <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 340, maxWidth: 420, margin: '0 auto', zIndex: 2 }}>
-                                        <div style={{ textAlign: 'center', marginBottom: 24 }}>
-                                            <div style={{ fontWeight: 'bold', fontSize: '1.7rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#f9f9f9' }}>
+                                    <div style={{ position: 'relative', width: 600, height: 600, maxWidth: '95vw', maxHeight: '95vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        {/* Bloques explicativos en círculo */}
+                                        {[
+                                            { title: 'Historias', icon: '📖', desc: 'Crea, lee y comparte historias educativas con la comunidad.' },
+                                            { title: 'Noticias', icon: '📰', desc: 'Infórmate de las novedades y comparte noticias relevantes.' },
+                                            { title: 'Estadísticas', icon: '📊', desc: 'Consulta tu progreso y el de la comunidad en tiempo real.' },
+                                            { title: 'Concursos', icon: '🏆', desc: 'Participa en concursos y reta a otros usuarios.' },
+                                            { title: 'Trofeos', icon: '🥇', desc: 'Gana trofeos por tus logros y actividades en la plataforma.' },
+                                            { title: 'Aprende con Pipo', icon: '🎓', desc: 'Resuelve preguntas y mejora tus conocimientos jugando.' },
+                                            { title: 'Perfil', icon: '👤', desc: 'Gestiona tu información personal y preferencias.' }
+                                        ].map((block, i, arr) => {
+                                            const angle = (2 * Math.PI * i) / arr.length;
+                                            const radius = 220;
+                                            const x = Math.cos(angle) * radius + 260;
+                                            const y = Math.sin(angle) * radius + 260;
+                                            return (
+                                                <div key={block.title} style={{ position: 'absolute', left: x, top: y, transform: 'translate(-50%, -50%)' }}>
+                                                    <InfoBlock {...block} />
+                                                </div>
+                                            );
+                                        })}
+                                        {/* Formulario central */}
+                                        <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 340, maxWidth: 420, zIndex: 2 }}>
+                                            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                                                <div style={{ fontWeight: 'bold', fontSize: '1.7rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
+                                            </div>
+                                            <React.Suspense fallback={<div>Cargando...</div>}>
+                                                {showLogin ? (
+                                                    <>
+                                                        <Login onLogin={handleLogin} />
+                                                        <div style={{ marginTop: 16, textAlign: 'center' }}>
+                                                            <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(false)}>
+                                                                ¿No tienes cuenta? Regístrate
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Register onRegister={handleLogin} />
+                                                        <div style={{ marginTop: 16, textAlign: 'center' }}>
+                                                            <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(true)}>
+                                                                ¿Ya tienes cuenta? Inicia sesión
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </React.Suspense>
                                         </div>
-                                        <React.Suspense fallback={<div>Cargando...</div>}>
-                                            {showLogin ? (
-                                                <>
-                                                    <Login onLogin={handleLogin} />
-                                                    <div style={{ marginTop: 16, textAlign: 'center' }}>
-                                                        <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(false)}>
-                                                            ¿No tienes cuenta? Regístrate
-                                                        </button>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Register onRegister={handleLogin} />
-                                                    <div style={{ marginTop: 16, textAlign: 'center' }}>
-                                                        <button type="button" style={{ background: 'none', border: 'none', color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setShowLogin(true)}>
-                                                            ¿Ya tienes cuenta? Inicia sesión
-                                                        </button>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </React.Suspense>
                                     </div>
                                 </div>
                             ) : <Navigate to="/perfil" />
