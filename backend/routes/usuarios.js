@@ -1,3 +1,4 @@
+
 // Obtener todos los usuarios registrados (solo para uso interno/frontend)
 router.get('/usuarios', async (req, res) => {
     try {
