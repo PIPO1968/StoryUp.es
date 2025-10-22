@@ -1,3 +1,21 @@
+// Obtener todos los usuarios registrados (solo para uso interno/frontend)
+router.get('/usuarios', async (req, res) => {
+    try {
+        const users = await User.find({}, {
+            email: 1,
+            username: 1,
+            realName: 1,
+            userType: 1,
+            centroTipo: 1,
+            centroNombre: 1,
+            avatar: 1,
+            _id: 1
+        });
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: 'Error al obtener usuarios', details: err.message });
+    }
+});
 
 const express = require('express');
 const router = express.Router();
