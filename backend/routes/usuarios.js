@@ -1,3 +1,10 @@
+const express = require('express');
+const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const Data = require('../models/data');
+
 // Login clásico (solo email y password)
 router.post('/login', async (req, res) => {
     try {
