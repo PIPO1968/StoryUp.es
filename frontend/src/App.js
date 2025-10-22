@@ -140,7 +140,7 @@ function App() {
                         <Route path="/" element={
                             !usuario ? (
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#f9f9f9' }}>
-                                    <div style={{ position: 'relative', width: 700, height: 700, maxWidth: '99vw', maxHeight: '99vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ position: 'relative', width: 900, height: 900, maxWidth: '99vw', maxHeight: '99vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         {/* Bloques explicativos en círculo */}
                                         {[
                                             { title: 'Historias', icon: '📖', desc: 'Crea, lee y comparte historias educativas con la comunidad.' },
@@ -152,9 +152,9 @@ function App() {
                                             { title: 'Perfil', icon: '👤', desc: 'Gestiona tu información personal y preferencias.' }
                                         ].map((block, i, arr) => {
                                             const angle = (2 * Math.PI * i) / arr.length;
-                                            const radius = 280;
-                                            const x = Math.cos(angle) * radius + 350;
-                                            const y = Math.sin(angle) * radius + 350;
+                                            const radius = 390;
+                                            const x = Math.cos(angle) * radius + 450;
+                                            const y = Math.sin(angle) * radius + 450;
                                             return (
                                                 <div key={block.title} style={{ position: 'absolute', left: x, top: y, transform: 'translate(-50%, -50%)' }}>
                                                     <InfoBlock {...block} />
