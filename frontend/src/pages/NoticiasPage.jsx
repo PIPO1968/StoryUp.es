@@ -1,26 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useGlobal } from '../context/GlobalContext';
 
 export default function NoticiasPage() {
-    const [noticias, setNoticias] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchNoticias = async () => {
-            try {
-                const API_URL = 'https://storyup-backend.onrender.com/api';
-                const res = await fetch(`${API_URL}/news`);
-                if (!res.ok) throw new Error("Error al obtener noticias");
-                const data = await res.json();
-                setNoticias(data);
-            } catch (err) {
-                setNoticias([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchNoticias();
-    }, []);
+    const { noticias, loading } = useGlobal();
 
     const renderEmptyNoticias = () => {
         const emptySlots = [];
@@ -66,7 +49,6 @@ export default function NoticiasPage() {
         </div>
     );
 }
-
 // --- Componente para cada noticia con comentarios ---
 function NoticiaConComentarios({ noticia, index }) {
     const [comentario, setComentario] = React.useState("");
@@ -74,13 +56,12 @@ function NoticiaConComentarios({ noticia, index }) {
     const [enviando, setEnviando] = React.useState(false);
     const [error, setError] = React.useState("");
 
+    const { usuario } = useGlobal();
     const handleEnviarComentario = async () => {
         setEnviando(true);
         setError("");
         try {
-            // Aquí deberías obtener el userId real del usuario logueado
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
+            if (!usuario || !usuario._id) {
                 setError("Debes iniciar sesión para comentar.");
                 setEnviando(false);
                 return;
@@ -88,7 +69,7 @@ function NoticiaConComentarios({ noticia, index }) {
             const res = await fetch(`https://storyup-backend.onrender.com/api/news/${noticia._id}/comment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, text: comentario })
+                body: JSON.stringify({ userId: usuario._id, text: comentario })
             });
             if (!res.ok) throw new Error("Error al enviar comentario");
             const nuevosComentarios = await res.json();
@@ -111,13 +92,13 @@ function NoticiaConComentarios({ noticia, index }) {
                     </h3>
                     {/* ID eliminado */}
                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
-                                                <span>👤 {noticia.anonimo ? "Anonimo" : (
-                                                    noticia.author && noticia.author._id ?
-                                                        <Link to={`/perfil/${noticia.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
-                                                            {noticia.author.username || noticia.author.name || "Autor desconocido"}
-                                                        </Link>
-                                                    : (noticia.author?.username || noticia.author?.name || "Autor desconocido")
-                                                )}</span>
+                        <span>👤 {noticia.anonimo ? "Anonimo" : (
+                            noticia.author && noticia.author._id ?
+                                <Link to={`/perfil/${noticia.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
+                                    {noticia.author.username || noticia.author.name || "Autor desconocido"}
+                                </Link>
+                                : (noticia.author?.username || noticia.author?.name || "Autor desconocido")
+                        )}</span>
                         <span>•</span>
                         <span>{new Date(noticia.createdAt).toLocaleDateString()}</span>
                         <span>💬 {comentarios.length}</span>
@@ -134,16 +115,16 @@ function NoticiaConComentarios({ noticia, index }) {
                     <div style={{ color: '#aaa', fontStyle: 'italic' }}>Sin comentarios aún.</div>
                 ) : (
                     comentarios.map((c, i) => {
-                                                const nick = c.author?.username || c.author?.name || c.nick || 'Usuario';
-                                                return (
-                                                        <div key={i} style={{ borderBottom: '1px solid #eee', padding: '6px 0', fontSize: 15 }}>
-                                                                <span style={{ color: '#e6b800', fontWeight: 'bold' }}>
-                                                                    {c.author && c.author._id ? (
-                                                                        <Link to={`/perfil/${c.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>{nick}</Link>
-                                                                    ) : nick}
-                                                                </span>: {c.text}
-                                                        </div>
-                                                );
+                        const nick = c.author?.username || c.author?.name || c.nick || 'Usuario';
+                        return (
+                            <div key={i} style={{ borderBottom: '1px solid #eee', padding: '6px 0', fontSize: 15 }}>
+                                <span style={{ color: '#e6b800', fontWeight: 'bold' }}>
+                                    {c.author && c.author._id ? (
+                                        <Link to={`/perfil/${c.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>{nick}</Link>
+                                    ) : nick}
+                                </span>: {c.text}
+                            </div>
+                        );
                     })
                 )}
                 <div style={{ display: 'flex', marginTop: 10, gap: 8 }}>
