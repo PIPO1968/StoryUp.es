@@ -35,7 +35,8 @@ function Register({ onRegister }) {
             if (!res.ok) throw new Error(data.error || 'Error de registro');
             if (data.token) setCookie('token', data.token, 7);
             onRegister({ ...data.user, token: data.token });
-            navigate('/perfil');
+            // Esperar un momento antes de navegar para asegurar que el usuario se cuenta
+            setTimeout(() => navigate('/perfil'), 500);
         } catch (err) {
             setError(err.message);
         } finally {

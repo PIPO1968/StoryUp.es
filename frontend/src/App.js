@@ -92,10 +92,15 @@ function App() {
         }
     }, [usuario, location.pathname, navigate]);
 
-    // Guardar token en cookie tras login/registro
+    // Guardar token en cookie tras login/registro y refrescar contador
     const handleLogin = (user) => {
         if (user.token) setCookie('token', user.token, 7);
         setUsuario(user);
+        // Refrescar contador tras login/registro
+        fetch('https://storyup-backend.onrender.com/api/usuarios/contador')
+            .then(res => res.json())
+            .then(data => setUsuariosStats(data))
+            .catch(() => { });
     };
 
     // Loader mientras se verifica la sesión
