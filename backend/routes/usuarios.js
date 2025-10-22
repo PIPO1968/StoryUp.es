@@ -62,6 +62,7 @@ router.post('/login', async (req, res) => {
                 userType: user.userType,
                 centroTipo: user.centroTipo,
                 centroNombre: user.centroNombre,
+                course: user.course,
                 _id: user._id
             }
         });
@@ -140,7 +141,7 @@ router.post('/me/avatar', async (req, res) => {
 // Registro o login
 router.post('/register-or-login', async (req, res) => {
     try {
-        const { email, password, username, realName, userType, centroTipo, centroNombre } = req.body;
+    const { email, password, username, realName, userType, centroTipo, centroNombre, course } = req.body;
         console.log('Datos recibidos en registro:', req.body);
         if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
         let user = await User.findOne({ email });
@@ -155,7 +156,8 @@ router.post('/register-or-login', async (req, res) => {
                 realName: realName || '',
                 userType: userType || 'Usuario',
                 centroTipo: centroTipo || '',
-                centroNombre: centroNombre || ''
+                centroNombre: centroNombre || '',
+                course: course || ''
             });
             try {
                 await user.save();
@@ -185,6 +187,10 @@ router.post('/register-or-login', async (req, res) => {
                 user.centroNombre = centroNombre;
                 updated = true;
             }
+            if (course && course !== user.course) {
+                user.course = course;
+                updated = true;
+            }
             if (updated) await user.save();
         }
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '7d' });
@@ -197,6 +203,7 @@ router.post('/register-or-login', async (req, res) => {
                 userType: user.userType,
                 centroTipo: user.centroTipo,
                 centroNombre: user.centroNombre,
+                course: user.course,
                 _id: user._id
             }
         });
@@ -226,6 +233,7 @@ router.get('/me', async (req, res) => {
                 userType: user.userType,
                 centroTipo: user.centroTipo,
                 centroNombre: user.centroNombre,
+                course: user.course,
                 avatar: user.avatar,
                 _id: user._id
             }
