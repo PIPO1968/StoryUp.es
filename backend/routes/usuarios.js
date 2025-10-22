@@ -1,10 +1,4 @@
 
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
 
 // Obtener todos los usuarios registrados (solo para uso interno/frontend)
 router.get('/usuarios', async (req, res) => {
@@ -26,14 +20,10 @@ router.get('/usuarios', async (req, res) => {
 
 });
 
-module.exports = router;
 
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const Data = require('../models/data');
+
+
+module.exports = router;
 
 // Estadísticas de usuarios: total y online (simulado)
 router.get('/usuarios/contador', async (req, res) => {
