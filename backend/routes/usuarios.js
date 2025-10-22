@@ -1,3 +1,23 @@
+// Endpoint para actualizar lastActive del usuario autenticado
+router.post('/me/active', async (req, res) => {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+    const token = auth.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const user = await User.findByIdAndUpdate(
+            decoded.userId,
+            { lastActive: new Date() },
+            { new: true }
+        );
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(401).json({ error: 'Token inválido', details: err.message });
+    }
+});
 
 const express = require('express');
 const router = express.Router();
@@ -13,13 +33,9 @@ User.deleteMany({}).then(() => console.log('Todos los usuarios eliminados (reset
 router.get('/usuarios/contador', async (req, res) => {
     try {
         const total = await User.countDocuments();
-        // Si no hay usuarios, online debe ser 0
-        let online = 0;
-        if (total > 0) {
-            // Aquí podrías implementar lógica real de usuarios online
-            // Por ahora, solo simula 1 online si hay al menos 1 usuario
-            online = 1;
-        }
+        // Usuarios online: lastActive en los últimos 5 minutos
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const online = await User.countDocuments({ lastActive: { $gte: fiveMinutesAgo } });
         res.json({ total, online });
     } catch (err) {
         res.status(500).json({ error: 'Error al obtener estadísticas', details: err.message });
