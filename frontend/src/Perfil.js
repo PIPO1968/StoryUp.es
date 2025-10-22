@@ -3,7 +3,7 @@ import { getCookie } from './cookieUtils';
 import ChatSidebar from './ChatSidebar';
 
 
-function Perfil({ usuario }) {
+function Perfil({ usuario, setUsuario }) {
     const [avatar, setAvatar] = useState(usuario?.avatar || '');
     const [loading, setLoading] = useState(false);
     // --- Estado para crear noticia ---
@@ -70,6 +70,7 @@ function Perfil({ usuario }) {
                     if (!res.ok) throw new Error('Error al guardar avatar');
                     const data = await res.json();
                     setAvatar(data.avatar);
+                    if (setUsuario) setUsuario((prev) => ({ ...prev, avatar: data.avatar }));
                 } catch (err) {
                     alert('Error al guardar avatar: ' + (err.message || err));
                 } finally {

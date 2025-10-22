@@ -53,10 +53,14 @@ export default function StoryDetailPage({ usuario }) {
         setCommentLoading(true);
         try {
             const API_URL = 'https://storyup-backend.onrender.com/api';
+            const token = usuario?.token || (typeof getCookie === 'function' ? getCookie('token') : '');
             const res = await fetch(`${API_URL}/stories/${id}/comment`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: usuario._id, text: comment })
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({ text: comment })
             });
             if (!res.ok) throw new Error('No se pudo comentar');
             const data = await res.json();
