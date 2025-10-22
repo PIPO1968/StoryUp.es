@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getCookie } from './cookieUtils';
 import ChatSidebar from './ChatSidebar';
 
 
@@ -37,6 +38,14 @@ function Perfil({ usuario }) {
 
     useEffect(() => {
         setAvatar(usuario?.avatar || '');
+        // Actualizar lastActive al cargar el perfil
+        const token = usuario?.token || getCookie('token');
+        if (token) {
+            fetch('https://storyup-backend.onrender.com/api/me/active', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+        }
     }, [usuario]);
 
     const handleAvatarChange = async (e) => {
