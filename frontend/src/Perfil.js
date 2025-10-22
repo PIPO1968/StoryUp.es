@@ -56,7 +56,25 @@ function Perfil({ usuario }) {
                 const base64 = ev.target.result;
                 setAvatar(base64);
                 setLoading(true);
-                // ...no renderizar nada aquí...
+                try {
+                    const token = usuario?.token || getCookie('token');
+                    const API_URL = 'https://storyup-backend.onrender.com/api';
+                    const res = await fetch(`${API_URL}/me/avatar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ avatar: base64 })
+                    });
+                    if (!res.ok) throw new Error('Error al guardar avatar');
+                    const data = await res.json();
+                    setAvatar(data.avatar);
+                } catch (err) {
+                    alert('Error al guardar avatar: ' + (err.message || err));
+                } finally {
+                    setLoading(false);
+                }
             };
             reader.readAsDataURL(file);
         }
