@@ -13,6 +13,7 @@ export function GlobalProvider({ children }) {
     // Estado global para todos los datos (puedes añadir más claves según crezca el backend)
     const [data, setData] = useState({
         usuario: null,
+        usuarios: [],
         noticias: [],
         historias: [],
         concursos: [],
@@ -27,8 +28,9 @@ export function GlobalProvider({ children }) {
         try {
             const token = getCookie('token');
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const [me, news, stories, contests, stats] = await Promise.all([
+            const [me, usuarios, news, stories, contests, stats] = await Promise.all([
                 fetch(`${API_URL}/me`, { headers, credentials: 'include' }).then(r => r.ok ? r.json() : null),
+                fetch(`${API_URL}/usuarios`).then(r => r.ok ? r.json() : []),
                 fetch(`${API_URL}/news`).then(r => r.ok ? r.json() : []),
                 fetch(`${API_URL}/stories`).then(r => r.ok ? r.json() : []),
                 fetch(`${API_URL}/concursos`).then(r => r.ok ? r.json() : []),
@@ -37,6 +39,7 @@ export function GlobalProvider({ children }) {
             setData(prev => ({
                 ...prev,
                 usuario: me?.user || null,
+                usuarios: usuarios,
                 noticias: news,
                 historias: stories,
                 concursos: contests,
