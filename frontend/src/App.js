@@ -140,7 +140,7 @@ function App() {
                         <Route path="/" element={
                             !usuario ? (
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: '#f9f9f9' }}>
-                                    <div style={{ position: 'relative', width: 600, height: 600, maxWidth: '95vw', maxHeight: '95vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <div style={{ position: 'relative', width: 480, height: 480, maxWidth: '98vw', maxHeight: '98vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         {/* Bloques explicativos en círculo */}
                                         {[
                                             { title: 'Historias', icon: '📖', desc: 'Crea, lee y comparte historias educativas con la comunidad.' },
@@ -152,9 +152,9 @@ function App() {
                                             { title: 'Perfil', icon: '👤', desc: 'Gestiona tu información personal y preferencias.' }
                                         ].map((block, i, arr) => {
                                             const angle = (2 * Math.PI * i) / arr.length;
-                                            const radius = 220;
-                                            const x = Math.cos(angle) * radius + 260;
-                                            const y = Math.sin(angle) * radius + 260;
+                                            const radius = 170;
+                                            const x = Math.cos(angle) * radius + 240;
+                                            const y = Math.sin(angle) * radius + 240;
                                             return (
                                                 <div key={block.title} style={{ position: 'absolute', left: x, top: y, transform: 'translate(-50%, -50%)' }}>
                                                     <InfoBlock {...block} />
@@ -162,7 +162,7 @@ function App() {
                                             );
                                         })}
                                         {/* Formulario central */}
-                                        <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #ffe06633', padding: '2.5rem 2.5rem 2rem 2.5rem', minWidth: 340, maxWidth: 420, zIndex: 2 }}>
+                                        <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px #ffe06633', padding: '1.5rem 1.5rem 1rem 1.5rem', minWidth: 270, maxWidth: 340, zIndex: 2 }}>
                                             <div style={{ textAlign: 'center', marginBottom: 24 }}>
                                                 <div style={{ fontWeight: 'bold', fontSize: '1.7rem', color: '#e6b800', marginBottom: 8 }}>StoryUp.es</div>
                                             </div>
