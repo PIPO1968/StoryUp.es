@@ -190,6 +190,16 @@ function App() {
 
 }
 
+// Bloque explicativo reutilizable
+function InfoBlock({title, icon, desc}) {
+    return (
+        <div style={{ background: '#fffbe6', borderRadius: 12, boxShadow: '0 2px 8px #ffe06633', padding: '1.2rem 1.2rem', minWidth: 180, maxWidth: 220, textAlign: 'center', margin: 8 }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>{icon}</div>
+            <div style={{ fontWeight: 'bold', color: '#e6b800', fontSize: 18, marginBottom: 6 }}>{title}</div>
+            <div style={{ color: '#888', fontSize: 15 }}>{desc}</div>
+        </div>
+    );
+}
 export default App;
 
 
