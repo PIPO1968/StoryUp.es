@@ -97,17 +97,37 @@ router.post('/data', async (req, res) => {
     }
 });
 
-// Consultar datos por tipo, usuario, etc.
-router.get('/data', async (req, res) => {
-    const { type, userId, limit = 50, skip = 0 } = req.query;
-    const query = {};
-    if (type) query.type = type;
-    if (userId) query.userId = userId;
+// Endpoint /me: obtener y actualizar datos del usuario autenticado
+router.post('/me', async (req, res) => {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+    }
+    const token = auth.split(' ')[1];
     try {
-        const items = await Data.find(query).sort({ createdAt: -1 }).skip(Number(skip)).limit(Number(limit));
-        res.json({ items });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+        // Permitir actualizar el curso si se envía en el body
+        if (req.body && req.body.course && req.body.course !== user.course) {
+            user.course = req.body.course;
+            await user.save();
+        }
+        res.json({
+            user: {
+                email: user.email,
+                username: user.username,
+                realName: user.realName,
+                userType: user.userType,
+                centroTipo: user.centroTipo,
+                centroNombre: user.centroNombre,
+                course: user.course,
+                avatar: user.avatar,
+                _id: user._id
+            }
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Error al consultar datos', details: err.message });
+        res.status(401).json({ error: 'Token inválido', details: err.message });
     }
 });
 
@@ -141,7 +161,7 @@ router.post('/me/avatar', async (req, res) => {
 // Registro o login
 router.post('/register-or-login', async (req, res) => {
     try {
-    const { email, password, username, realName, userType, centroTipo, centroNombre, course } = req.body;
+        const { email, password, username, realName, userType, centroTipo, centroNombre, course } = req.body;
         console.log('Datos recibidos en registro:', req.body);
         if (!email || !password) return res.status(400).json({ error: 'Email y contraseña requeridos' });
         let user = await User.findOne({ email });
