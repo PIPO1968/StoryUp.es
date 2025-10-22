@@ -13,9 +13,13 @@ User.deleteMany({}).then(() => console.log('Todos los usuarios eliminados (reset
 router.get('/usuarios/contador', async (req, res) => {
     try {
         const total = await User.countDocuments();
-        // Simulación: usuarios online = usuarios que han iniciado sesión en los últimos 10 minutos (requiere campo updatedAt)
-        // Por ahora, devolvemos un número aleatorio entre 1 y total
-        const online = Math.max(1, Math.floor(Math.random() * total));
+        // Si no hay usuarios, online debe ser 0
+        let online = 0;
+        if (total > 0) {
+            // Aquí podrías implementar lógica real de usuarios online
+            // Por ahora, solo simula 1 online si hay al menos 1 usuario
+            online = 1;
+        }
         res.json({ total, online });
     } catch (err) {
         res.status(500).json({ error: 'Error al obtener estadísticas', details: err.message });
