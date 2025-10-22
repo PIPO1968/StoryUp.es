@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     userType: { type: String, default: 'Usuario' },
     centroTipo: { type: String, default: '' },
     centroNombre: { type: String, default: '' },
+    course: { type: String, default: '' },
     avatar: { type: String, default: '' }, // base64 o URL
     createdAt: { type: Date, default: Date.now },
     lastActive: { type: Date, default: null }
