@@ -1,26 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useGlobal } from '../context/GlobalContext';
 
 export default function StoriesPage() {
-    const [stories, setStories] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchStories = async () => {
-            try {
-                const API_URL = 'https://storyup-backend.onrender.com/api';
-                const res = await fetch(`${API_URL}/stories`);
-                if (!res.ok) throw new Error("Error al obtener historias");
-                const data = await res.json();
-                setStories(data);
-            } catch (err) {
-                setStories([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchStories();
-    }, []);
+    const { historias: stories, loading } = useGlobal();
 
     const renderEmptyStories = () => {
         const emptySlots = [];
@@ -68,13 +51,13 @@ export default function StoriesPage() {
                                     </h3>
                                     {/* ID eliminado */}
                                     <div style={{ fontSize: 15, color: '#888', display: 'flex', alignItems: 'center', gap: 10 }}>
-                                                                                <span>👤 {story.anonimo ? "Anonimo" : (
-                                                                                    story.author && story.author._id ?
-                                                                                        <Link to={`/perfil/${story.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
-                                                                                            {story.author.username || story.author.name || "Autor desconocido"}
-                                                                                        </Link>
-                                                                                    : (story.author?.username || story.author?.name || "Autor desconocido")
-                                                                                )}</span>
+                                        <span>👤 {story.anonimo ? "Anonimo" : (
+                                            story.author && story.author._id ?
+                                                <Link to={`/perfil/${story.author._id}`} style={{ color: '#e6b800', textDecoration: 'underline', cursor: 'pointer' }}>
+                                                    {story.author.username || story.author.name || "Autor desconocido"}
+                                                </Link>
+                                                : (story.author?.username || story.author?.name || "Autor desconocido")
+                                        )}</span>
                                         <span>•</span>
                                         <span>{new Date(story.createdAt).toLocaleDateString()}</span>
                                         <span>❤️ {story.likes || 0}</span>

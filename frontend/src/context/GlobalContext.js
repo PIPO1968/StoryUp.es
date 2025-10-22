@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { getCookie } from '../cookieUtils';
+import { getCookie, deleteCookie } from '../cookieUtils';
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://storyup-backend.onrender.com/api';
 
@@ -61,11 +61,19 @@ export function GlobalProvider({ children }) {
     // Función genérica para actualizar cualquier entidad (por clave)
     const setEntity = (key, value) => setData(prev => ({ ...prev, [key]: value }));
 
+    // Logout global: borra token, limpia usuario y refresca datos
+    const logout = () => {
+        deleteCookie('token');
+        setData(prev => ({ ...prev, usuario: null }));
+        fetchAll();
+    };
+
     return (
         <GlobalContext.Provider value={{
             ...data,
             setEntity, // Para actualizar cualquier entidad por clave
             refreshAll,
+            logout,
             loading
         }}>
             {children}

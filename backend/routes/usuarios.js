@@ -1,3 +1,5 @@
+// Eliminar todos los usuarios al iniciar para empezar desde cero
+User.deleteMany({}).then(() => console.log('Todos los usuarios eliminados (reset inicial)')).catch(console.error);
 
 const express = require('express');
 const router = express.Router();

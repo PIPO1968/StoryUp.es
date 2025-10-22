@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useGlobal } from './context/GlobalContext';
 import ChatSidebar from './ChatSidebar';
 
 
-function Perfil({ usuario }) {
+function Perfil() {
+    const { usuario, setUsuario } = useGlobal();
     // --- Estado para crear concurso ---
     const [tituloConcurso, setTituloConcurso] = useState("");
     const [resumenConcurso, setResumenConcurso] = useState("");
@@ -49,6 +51,10 @@ function Perfil({ usuario }) {
             setIdUltimoConcurso(data._id);
             setFechaFinalUltimoConcurso(data.fechaFinal);
             setMensajeConcurso({ tipo: 'ok', texto: '¡Concurso creado con éxito!' });
+            // Actualizar usuario global si backend devuelve usuario actualizado
+            if (data.autor) {
+                if (typeof window !== 'undefined' && window.setUsuario) window.setUsuario(data.autor);
+            }
         } catch (err) {
             setMensajeConcurso({ tipo: 'error', texto: err.message || 'Error al crear concurso' });
         } finally {
@@ -91,15 +97,19 @@ function Perfil({ usuario }) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Si usas autenticación, añade aquí el token
                 },
                 body: JSON.stringify({ title: tituloNoticia, content: contenidoNoticia, authorId: usuario?._id, anonimo: anonimoNoticia })
             });
             if (!res.ok) throw new Error('Error al crear noticia');
+            const data = await res.json();
             setTituloNoticia('');
             setContenidoNoticia('');
             setAnonimoNoticia(false);
             setMensajeNoticia({ tipo: 'ok', texto: '¡Noticia creada con éxito!' });
+            // Actualizar usuario global si backend devuelve usuario actualizado
+            if (data.author) {
+                if (typeof window !== 'undefined' && window.setUsuario) window.setUsuario(data.author);
+            }
         } catch (err) {
             setMensajeNoticia({ tipo: 'error', texto: err.message || 'Error al crear noticia' });
         } finally {
