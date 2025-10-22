@@ -74,11 +74,23 @@ router.post('/:id/like', async (req, res) => {
 });
 
 // Comentar una historia
+const jwt = require('jsonwebtoken');
 router.post('/:id/comment', async (req, res) => {
     try {
-        const { userId, text } = req.body;
-        if (!userId || !text) return res.status(400).json({ error: 'Faltan datos' });
-        const user = await User.findById(userId);
+        const auth = req.headers.authorization;
+        if (!auth || !auth.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Token no proporcionado' });
+        }
+        const token = auth.split(' ')[1];
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        } catch (err) {
+            return res.status(401).json({ error: 'Token inválido', details: err.message });
+        }
+        const { text } = req.body;
+        if (!text) return res.status(400).json({ error: 'Faltan datos' });
+        const user = await User.findById(decoded.userId);
         if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
         const story = await Story.findById(req.params.id);
         if (!story) return res.status(404).json({ error: 'Historia no encontrada' });
