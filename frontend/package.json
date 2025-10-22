@@ -1,7 +1,7 @@
 {
     "homepage": ".",
     "name": "storyup-frontend",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "private": true,
     "dependencies": {
         "lucide-react": "^0.546.0",
