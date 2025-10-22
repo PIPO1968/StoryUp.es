@@ -34,14 +34,17 @@ mongoose.connect(process.env.MONGO_URI)
 require('./models/user');
 require('./models/story');
 require('./models/news');
+require('./models/event');
 
 // Rutas API
 const usuariosRouter = require('./routes/usuarios');
 const storiesRouter = require('./routes/stories');
 const newsRouter = require('./routes/news');
+const eventRouter = require('./routes/event');
 app.use('/api', usuariosRouter);
 app.use('/api/stories', storiesRouter);
 app.use('/api/news', newsRouter);
+app.use('/api/event', eventRouter);
 // Endpoint de Health Check para Render
 app.get('/healthz', (req, res) => {
     res.status(200).json({ status: "ok" });
