@@ -28,7 +28,6 @@ router.post('/me/active', async (req, res) => {
 });
 
 // Eliminar todos los usuarios al iniciar para empezar desde cero
-User.deleteMany({}).then(() => console.log('Todos los usuarios eliminados (reset inicial)')).catch(console.error);
 
 // Estadísticas de usuarios: total y online (simulado)
 router.get('/usuarios/contador', async (req, res) => {
