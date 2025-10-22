@@ -6,7 +6,9 @@ const path = require('path');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+
 const app = express();
+app.use(express.json());
 app.use(cors({
     origin: [
         'https://www.storyup.es',
@@ -15,14 +17,9 @@ app.use(cors({
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
-// Responder a preflight OPTIONS para todas las rutas
 app.options('*', cors());
-app.use(express.json());
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGO_URI)
