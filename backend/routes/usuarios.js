@@ -23,7 +23,10 @@ router.get('/usuarios', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: 'Error al obtener usuarios', details: err.message });
     }
+
 });
+
+module.exports = router;
 
 const express = require('express');
 const router = express.Router();
