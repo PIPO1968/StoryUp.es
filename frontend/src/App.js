@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { InfoBlock } from './App';
 import Register from './Register';
 import Perfil from './Perfil';
 import CrearHistoria from './CrearHistoria';
