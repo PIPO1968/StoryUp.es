@@ -73,7 +73,7 @@ function Perfil({ usuario }) {
                         <p><strong>Nick:</strong> {usuario?.nick || usuario?.username}</p>
                         <p><strong>Email:</strong> {usuario?.email}</p>
                         <p><strong>Tipo:</strong> {usuario?.userType || 'Usuario'}</p>
-                        <p><strong>Centro Escolar:</strong> {usuario?.school || '—'}</p>
+                        <p><strong>Centro Escolar:</strong> {usuario?.centroNombre || usuario?.school || '—'}</p>
                         <p><strong>Curso:</strong> {usuario?.course || '—'}</p>
                         <div style={{ display: 'flex', gap: '2.5rem', marginTop: 12 }}>
                             <span><strong>Likes:</strong> {usuario?.likes ?? '0'}</span>

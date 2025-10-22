@@ -14,12 +14,13 @@ function Register({ onRegister }) {
     const [centroNombre, setCentroNombre] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [course, setCourse] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
-        if (!realName || !nick || !email || !password || !userType || !centroTipo || !centroNombre) {
+        if (!realName || !nick || !email || !password || !userType || !centroTipo || !centroNombre || !course) {
             setError('Todos los campos son obligatorios');
             setLoading(false);
             return;
@@ -28,7 +29,7 @@ function Register({ onRegister }) {
             const res = await fetch(`${API_URL}/register-or-login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ realName, username: nick, email, password, userType, centroTipo, centroNombre })
+                body: JSON.stringify({ realName, username: nick, email, password, userType, centroTipo, centroNombre, course })
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Error de registro');
@@ -58,6 +59,17 @@ function Register({ onRegister }) {
                 onChange={e => setNick(e.target.value)}
                 required
             />
+            <select value={course} onChange={e => setCourse(e.target.value)} required>
+                <option value="">Selecciona tu curso</option>
+                <option value="3º ESO">3º ESO</option>
+                <option value="4º ESO">4º ESO</option>
+                <option value="5º ESO">5º ESO</option>
+                <option value="6º ESO">6º ESO</option>
+                <option value="7º ESO">7º ESO</option>
+                <option value="8º ESO">8º ESO</option>
+                <option value="1º INS">1º INS</option>
+                <option value="2º INS">2º INS</option>
+            </select>
             <input
                 type="email"
                 placeholder="Email"
