@@ -25,10 +25,10 @@ function SidebarHistoria({ type, setType, theme, setTheme, anonimo, setAnonimo }
                 onClick={() => setAnonimo(a => !a)}
             >{anonimo ? 'Modo Anónimo Activado' : 'Escribir como Anónimo'}</button>
             {/* Adornos */}
-            <div style={{ position: 'absolute', left: -18, top: 12, fontSize: 22 }}>{'⭐'}</div>
-            <div style={{ position: 'absolute', left: -18, bottom: 32, fontSize: 22 }}>{'💖'}</div>
-            <div style={{ position: 'absolute', right: -18, top: 32, fontSize: 22 }}>{'👻'}</div>
-            <div style={{ position: 'absolute', right: -18, bottom: 12, fontSize: 22 }}>{'📚'}</div>
+            <div style={{ position: 'absolute', left: -18, top: 12, fontSize: 22 }}>⭐</div>
+            <div style={{ position: 'absolute', left: -18, bottom: 32, fontSize: 22 }}>💖</div>
+            <div style={{ position: 'absolute', right: -18, top: 32, fontSize: 22 }}>👻</div>
+            <div style={{ position: 'absolute', right: -18, bottom: 12, fontSize: 22 }}>📚</div>
         </div>
     );
 }
