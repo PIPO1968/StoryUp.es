@@ -61,4 +61,57 @@ body {
     }
 }
 
-/* ...continúa el resto del CSS según el archivo original... */
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.App-link {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.12rem;
+    margin: 0 6px 8px 0;
+    cursor: pointer;
+    color: #222;
+}
+
+.topbar-center-absolute {
+    color: #61dafb;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    pointer-events: none;
+    height: 54px;
+    display: flex;
+    align-items: center;
+}
+
+.topbar-logo {
+    border: 1px solid #ffe066;
+    height: 100%;
+    max-height: 48px;
+    width: auto;
+    border-radius: 4px;
+    padding: 2px 8px;
+    object-fit: contain;
+    background: #fffbe6;
+    box-shadow: 0 1px 4px #ffe06644;
+    padding: 8px 18px;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    font-size: 1rem;
+    margin-left: 12px;
+    transition: background 0.2s, color 0.2s;
+}
+
+button:hover {
+    background: #fffbe6;
+    color: #e6b800;
+    white-space: nowrap;
+}
