@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 // Puedes adaptar los imports de UI según tu librería instalada
 // import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // import { Input } from '@/components/ui/input';
 import { User } from 'lucide-react';
-import { useAuth } from '../App';
+import { useAuth } from './AuthContext';
 
 function Perfil() {
-    const { user } = useAuth ? useAuth() : { user: null };
+    const { user } = useAuth();
     const [schoolCenter, setSchoolCenter] = useState('');
     const [schoolCenterSaved, setSchoolCenterSaved] = useState(false);
     const [likes, setLikes] = useState(0);
