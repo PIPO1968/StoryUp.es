@@ -11,15 +11,15 @@ import LanguageSelector from './LanguageSelector.jsx';
 function App() {
     return (
         <div>
-            <Sidebar onLogout={() => { }} />
+            <Sidebar />
             <Routes>
-                <Route path="/" element={<Login onLogin={() => { }} />} />
-                <Route path="/register" element={<Register onRegister={() => { }} />} />
-                <Route path="/perfil" element={<Perfil usuario={{}} setUsuario={() => { }} />} />
-                <Route path="/crear-historia" element={<CrearHistoria usuario={{}} />} />
+                <Route path="/" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/perfil" element={<Perfil />} />
+                <Route path="/crear-historia" element={<CrearHistoria />} />
                 {/* Agrega más rutas según tu app */}
             </Routes>
-            <LanguageSelector lang="es" setLang={() => { }} />
+            <LanguageSelector />
         </div>
     );
 }
