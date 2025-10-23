@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+const API_URL = 'https://storyup-backend.onrender.com/api';
 // Puedes adaptar los imports de UI según tu librería instalada
 // import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // import { Input } from '@/components/ui/input';
@@ -15,7 +16,7 @@ function Perfil() {
 
     useEffect(() => {
         if (user?.id) {
-            fetch(`/api/user?id=${user.id}`)
+            fetch(`${API_URL}/user?id=${user.id}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.centro_escolar) {
@@ -26,7 +27,7 @@ function Perfil() {
                         setSchoolCenterSaved(false);
                     }
                 });
-            fetch(`/api/user/likes?id=${user.id}`)
+            fetch(`${API_URL}/user/likes?id=${user.id}`)
                 .then(res => res.json())
                 .then(data => {
                     setLikes(data.totalLikes || 0);
@@ -36,7 +37,7 @@ function Perfil() {
                         contestLikes: data.contestLikes || 0
                     });
                 });
-            fetch(`/api/user/trophies?id=${user.id}`)
+            fetch(`${API_URL}/user/trophies?id=${user.id}`)
                 .then(res => res.json())
                 .then(data => {
                     setTrophies(data.trophies || []);
@@ -46,7 +47,7 @@ function Perfil() {
 
     const handleSaveSchoolCenter = async () => {
         if (!schoolCenter.trim() || !user?.id) return;
-        await fetch(`/api/user?id=${user.id}`, {
+        await fetch(`${API_URL}/user?id=${user.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ centro_escolar: schoolCenter.trim() })
